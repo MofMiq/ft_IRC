@@ -5,7 +5,7 @@
 class User
 {
     public:
-        std::string _name;
+        std::string _username;
         std::string _nickname;
         std::string _hostname;
         int fd; // -> para el poll

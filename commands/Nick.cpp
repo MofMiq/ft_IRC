@@ -1,18 +1,21 @@
 #include "../inc/Commands.hpp"
 
 /*
-NICK: is used to give the client a nickname o change the previous one.
-If a NICK command is used with a nickname that is already in use -> ERR_NICKNAMEINUSE numeric and ignore the NICK command
 
-ERR_ERRONEUSNICKNAME: containing invalid characters
+NICK <newNick>
+
+NICK: is used to give the client a nickname o change the previous one.
+(431)ERR_NONICKNAMEGIVEN: does not receive the <nickname> parameter with the NICK command and ignore
+
+(432)ERR_ERRONEUSNICKNAME: containing invalid characters:  -, [, ], \, ``, {, }, ^, _, y |
 
 Servers MUST allow at least all alphanumerical characters, square and curly brackets ([]{}), backslashes (\), and pipe (|)
 characters in nicknames, and MAY disallow digits as the first character.
 
-ERR_NONICKNAMEGIVEN: does not receive the <nickname> parameter with the NICK command and ignore
+(433)ERR_NICKNAMEINUSE ->If a NICK command is used with a nickname that is already in use; all errors ignore the NICK command
 
-The NICK message may be sent from the server to clients to acknowledge their NICK command was successful, and to inform other
-clients about the change of nickname.
+RESPONSE: The NICK message may be sent from the server to clients to acknowledge their NICK command was successful, and to inform other
+clients about the change of nickname. Ex: oldNick!user@host NICK :newNick
 
 Example:
 NICK Wiz                  ; Requesting the new nick "Wiz".
@@ -20,6 +23,9 @@ NICK Wiz                  ; Requesting the new nick "Wiz".
 :dan-!d@localhost NICK Mamoped
                             ; dan- changed his nickname to Mamoped.
 
-ERR_NICKCOLLISION: Returned by a server to a client when it detects a nickname collision (registered of a NICK that already exists by another server) -> not needed?
+-> not needed? ERR_NICKCOLLISION: Returned by a server to a client when it detects a nickname collision (registered of a NICK that already exists by another server)
 
 */
+
+//pasrseNick()
+//execNick()
