@@ -1,52 +1,3 @@
-#pragma once
-
-/*#include <iostream>
-#include "User.hpp"
-#include "Channel.hpp"
-#include <map>
-#include <vector>
-class Server
-{
-private:
-    std::string _pass; // Almacena la contrase�a del servidor.
-    int _port; //Almacena el puerto en el que el servidor escucha.
-    int _serverSocket; // Descriptor del socket del servidor.
-    std::vector<struct pollfd> _pollfds; //Vector de pollfd usado para manejar m�ltiples descriptores de archivo con poll.
-    std::map<int, User> _clients; // Mapa de clientes conectados, mapeando el descriptor de archivo del cliente a un objeto User.
-    std::map<std::string, Channel> _channels; // Mapa de canales, mapeando el nombre del canal a un objeto Channel.
-
-    //Elimina un cliente del map _clients y de todos los canales en los que est� presente.
-    void removeClient(int clientFd); //puede ser tb publico, si es privado se llama desd otra funcion
-
-    //Maneja los mensajes de los clientes y realiza acciones en consecuencia.
-    void handleClientMessage(int clientFd, const std::string& message);  //lo mismo q2 la otra
-
-public:
-    Server(int port, const std::string& pass);
-    ~Server();
-
-    //Inicializa el servidor, crea el socket, lo configura como no bloqueante,
-    //lo enlaza a una direcci�n y lo pone en modo de escucha.
-    void initServer();
-    
-    // Acepta una nueva conexi�n de cliente y lo configura como no bloqueante,
-    //y luego a�ade el descriptor de archivo del cliente a la lista de pollfd.
-    void connectClient();
-
-    //Maneja las conexiones y los mensajes entrantes, usando poll para monitorear m�ltiples descriptores de archivo.
-    void receiveMsg();
-
-    //A�ade un nuevo cliente al map _clients.
-    void newClient(int clientFd);
-
-    // Getters y setters
-    int getPort() const;
-    std::string getPass() const;
-}; */
-
-
-#include <stdio.h> //perror()
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -167,25 +118,6 @@ private:
         std::cout << "New connection accepted" << std::endl;
     }
 
-    std::string extractPassword(std::string strRaw)
-    {
-        std::string pass = "PASS";
-        size_t position = strRaw.find(pass);
-
-        if (position == std::string::npos)
-            return ("");
-
-        position += pass.size();
-
-        size_t start_word = strRaw.find_first_not_of(" \t\n", position);
-        size_t end_word = strRaw.find_first_of(" \t\n", start_word);
-
-        if (start_word != std::string::npos && end_word != std::string::npos)
-            return (strRaw.substr(start_word, end_word - start_word));
-
-        return ("");
-    }
-
     void handle_client_message(int client_socket) {
         char buffer[BUFFER_SIZE];
         int bytes_read = read(client_socket, buffer, sizeof(buffer) - 1);
@@ -204,34 +136,6 @@ private:
 
         buffer[bytes_read] = '\0';
         std::string message(buffer);
-
-        std::cout << "MENSAJE RECIBIDO DEL CLIENTE" << std::endl;
-        std::cout << message << std::endl;
-
-        if (message.find("PASS") != std::string::npos)
-        {
-            std::string userPass = extractPassword(message);
-            if (userPass != "")
-            {
-                userPass = userPass.substr(0, userPass.size() - 1);
-                if (userPass == this->password)
-                    std::cout << "CONTRASEÑA OK" << std::endl;
-                else
-                {
-                    std::cout << "CONTRASEÑA ERRONEA" << std::endl;
-                    close(client_socket);
-                    remove_client(client_socket);
-                    return;
-                }
-            }
-            else
-            {
-                close(client_socket);
-                remove_client(client_socket);
-                return;
-            }  
-        }
-
 
         if (message.substr(0, 5) == "NICK ") {
             clients[client_socket] = message.substr(5);
@@ -279,3 +183,4 @@ private:
         clients.erase(client_socket);
     }
 };
+
