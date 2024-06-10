@@ -1,3 +1,5 @@
+#include "../../inc/Commands.hpp"
+
 /*
 PRIVMSG <target> [:]<text>
 
@@ -22,3 +24,11 @@ PRIVMSG Angel :yes I'm receiving it ! -> Command to send a message to user Angel
 PRIVMSG #general :yes I'm receiving it ! -> Command to send a message to channel #general.
 
 */
+
+void Command::executePrivmsg(Command& cmd, Server& server, User& user)
+{
+    std::cout << "hola desde PRIVMSG" << std::endl;
+    (void)cmd;
+    (void)server;
+    (void)user;
+}

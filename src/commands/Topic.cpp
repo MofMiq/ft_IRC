@@ -1,4 +1,4 @@
-#include "../inc/Commands.hpp"
+#include "../../inc/Commands.hpp"
 
 /*
 TOPIC <channel> [<newTopic>]
@@ -35,3 +35,11 @@ TOPIC #test : -> Clearing the topic on "#test"
 TOPIC #test -> Checking the topic for "#test"
 
 */
+
+void Command::executeTopic(Command &cmd, Server &server, User &user)
+{
+    std::cout << "hola desde TOPIC" << std::endl;
+    (void)cmd;
+    (void)server;
+    (void)user;
+}

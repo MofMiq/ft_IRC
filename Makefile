@@ -13,13 +13,12 @@ OBJ_DIR	= objs/
 #direccion de carpetas dentro de src/
 #COMMAND es la variable para los archivos sin extension de la carpeta de parseo
 
-COMMAND	= Nick Mode Topic Privmsg
+COMMAND	= Commands Nick Mode Topic Privmsg
 
 SERVER	= server
 
-SRC 	= 	main.cpp \
-#			$(addsuffix .cpp, $(addprefix command/, $(SERVER))) \
-#			$(addsuffix .cpp, $(addprefix command/, $(COMMAND))) \
+SRC 	= 	main.cpp User.cpp \
+			$(addsuffix .cpp, $(addprefix commands/, $(COMMAND))) \
 
 OBJ 	=	$(addprefix $(OBJ_DIR), $(SRC:.cpp=.o))
 
@@ -30,8 +29,7 @@ $(NAME): $(OBJ)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@mkdir -p $(dir $@)
-#	@mkdir -p $(OBJ_DIR)/command
-	@mkdir -p $(OBJ_DIR)/server
+	@mkdir -p $(OBJ_DIR)/commands
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:

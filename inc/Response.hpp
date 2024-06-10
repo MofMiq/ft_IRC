@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RESPONSE_HPP
+#define RESPONSE_HPP
 
 #include "Server.hpp"
 
@@ -16,3 +17,5 @@ enum ErrorCode
 // the struct of the MESSAGE is :<FROM> <COMMAND> <PARAMETERS> :<TRAILER>
 
 //clase de Response???
+
+#endif

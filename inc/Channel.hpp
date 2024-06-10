@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CHANNEL_HPP
+#define CHANNEL_HPP
 
 //#include "Server.hpp"
 #include <string>
@@ -55,3 +56,5 @@ class Channel
         std::string getName() const;
         std::string getTopic() const;
 };
+
+#endif

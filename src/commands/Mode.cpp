@@ -1,3 +1,5 @@
+#include "../../inc/Commands.hpp"
+
 /*
 MODE #channel <modes> <parameters>
 
@@ -48,3 +50,11 @@ MODE: is used to set or remove options (or modes) from a given target.
     (324) RPL_CHANNELMODEIS: Respuesta general al comando MODE, indicando los modos actuales del canal.
     ERR_INVALIDMODEPARAM (696)
 */
+
+void Command::executeMode(Command& cmd, Server& server, User& user)
+{
+    std::cout << "hola desde MODE" << std::endl;
+    (void)cmd;
+    (void)server;
+    (void)user;
+}

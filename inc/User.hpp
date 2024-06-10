@@ -1,4 +1,5 @@
-#pragma once
+#ifndef USER_HPP
+#define USER_HPP
 
 #include <string>
 //#include "Server.hpp"
@@ -26,3 +27,5 @@ public:
 
     int getFd() const;
 };
+
+#endif

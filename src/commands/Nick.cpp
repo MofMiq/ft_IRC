@@ -1,4 +1,4 @@
-#include "../inc/Commands.hpp"
+#include "../../inc/Commands.hpp"
 
 /*
 
@@ -29,3 +29,11 @@ NICK Wiz                  ; Requesting the new nick "Wiz".
 
 //pasrseNick()
 //execNick()
+
+void Command::executeNick(Command &cmd, Server &server, User &user)
+{
+    std::cout << "hola desde NICK" << std::endl;
+    (void)cmd;
+    (void)server;
+    (void)user;
+}

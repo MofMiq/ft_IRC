@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SERVER_HPP
+#define SERVER_HPP
 
 /*#include <iostream>
 #include "User.hpp"
@@ -60,13 +61,15 @@ public:
 #include <cstring>
 #include <fcntl.h>
 #include <algorithm>
+#include "Commands.hpp"
+#include "User.hpp"
 
 const int MAX_CLIENTS = 100;
 const int BUFFER_SIZE = 1024;
 
-class IRCServer {
+class Server {
 public:
-    IRCServer(int port, const std::string& password)
+    Server(int port, const std::string& password)
         : port(port), password(password), server_socket(-1) {}
 
     bool start() {
@@ -232,8 +235,13 @@ private:
             }  
         }
 
+        //DELETE -> de forma bruta voy a crear un User para poder compilar y probar algo
+        User* usr1 = new User(client_socket); //leaks logicamente
 
-        if (message.substr(0, 5) == "NICK ") {
+        Command cmd(message);
+        cmd.parseCommand(cmd.getArg(0), this, usr1);
+
+/*         if (message.substr(0, 5) == "NICK ") {
             clients[client_socket] = message.substr(5);
         } else if (message.substr(0, 5) == "JOIN ") {
             std::string channel = message.substr(5);
@@ -265,7 +273,7 @@ private:
                     }
                 }
             }
-        }
+        } */
     }
 
     void remove_client(int client_socket) {
@@ -279,3 +287,5 @@ private:
         clients.erase(client_socket);
     }
 };
+
+#endif

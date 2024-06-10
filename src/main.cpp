@@ -12,7 +12,7 @@ int main(int argc, char **argv)
     int port = std::atoi(argv[1]);
     std::string password = argv[2];
 
-    IRCServer server(port, password);
+    Server server(port, password);
     if (!server.start()) {
         return 1;
     }
