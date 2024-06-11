@@ -70,7 +70,7 @@ const int BUFFER_SIZE = 1024;
 class Server {
 public:
     Server(int port, const std::string& password)
-        : port(port), password(password), server_socket(-1) {}
+        : port(port), password(password), server_socket(-1), serverName("MyServer") {}
 
     bool start() {
         server_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -133,11 +133,16 @@ public:
             }
         }
     }
+    
+    std::string getServerName() const {
+        return this->serverName;
+    }
 
 private:
     int port;
     std::string password;
     int server_socket;
+    std::string serverName;
     std::vector<struct pollfd> pollfds;
     std::map<int, std::string> clients; // Map from socket to client nickname
     std::map<std::string, std::set<int> > channels; // Map from channel name to set of clients
@@ -286,6 +291,7 @@ private:
         }
         clients.erase(client_socket);
     }
+
 };
 
 #endif
