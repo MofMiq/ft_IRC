@@ -9,6 +9,7 @@ private:
     std::string _userName;
     std::string _nickName;
     std::string _hostName;
+    std::string _serverName;
     int _fd; // File descriptor para el poll
 
 public:
