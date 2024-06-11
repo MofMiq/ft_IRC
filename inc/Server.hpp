@@ -242,6 +242,7 @@ private:
 
         //DELETE -> de forma bruta voy a crear un User para poder compilar y probar algo
         User* usr1 = new User(client_socket); //leaks logicamente
+        //este comentario es para probar
 
         Command cmd(message);
         cmd.parseCommand(cmd.getArg(0), this, usr1);
