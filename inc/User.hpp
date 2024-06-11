@@ -15,6 +15,7 @@ private:
     int _fd; // File descriptor para el poll
 
 public:
+    User();
     User(int fd);
     User(int fd, std::string userName, std::string hostName, std::string serverName, std::string realName);
 
