@@ -50,7 +50,7 @@ void Command::parseCommand(const std::string &cmd, Server* server, User* user)
     else if (cmd == "TOPIC")
         executeTopic(*this, *server, *user);
     else if (cmd == "PRIVMSG")
-        executeTopic(*this, *server, *user);
+        executePrivmsg(*this, *server, *user);
     else if (cmd == "MODE")
-        executeTopic(*this, *server, *user);
+        executeMode(*this, *server, *user);
 }
