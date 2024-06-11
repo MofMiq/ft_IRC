@@ -34,13 +34,14 @@ private:
 
 public:
     Server(int port, const std::string& password);
-    bool start();
-    void run();
+    bool        start();
+    void        run();
     std::string getServerName() const;
-    void handle_new_connection();
+    void        handle_new_connection();
     std::string extractPassword(std::string strRaw);
-    void handle_client_message(int client_socket);
-    void remove_client(int client_socket);
+    void        extractDataUser(std::string strRaw, std::string& userName, std::string& hostName, std::string& serverName, std::string& realName);
+    void        handle_client_message(int client_socket);
+    void        remove_client(int client_socket);
 };
 
 #endif

@@ -117,6 +117,36 @@ std::string     Server::extractPassword(std::string strRaw)
     return ("");
 }
 
+void        Server::extractDataUser(std::string strRaw, std::string& userName, std::string& hostName, std::string& serverName, std::string& realName)
+{
+    //USER <usuario> <host> <servidor> <nombre_real>
+
+    std::string user = "USER";
+    size_t position = strRaw.find(user);
+
+    if (position == std::string::npos)
+        return;
+
+    position += user.size();
+
+    size_t start_word = strRaw.find_first_not_of(" \t\n", position);
+    size_t end_word = strRaw.find_first_of(" \t\n", start_word) - 1;
+    userName = strRaw.substr(start_word, end_word - start_word);
+    
+    start_word = strRaw.find_first_not_of(" \t\n", end_word);
+    end_word = strRaw.find_first_of(" \t\n", start_word) - 1;
+    hostName = strRaw.substr(start_word, end_word - start_word);
+
+    start_word = strRaw.find_first_not_of(" \t\n", end_word);
+    end_word = strRaw.find_first_of(" \t\n", start_word) - 1;
+    serverName = strRaw.substr(start_word, end_word - start_word);
+
+    start_word = strRaw.find_first_not_of(" \t\n", end_word);
+    end_word = strRaw.find_first_of(" \t\n", start_word) - 1;
+    realName = strRaw.substr(start_word, end_word - start_word);
+}
+
+
 void    Server::handle_client_message(int client_socket) {
     char buffer[BUFFER_SIZE];
     int bytes_read = read(client_socket, buffer, sizeof(buffer) - 1);
@@ -146,10 +176,15 @@ void    Server::handle_client_message(int client_socket) {
         {
             userPass = userPass.substr(0, userPass.size() - 1);
             if (userPass == this->password)
+            {
                 std::cout << "CONTRASEÑA OK" << std::endl;
+                std::string userName, hostName, serverName, realName;
+                extractDataUser(message, userName, hostName, serverName, realName);
                 //Añadir usuario al contenedor de usuarios del server
                 //User u1(fd / NICK / todos los datos);
+                User u1(client_socket, userName, hostName, serverName, realName);
                 //_usersServer[NICK] = u1.clone();
+            }
             else
             {
                 std::cout << "CONTRASEÑA ERRONEA" << std::endl;
