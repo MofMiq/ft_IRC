@@ -1,4 +1,4 @@
-NAME	= ircserver
+NAME	= ircserv
 CC		= c++
 CFLAGS	= -Wall -Werror -Wextra -std=c++98
 RM		= rm -rf
@@ -13,11 +13,11 @@ OBJ_DIR	= objs/
 #direccion de carpetas dentro de src/
 #COMMAND es la variable para los archivos sin extension de la carpeta de parseo
 
-COMMAND	= Commands Nick Mode Topic Privmsg
+COMMAND	= Nick Mode Topic Privmsg
 
 SERVER	= server
 
-SRC 	= 	main.cpp User.cpp \
+SRC 	= 	main.cpp User.cpp Commands.cpp Response.cpp \
 			$(addsuffix .cpp, $(addprefix commands/, $(COMMAND))) \
 
 OBJ 	=	$(addprefix $(OBJ_DIR), $(SRC:.cpp=.o))
