@@ -26,7 +26,7 @@ class Command
         ~Command();
 
 
-        std::string getArg(int i);
+        std::string& getArg(int i);
 
         //Este m�todo toma un comando en forma de cadena (cmd) y lo convierte en el correspondiente valor enumerado (CMD).
         //Es decir, analiza la cadena de comando y la asigna al enum correspondiente.

@@ -1,4 +1,4 @@
-#include "../../inc/Commands.hpp"
+#include "../inc/Commands.hpp"
 
 #define GREEN "\033[32m"
 #define RED "\033[31m"
@@ -35,11 +35,9 @@ Command::~Command()
 
 
 
-std::string Command::getArg(int i)
+std::string& Command::getArg(int i)
 {
-    if (i <= this->_argCount)
-        return this->_args[i];
-    return std::string();
+    return this->_args[i];
 }
 
 void Command::parseCommand(const std::string &cmd, Server* server, User* user)
