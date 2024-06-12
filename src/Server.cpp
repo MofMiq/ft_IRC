@@ -95,6 +95,11 @@ void    Server::handle_new_connection() {
     pollfds.push_back(pfd);
     clients[client_socket] = "";
     _usersServerByFd[client_socket] = new User(client_socket);
+    _usersServerByFd[client_socket]->setUsername("");
+    _usersServerByFd[client_socket]->setNickname("");
+    _usersServerByFd[client_socket]->setHostname("");
+    _usersServerByFd[client_socket]->setServername("");
+    _usersServerByFd[client_socket]->setRealname("");
     //falta implementar la eliminación del usuario del mapa _usersServerByFd cuando se elimina el usuario del servidor
 
     std::cout << "New connection accepted" << std::endl;
@@ -197,7 +202,7 @@ void    Server::handle_client_message(int client_socket) {
         }  
     }
 
-    if (message.find("USER") != std::string::npos)
+    if (message.find("USER") != std::string::npos && this->_usersServerByFd[client_socket]->getUsername() == "")
     {
         std::string userName, hostName, serverName, realName;
         extractDataUser(message, userName, hostName, serverName, realName);
