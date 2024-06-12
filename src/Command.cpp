@@ -36,16 +36,15 @@ std::string& Command::getArg(int i)
 
 Code Command::parseCommand(const std::string &cmd, Server* server, User* user)
 {
-    std::cout << "desde pasrseCommand: " << cmd << "hello" << std::endl;
     if (this->_argCount == 0)
-        err_unknowncommand(*server, *user);
+        return ERR_UNKNOWNCOMMAND;
     if (cmd == "NICK" || cmd == "NICK\n")
-        executeNick(*this, *server, *user);
+        return executeNick(*this, *server, *user);
     else if (cmd == "TOPIC")
-        executeTopic(*this, *server, *user);
+        return executeTopic(*this, *server, *user);
     else if (cmd == "PRIVMSG")
-        executePrivmsg(*this, *server, *user);
+        return executePrivmsg(*this, *server, *user);
     else if (cmd == "MODE")
-        executeMode(*this, *server, *user);
+        return executeMode(*this, *server, *user);
     return ERR_UNKNOWNCOMMAND;
 }

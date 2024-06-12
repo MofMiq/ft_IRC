@@ -12,6 +12,7 @@ private:
     int _fd; // File descriptor para el poll
     std::string _userName;
     std::string _nickName;
+    std::string _oldNick;
     std::string _hostName;
     std::string _serverName;
     std::string _realName;
@@ -29,6 +30,9 @@ public:
 
     std::string getNickname() const;
     void setNickname(const std::string& nickname); //PA el comando NICK
+
+    std::string getOldNick() const;
+    void setOldNick(const std::string& oldNick); //PA el comando NICK
 
     std::string getHostname() const;
     void setHostname(const std::string& hostname);

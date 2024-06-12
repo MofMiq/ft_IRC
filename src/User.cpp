@@ -6,10 +6,6 @@ User::User()
 
 User::User(int fd) : _fd(fd)
 {
-    //esto es solo para poder iniciar la clase
-    this->_userName = "LA";
-    this->_nickName = "PO";
-    this->_hostName = "RU";
 }
 
 User::User(int fd, std::string userName, std::string hostName, std::string serverName, std::string realName) : _fd(fd), _userName(userName), _hostName(hostName), _serverName(serverName), _realName(realName)
@@ -38,6 +34,16 @@ std::string User::getNickname() const
 void User::setNickname(const std::string &nickname)
 {
     this->_nickName = nickname;
+}
+
+std::string User::getOldNick() const
+{
+    return this->_oldNick;
+}
+
+void User::setOldNick(const std::string &oldNick)
+{
+    this->_oldNick = oldNick;
 }
 
 std::string User::getHostname() const

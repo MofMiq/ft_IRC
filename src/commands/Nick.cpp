@@ -29,23 +29,25 @@ NICK Wiz                  ; Requesting the new nick "Wiz".
 //pasrseNick()
 //execNick()
 
+bool isAllowedSymbol(char c)
+{
+    if ((c == '[') || (c == ']')
+        || (c == '{') || (c == '}') || (c == '\\') || (c == '|') || (c == '_')
+        || (c == '-') || (c == '`'))
+        return true;
+    return false;
+}
+
 bool validNickname(std::string& nick)
 {
-    //alphanumeric & [ ] { } \ | _ - ` 
     char c = nick.at(0);
 
     if (std::isdigit(c))
         return false;
-/*     if (std::isdigit(c) || !std::isalpha(c) || !((c == '[') || (c == ']')
-        || (c == '{') || (c == '}') || (c == '\\') || (c == '|') || (c == '_')
-        || (c == '-') || (c == '`')))
-        return false; */
     for (size_t i = 1; i < nick.length(); i++)
     {
         c = nick.at(i);
-        if (!std::isdigit(c) || !std::isalpha(c) || !((c == '[') || (c == ']')
-            || (c == '{') || (c == '}') || (c == '\\') || (c == '|') || (c == '_')
-            || (c =='-') || (c == '`')))
+        if (!std::isalnum(c) && !isAllowedSymbol(c))
             return false;
     }
     return true;
@@ -61,7 +63,7 @@ Code Command::executeNick(Command &cmd, Server &server, User &user)
         //este mensaje se lo tengo que enviar a pespinos/servidor
     }
 
-    if (!validNickname(cmd.getArg(1)))
+    if (validNickname(cmd.getArg(1)))
     {
         return ERR_ERRONEUSNICKNAME;
         //std::cout << err_nonicknamegiven(server, user) << std::endl;
@@ -69,7 +71,7 @@ Code Command::executeNick(Command &cmd, Server &server, User &user)
     (void)server;
     //check is already exist in the server container of Users
 
+    user.setOldNick(user.getNickname());
     user.setNickname(cmd.getArg(1));
     return RLP_NICKOK;
-
 }

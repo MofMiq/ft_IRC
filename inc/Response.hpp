@@ -4,6 +4,7 @@
 //#include "Server.hpp"
 #include "User.hpp"
 
+class Command;
 class Server;
 
 enum Code
@@ -25,15 +26,16 @@ enum Code
 
 std::string to_string(int value);
 
-void        redirectMessage(Server& server, User& user, Code Code);
+void        redirectMessage(Server& server, User& user, Code Code, Command& cmd);
 
 std::string createMessage(Server& server, User& user, Code Code);
+std::string createReply(Server &server, User &user, Code Code, Command& cmd);
 
 std::string err_unknowncommand(Server& server, User& user);
 std::string err_nonicknamegiven(Server& server, User& user);
 std::string err_erroneusnickname(Server& server, User& user);
 std::string err_nicknameinuse(Server& server, User& user);
-std::string rlp_nickok(Server& server, User& user);
+std::string rlp_nickok(Server &server, User &user, Command& cmd);
 
 
 #endif

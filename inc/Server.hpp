@@ -198,45 +198,13 @@ private:
         //DELETE -> de forma bruta voy a crear un User para poder compilar y probar algo
         User* usr1 = new User(client_socket, "mari", "marih", "maris", "marina"); //leaks logicamente
         //este comentario es para probar
+        usr1->setNickname("niki");
 
         Code code;
         Command cmd(message);
         code = cmd.parseCommand(cmd.getArg(0), this, usr1);
-        redirectMessage(*this, *usr1, code);
+        redirectMessage(*this, *usr1, code, cmd);
 
-/*         if (message.substr(0, 5) == "NICK ") {
-            clients[client_socket] = message.substr(5);
-        } else if (message.substr(0, 5) == "JOIN ") {
-            std::string channel = message.substr(5);
-            channels[channel].insert(client_socket);
-        } else if (message.substr(0, 5) == "PART ") {
-            std::string channel = message.substr(5);
-            channels[channel].erase(client_socket);
-            if (channels[channel].empty()) {
-                channels.erase(channel);
-            }
-        } else if (message.substr(0, 5) == "KICK ") {
-            // Handle KICK command
-        } else if (message.substr(0, 7) == "INVITE ") {
-            // Handle INVITE command
-        } else if (message.substr(0, 6) == "TOPIC ") {
-            // Handle TOPIC command
-        } else if (message.substr(0, 5) == "MODE ") {
-            // Handle MODE command
-        } else {
-            // Broadcast message to all clients in the channel
-            std::map<std::string, std::set<int> >::iterator it;
-            for (it = channels.begin(); it != channels.end(); ++it) {
-                if (it->second.find(client_socket) != it->second.end()) {
-                    std::set<int>::iterator client_it;
-                    for (client_it = it->second.begin(); client_it != it->second.end(); ++client_it) {
-                        if (*client_it != client_socket) {
-                            send(*client_it, message.c_str(), message.size(), 0);
-                        }
-                    }
-                }
-            }
-        } */
     }
 
     void remove_client(int client_socket) {
@@ -249,7 +217,6 @@ private:
         }
         clients.erase(client_socket);
     }
-
 };
 
 #endif
