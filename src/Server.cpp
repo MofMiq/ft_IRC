@@ -130,20 +130,36 @@ void        Server::extractDataUser(std::string strRaw, std::string& userName, s
     position += user.size();
 
     size_t start_word = strRaw.find_first_not_of(" \t\n", position);
-    size_t end_word = strRaw.find_first_of(" \t\n", start_word) - 1;
+    size_t end_word = strRaw.find_first_of(" \t\n", start_word);
     userName = strRaw.substr(start_word, end_word - start_word);
+    // std::cout << "START_WORD -> " << start_word << std::endl;
+    // std::cout << "END_WORD -> " << end_word << std::endl;
+    std::cout << "USERNAME -> " << userName << std::endl;
+    // std::cout << "LONGITUD = " << userName.size() << std::endl;
     
     start_word = strRaw.find_first_not_of(" \t\n", end_word);
-    end_word = strRaw.find_first_of(" \t\n", start_word) - 1;
+    end_word = strRaw.find_first_of(" \t\n", start_word);
     hostName = strRaw.substr(start_word, end_word - start_word);
+    // std::cout << "START_WORD -> " << start_word << std::endl;
+    // std::cout << "END_WORD -> " << end_word << std::endl;
+    std::cout << "HOSTNAME -> " << hostName << std::endl;
+    // std::cout << "LONGITUD = " << hostName.size() << std::endl;
 
     start_word = strRaw.find_first_not_of(" \t\n", end_word);
-    end_word = strRaw.find_first_of(" \t\n", start_word) - 1;
+    end_word = strRaw.find_first_of(" \t\n", start_word);
     serverName = strRaw.substr(start_word, end_word - start_word);
+    // std::cout << "START_WORD -> " << start_word << std::endl;
+    // std::cout << "END_WORD -> " << end_word << std::endl;
+    std::cout << "SERVERNAME -> " << serverName << std::endl;
+    // std::cout << "LONGITUD = " << serverName.size() << std::endl;
 
     start_word = strRaw.find_first_not_of(" \t\n", end_word);
-    end_word = strRaw.find_first_of(" \t\n", start_word) - 1;
+    end_word = strRaw.find_first_of(" \t\n", start_word);
     realName = strRaw.substr(start_word, end_word - start_word);
+    // std::cout << "START_WORD -> " << start_word << std::endl;
+    // std::cout << "END_WORD -> " << end_word << std::endl;
+    std::cout << "REALNAME -> " << realName << std::endl;
+    // std::cout << "LONGITUD = " << realName.size() << std::endl;
 }
 
 
@@ -178,12 +194,6 @@ void    Server::handle_client_message(int client_socket) {
             if (userPass == this->password)
             {
                 std::cout << "CONTRASEÑA OK" << std::endl;
-                std::string userName, hostName, serverName, realName;
-                extractDataUser(message, userName, hostName, serverName, realName);
-                //Añadir usuario al contenedor de usuarios del server
-                //User u1(fd / NICK / todos los datos);
-                User u1(client_socket, userName, hostName, serverName, realName);
-                //_usersServer[NICK] = u1.clone();
             }
             else
             {
@@ -199,6 +209,16 @@ void    Server::handle_client_message(int client_socket) {
             remove_client(client_socket);
             return;
         }  
+    }
+
+    if (message.find("USER") != std::string::npos)
+    {
+        std::string userName, hostName, serverName, realName;
+        extractDataUser(message, userName, hostName, serverName, realName);
+        //Añadir usuario al contenedor de usuarios del server
+        //User u1(fd / NICK / todos los datos);
+        //User u1(client_socket, userName, hostName, serverName, realName);
+        //_usersServer[NICK] = u1.clone();
     }
 
     //DELETE -> de forma bruta voy a crear un User para poder compilar y probar algo

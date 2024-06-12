@@ -7,12 +7,12 @@ class User
 {
 private:
     //USER <usuario> <host> <servidor> <nombre_real>
+    int _fd; // File descriptor para el poll
     std::string _userName;
     std::string _nickName;
     std::string _hostName;
     std::string _serverName;
     std::string _realName;
-    int _fd; // File descriptor para el poll
 
 public:
     User();
@@ -32,8 +32,6 @@ public:
     void setHostname(const std::string& hostname);
 
     int getFd() const;
-
-    User*   	clone() const;
 };
 
 #endif

@@ -50,8 +50,3 @@ int User::getFd() const
 {
     return this->_fd;
 }
-
-User*       User::clone() const
-{
-    return (new User());
-}
