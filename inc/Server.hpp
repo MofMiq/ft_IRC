@@ -23,6 +23,7 @@ const int BUFFER_SIZE = 1024;
 
 class Server {
 private:
+    bool _authenticated;
     int port;
     std::string password;
     int server_socket;
@@ -40,6 +41,7 @@ public:
     std::string getServerName() const;
     void        handle_new_connection();
     std::string extractPassword(std::string strRaw);
+    std::string extractNick(std::string strRaw);
     void        extractDataUser(std::string strRaw, std::string& userName, std::string& hostName, std::string& serverName, std::string& realName);
     void        handle_client_message(int client_socket);
     void        remove_client(int client_socket);
