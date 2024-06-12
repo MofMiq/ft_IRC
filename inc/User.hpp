@@ -31,6 +31,12 @@ public:
     std::string getHostname() const;
     void setHostname(const std::string& hostname);
 
+    std::string getServername() const;
+    void setServername(const std::string& servername);
+
+    std::string getRealname() const;
+    void setRealname(const std::string& realname);
+
     int getFd() const;
 };
 

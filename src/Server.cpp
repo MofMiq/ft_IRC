@@ -94,6 +94,8 @@ void    Server::handle_new_connection() {
     pfd.revents = 0;
     pollfds.push_back(pfd);
     clients[client_socket] = "";
+    _usersServerByFd[client_socket] = new User(client_socket);
+    //falta implementar la eliminación del usuario del mapa _usersServerByFd cuando se elimina el usuario del servidor
 
     std::cout << "New connection accepted" << std::endl;
 }
@@ -132,34 +134,18 @@ void        Server::extractDataUser(std::string strRaw, std::string& userName, s
     size_t start_word = strRaw.find_first_not_of(" \t\n", position);
     size_t end_word = strRaw.find_first_of(" \t\n", start_word);
     userName = strRaw.substr(start_word, end_word - start_word);
-    // std::cout << "START_WORD -> " << start_word << std::endl;
-    // std::cout << "END_WORD -> " << end_word << std::endl;
-    std::cout << "USERNAME -> " << userName << std::endl;
-    // std::cout << "LONGITUD = " << userName.size() << std::endl;
     
     start_word = strRaw.find_first_not_of(" \t\n", end_word);
     end_word = strRaw.find_first_of(" \t\n", start_word);
     hostName = strRaw.substr(start_word, end_word - start_word);
-    // std::cout << "START_WORD -> " << start_word << std::endl;
-    // std::cout << "END_WORD -> " << end_word << std::endl;
-    std::cout << "HOSTNAME -> " << hostName << std::endl;
-    // std::cout << "LONGITUD = " << hostName.size() << std::endl;
 
     start_word = strRaw.find_first_not_of(" \t\n", end_word);
     end_word = strRaw.find_first_of(" \t\n", start_word);
     serverName = strRaw.substr(start_word, end_word - start_word);
-    // std::cout << "START_WORD -> " << start_word << std::endl;
-    // std::cout << "END_WORD -> " << end_word << std::endl;
-    std::cout << "SERVERNAME -> " << serverName << std::endl;
-    // std::cout << "LONGITUD = " << serverName.size() << std::endl;
 
     start_word = strRaw.find_first_not_of(" \t\n", end_word);
     end_word = strRaw.find_first_of(" \t\n", start_word);
     realName = strRaw.substr(start_word, end_word - start_word);
-    // std::cout << "START_WORD -> " << start_word << std::endl;
-    // std::cout << "END_WORD -> " << end_word << std::endl;
-    std::cout << "REALNAME -> " << realName << std::endl;
-    // std::cout << "LONGITUD = " << realName.size() << std::endl;
 }
 
 
@@ -215,10 +201,21 @@ void    Server::handle_client_message(int client_socket) {
     {
         std::string userName, hostName, serverName, realName;
         extractDataUser(message, userName, hostName, serverName, realName);
+        this->_usersServerByFd[client_socket]->setUsername(userName);
+        this->_usersServerByFd[client_socket]->setHostname(hostName);
+        this->_usersServerByFd[client_socket]->setServername(serverName);
+        this->_usersServerByFd[client_socket]->setRealname(realName);
+
+        std::cout << "DATOS COMPLETOS DEL USUARIO CON FD -> " << this->_usersServerByFd[client_socket]->getFd() << std::endl;
+        std::cout << "USERNAME -> " << this->_usersServerByFd[client_socket]->getUsername() << std::endl;
+        std::cout << "HOSTNAME -> " << this->_usersServerByFd[client_socket]->getHostname() << std::endl;
+        std::cout << "SERVERNAME -> " << this->_usersServerByFd[client_socket]->getServername() << std::endl;
+        std::cout << "REALNAME -> " << this->_usersServerByFd[client_socket]->getRealname() << std::endl;
+
         //Añadir usuario al contenedor de usuarios del server
-        //User u1(fd / NICK / todos los datos);
-        //User u1(client_socket, userName, hostName, serverName, realName);
-        //_usersServer[NICK] = u1.clone();
+        //_usersServer[fdCliente] = new User(todos los datos);
+        //hacer una funcion con un mapa que transforme el NICK del usuario en su FD
+        //  este NICK se agrega con el comando NICK que es cuando se crea la equivalencia NICK -> FD en el mapa que se guarda en Server
     }
 
     //DELETE -> de forma bruta voy a crear un User para poder compilar y probar algo
