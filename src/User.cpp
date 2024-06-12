@@ -7,6 +7,11 @@ User::User(int fd) : _fd(fd)
     this->_nickName = "PO";
     this->_hostName = "RU";
 }
+
+User::User(int fd, std::string userName, std::string hostName, std::string serverName, std::string realName)
+: _fd(fd), _userName(userName), _hostName(hostName), _serverName(serverName), _realName(realName)
+{}
+
 User::~User()
 {
 }
@@ -44,4 +49,24 @@ void User::setHostname(const std::string &hostname)
 int User::getFd() const
 {
     return this->_fd;
+}
+
+std::string User::getServername() const
+{
+    return (this->_serverName);
+}
+
+void        User::setServername(const std::string& servername)
+{
+    this->_serverName = servername;
+}
+
+std::string User::getRealname() const
+{
+    return (this->_realName);
+}
+
+void        User::setRealname(const std::string& realname)
+{
+    this->_realName = realname;
 }

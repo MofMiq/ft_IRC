@@ -17,7 +17,7 @@ COMMAND	= Nick Mode Topic Privmsg
 
 SERVER	= server
 
-SRC 	= 	main.cpp User.cpp Commands.cpp Response.cpp \
+SRC 	= 	main.cpp User.cpp Commands.cpp Response.cpp Server.cpp\
 			$(addsuffix .cpp, $(addprefix commands/, $(COMMAND))) \
 
 OBJ 	=	$(addprefix $(OBJ_DIR), $(SRC:.cpp=.o))
