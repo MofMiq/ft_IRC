@@ -1,13 +1,16 @@
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 
-#include "Server.hpp"
+//#include "Server.hpp"
 #include "User.hpp"
 
+class Server;
 
-enum ErrorCode
+enum Code
 {
     // Error code for NICK
+    RLP_NICKOK = 002,
+    ERR_UNKNOWNCOMMAND = 421,
     ERR_NONICKNAMEGIVEN = 431,
     ERR_ERRONEUSNICKNAME = 432,
     ERR_NICKNAMEINUSE = 433,
@@ -22,11 +25,15 @@ enum ErrorCode
 
 std::string to_string(int value);
 
-std::string createMessage(Server& server, User& user, ErrorCode errorCode);
+void        redirectMessage(Server& server, User& user, Code Code);
 
+std::string createMessage(Server& server, User& user, Code Code);
+
+std::string err_unknowncommand(Server& server, User& user);
 std::string err_nonicknamegiven(Server& server, User& user);
 std::string err_erroneusnickname(Server& server, User& user);
 std::string err_nicknameinuse(Server& server, User& user);
+std::string rlp_nickok(Server& server, User& user);
 
 
 #endif

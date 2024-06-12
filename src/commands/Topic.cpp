@@ -1,4 +1,4 @@
-#include "../../inc/Commands.hpp"
+#include "../../inc/Command.hpp"
 
 /*
 TOPIC <channel> [<newTopic>]
@@ -36,10 +36,11 @@ TOPIC #test -> Checking the topic for "#test"
 
 */
 
-void Command::executeTopic(Command &cmd, Server &server, User &user)
+Code Command::executeTopic(Command &cmd, Server &server, User &user)
 {
     std::cout << "hola desde TOPIC" << std::endl;
     (void)cmd;
     (void)server;
     (void)user;
+    return RLP_NICKOK;
 }

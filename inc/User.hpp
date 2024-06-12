@@ -3,16 +3,24 @@
 
 #include <string>
 //#include "Server.hpp"
+#define MAX_LENGHT 9
+
 class User
 {
 private:
+    //USER <usuario> <host> <servidor> <nombre_real>
+    int _fd; // File descriptor para el poll
     std::string _userName;
     std::string _nickName;
     std::string _hostName;
-    int _fd; // File descriptor para el poll
+    std::string _serverName;
+    std::string _realName;
 
 public:
+    User();
     User(int fd);
+    User(int fd, std::string userName, std::string hostName, std::string serverName, std::string realName);
+
     ~User();
 
     // Getters y setters

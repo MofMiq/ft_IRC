@@ -1,53 +1,7 @@
 #ifndef SERVER_HPP
-#define SERVER_HPP
+# define SERVER_HPP
 
-/*#include <iostream>
-#include "User.hpp"
-#include "Channel.hpp"
-#include <map>
-#include <vector>
-class Server
-{
-private:
-    std::string _pass; // Almacena la contrase�a del servidor.
-    int _port; //Almacena el puerto en el que el servidor escucha.
-    int _serverSocket; // Descriptor del socket del servidor.
-    std::vector<struct pollfd> _pollfds; //Vector de pollfd usado para manejar m�ltiples descriptores de archivo con poll.
-    std::map<int, User> _clients; // Mapa de clientes conectados, mapeando el descriptor de archivo del cliente a un objeto User.
-    std::map<std::string, Channel> _channels; // Mapa de canales, mapeando el nombre del canal a un objeto Channel.
-
-    //Elimina un cliente del map _clients y de todos los canales en los que est� presente.
-    void removeClient(int clientFd); //puede ser tb publico, si es privado se llama desd otra funcion
-
-    //Maneja los mensajes de los clientes y realiza acciones en consecuencia.
-    void handleClientMessage(int clientFd, const std::string& message);  //lo mismo q2 la otra
-
-public:
-    Server(int port, const std::string& pass);
-    ~Server();
-
-    //Inicializa el servidor, crea el socket, lo configura como no bloqueante,
-    //lo enlaza a una direcci�n y lo pone en modo de escucha.
-    void initServer();
-    
-    // Acepta una nueva conexi�n de cliente y lo configura como no bloqueante,
-    //y luego a�ade el descriptor de archivo del cliente a la lista de pollfd.
-    void connectClient();
-
-    //Maneja las conexiones y los mensajes entrantes, usando poll para monitorear m�ltiples descriptores de archivo.
-    void receiveMsg();
-
-    //A�ade un nuevo cliente al map _clients.
-    void newClient(int clientFd);
-
-    // Getters y setters
-    int getPort() const;
-    std::string getPass() const;
-}; */
-
-
-#include <stdio.h> //perror()
-
+#include <stdio.h>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -61,8 +15,9 @@ public:
 #include <cstring>
 #include <fcntl.h>
 #include <algorithm>
-#include "Commands.hpp"
+#include "Command.hpp"
 #include "User.hpp"
+#include "Response.hpp"
 
 const int MAX_CLIENTS = 100;
 const int BUFFER_SIZE = 1024;
@@ -241,11 +196,13 @@ private:
         }
 
         //DELETE -> de forma bruta voy a crear un User para poder compilar y probar algo
-        User* usr1 = new User(client_socket); //leaks logicamente
+        User* usr1 = new User(client_socket, "mari", "marih", "maris", "marina"); //leaks logicamente
         //este comentario es para probar
 
+        Code code;
         Command cmd(message);
-        cmd.parseCommand(cmd.getArg(0), this, usr1);
+        code = cmd.parseCommand(cmd.getArg(0), this, usr1);
+        redirectMessage(*this, *usr1, code);
 
 /*         if (message.substr(0, 5) == "NICK ") {
             clients[client_socket] = message.substr(5);

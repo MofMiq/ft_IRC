@@ -1,5 +1,9 @@
 #include "../inc/User.hpp"
 
+User::User()
+{
+}
+
 User::User(int fd) : _fd(fd)
 {
     //esto es solo para poder iniciar la clase
@@ -7,6 +11,11 @@ User::User(int fd) : _fd(fd)
     this->_nickName = "PO";
     this->_hostName = "RU";
 }
+
+User::User(int fd, std::string userName, std::string hostName, std::string serverName, std::string realName) : _fd(fd), _userName(userName), _hostName(hostName), _serverName(serverName), _realName(realName)
+{
+}
+
 User::~User()
 {
 }

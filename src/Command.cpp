@@ -1,10 +1,4 @@
-#include "../inc/Commands.hpp"
-
-#define GREEN "\033[32m"
-#define RED "\033[31m"
-#define YELLOW "\033[33m"
-#define PURPLE "\033[34m"
-#define END "\033[0m"
+#include "../inc/Command.hpp"
 
 Command::Command(const std::string &msg)
 {
@@ -40,11 +34,11 @@ std::string& Command::getArg(int i)
     return this->_args[i];
 }
 
-void Command::parseCommand(const std::string &cmd, Server* server, User* user)
+Code Command::parseCommand(const std::string &cmd, Server* server, User* user)
 {
-    if (this->_argCount == 0)
-        return ; //no ha mandado nada, error msg?
     std::cout << "desde pasrseCommand: " << cmd << "hello" << std::endl;
+    if (this->_argCount == 0)
+        err_unknowncommand(*server, *user);
     if (cmd == "NICK" || cmd == "NICK\n")
         executeNick(*this, *server, *user);
     else if (cmd == "TOPIC")
@@ -53,4 +47,5 @@ void Command::parseCommand(const std::string &cmd, Server* server, User* user)
         executePrivmsg(*this, *server, *user);
     else if (cmd == "MODE")
         executeMode(*this, *server, *user);
+    return ERR_UNKNOWNCOMMAND;
 }
