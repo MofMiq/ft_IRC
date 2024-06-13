@@ -3,6 +3,7 @@
 
 #include <string>
 //#include "Server.hpp"
+#define MAX_LENGHT 9
 class User
 {
 private:
@@ -13,6 +14,7 @@ private:
     std::string _hostName;
     std::string _serverName;
     std::string _realName;
+    std::string _oldNick;
 
 public:
     User();
@@ -36,6 +38,10 @@ public:
 
     std::string getRealname() const;
     void setRealname(const std::string& realname);
+
+    std::string getOldNick() const;
+    void setOldNick(const std::string& oldNick); //PA el comando NICK
+
 
     int getFd() const;
 };

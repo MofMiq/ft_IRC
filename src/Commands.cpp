@@ -53,4 +53,6 @@ void Command::parseCommand(const std::string &cmd, Server* server, User* user)
         executeTopic(*this, *server, *user);
     else if (cmd == "MODE")
         executeTopic(*this, *server, *user);
+    else if (cmd == "JOIN")
+        executeJoin(*this, *server, *user);
 }

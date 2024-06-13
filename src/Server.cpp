@@ -293,3 +293,21 @@ void Server::remove_client(int client_socket) {
     }
     clients.erase(client_socket);
 }
+
+
+bool Server::channelExists(const std::string& channelName) {
+    return _channelsServer.find(channelName) != _channelsServer.end();
+}
+
+void Server::addUserToChannel(User& user, const std::string& channelName) {
+    if (!channelExists(channelName)) {
+        _channelsServer[channelName] = Channel(channelName);
+    }
+    _channelsServer[channelName].addUser(user);
+}
+
+void Server::createChannel(const std::string& channelName) {
+    if (!channelExists(channelName)) {
+        _channelsServer[channelName] = Channel(channelName);
+    }
+}

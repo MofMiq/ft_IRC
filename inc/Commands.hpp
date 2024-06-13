@@ -6,6 +6,9 @@
 #include <vector>
 #include <sstream>
 #include <iostream>
+#include "User.hpp"
+#include "Server.hpp"
+
 
 class Server;
 class User;
@@ -45,7 +48,7 @@ class Command
         void executeMode(Command& cmd, Server& server, User& user);
 
         //ana
-        // void executeJoin(Command& cmd, Server& server, User& user);
+         void executeJoin(Command& cmd, Server& server, User& user);
         // void executeUser(Command& cmd, Server& server, User& user);
         // void executeKick(Command& cmd, Server& server, User& user);
         // void executeInvite(Command& cmd, Server& server, User& user);

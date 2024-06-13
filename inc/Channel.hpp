@@ -1,60 +1,59 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-//#include "Server.hpp"
 #include <string>
 #include <map>
 #include <set>
 #include "User.hpp"
-#define MAXCLI 50 //default number max client
 
-class Channel
-{
-    private:
-        int     _clientCount;
-        int     _maxClients;
-        std::string _name;
-        std::string _topic;
-        std::string _pass;
-        std::map<int, User> _users; // Contenedor de usuarios usando un mapa para acceso r�pido por file descriptor
-        std::set<int> _operators; // Conjunto de operadores usando file descriptor
+#define MAXCLI 50 // Número máximo de clientes por defecto
 
-        bool _private; //mode -i
-        bool _topicPrivate; //mode -t
-        bool _passNeedded; // mode -k -> argumento extra para INVITE pero lo establece MODE
-        bool _limitClient; //mode -l
-        //mode -o no necesita bool por que es la lista de operator
+class Channel {
+private:
+ int _clientCount;
+    int _maxClients;
+    std::string _name;
+    std::string _topic;
+    std::string _pass;
+    std::map<int, User> _users; // Contenedor de usuarios usando un mapa para acceso rápido por file descriptor
+    std::set<int> _operators; // Conjunto de operadores usando file descriptor
 
-    public:
-        //validName() -> lo de comprobar si hay otro comando prohibido
+    bool _private; // mode -i
+    bool _topicPrivate; // mode -t
+    bool _passNeeded; // mode -k -> argumento extra para INVITE pero lo establece MODE
+    bool _limitClient; // mode -l
+    // mode -o no necesita bool porque es la lista de operadores
 
-    //Inicializa un nuevo canal con el nombre dado y un n�mero m�ximo de clientes (por defecto MAXCLI).
-    //Establece los valores iniciales de los atributos del canal.
-        Channel(const std::string& name, int maxClients = MAXCLI);
-        ~Channel();
 
-        // M�todos para gestionar el canal
+public:
+    // Constructor por defecto
+    Channel();
 
-        //A�ade un usuario al canal, insert�ndolo en el mapa _users usando su descriptor de archivo como clave.
-        //Incrementa el contador de clientes _clientCount.
-        void addUser(const User& user); //INVITE
+    // Constructor para inicializar el canal con el nombre dado y el número máximo de clientes
+    Channel(const std::string& name, int maxClients = MAXCLI);
 
-        //Elimina un usuario del canal, elimin�ndolo del mapa _users y,
-        //si es operador, del conjunto _operators. Decrementa el contador de clientes _clientCount.
-        void removeUser(int userFd); //KICK
+    ~Channel();
 
-        //Verifica si un usuario, identificado por su descriptor de archivo,
-        //es operador del canal. Retorna true si el usuario es operador, false en caso contrario.
-        bool isUserOperator(int userFd) const;
+    // Añade un usuario al canal
+    void addUser(const User& user);
 
-        //Establece el topic del canal, actualizando el atributo _topic.
-        void setTopic(const std::string& topic);
+    // Elimina un usuario del canal
+    void removeUser(int userFd);
 
-        //validName() -> lo de comprobar si hay otro comando prohibido
+    // Verifica si un usuario es operador del canal
+    bool isUserOperator(int userFd) const;
 
-        // Getters y setters
-        std::string getName() const;
-        std::string getTopic() const;
+    // Establece el topic del canal
+    void setTopic(const std::string& topic);
+
+    // Obtiene el nombre del canal
+    std::string getName() const;
+
+    // Obtiene el topic del canal
+    std::string getTopic() const;
+
+    // Verifica si el canal está vacío
+    bool isEmpty() const;
 };
 
 #endif

@@ -30,9 +30,10 @@ private:
     std::string serverName;
     std::vector<struct pollfd> pollfds;
     std::map<int, std::string> clients; // Map from socket to client nickname SE UTILIZA PARA EL POLL
-    std::map<std::string, Channel* > _channelsServer; // Map de NOMBRE CANAL y puntero a CHANNEL correspondiente
+    //std::map<std::string, Channel* > _channelsServer; // Map de NOMBRE CANAL y puntero a CHANNEL correspondiente
     std::map<std::string, int > _usersServerByNick; // Map de NICK a FD
     std::map<int, User* > _usersServerByFd; // Map de FD y puntero a USER correspondiente
+    std::map<std::string, Channel> _channelsServer;
 
 public:
     Server(int port, const std::string& password);
@@ -45,6 +46,10 @@ public:
     void        extractDataUser(std::string strRaw, std::string& userName, std::string& hostName, std::string& serverName, std::string& realName);
     void        handle_client_message(int client_socket);
     void        remove_client(int client_socket);
+
+    bool channelExists(const std::string& channelName);
+    void addUserToChannel(User& user, const std::string& channelName);
+    void createChannel(const std::string& channelName);
 };
 
 #endif
