@@ -10,6 +10,13 @@ bool    Server::start()
         return false;
     }
 
+    int opt = 1;
+    if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) {
+        perror("setsockopt");
+        close(server_socket);
+        return false;
+    }
+
     // Configurar el socket como no bloqueante
     int flags = fcntl(server_socket, F_GETFL, 0);
     if (flags == -1 || fcntl(server_socket, F_SETFL, flags | O_NONBLOCK) == -1) {
