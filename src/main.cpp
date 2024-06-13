@@ -8,6 +8,12 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    if (std::atoi(argv[2]) != 0 || std::atoi(argv[2]) < 1024 || std::atoi(argv[2]) > 49151)
+    {
+        std::cerr << "Error: invalid port. Port range 1024-49151" << std::endl;
+        return (1);
+    }
+
     //int port = std::stoi(argv[1]); //no standard 98
     int port = std::atoi(argv[1]);
     std::string password = argv[2];
