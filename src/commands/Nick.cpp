@@ -66,10 +66,7 @@ Code Command::executeNick(Command &cmd, Server &server, User &user)
     }
     (void)server;
     //check is already exist in the server container of Users
-
-    std::cout << "\n" << RED << "ANTES: executeNick: oldNick: " << user.getOldNick() << " / newNick: " << user.getNickname() << END << std::endl;
     user.setOldNick(user.getNickname());
     user.setNickname(cmd.getArg(1));
-    std::cout << "\n" << YELLOW << "DESPUES: executeNick: oldNick: " << user.getOldNick() << " / newNick: " << user.getNickname() << END << std::endl;
-    return RLP_NICKOK;
+    return RPL_NICKOK;
 }

@@ -1,5 +1,5 @@
-#ifndef COMMANDS_HPP
-#define COMMANDS_HPP
+#ifndef COMMAND_HPP
+#define COMMAND_HPP
 
 #include <string>
 #include <map>
@@ -52,7 +52,7 @@ class Command
         Code executeMode(Command& cmd, Server& server, User& user);
 
         //ana
-         void executeJoin(Command& cmd, Server& server, User& user);
+        Code executeJoin(Command& cmd, Server& server, User& user);
         // void executeUser(Command& cmd, Server& server, User& user);
         // void executeKick(Command& cmd, Server& server, User& user);
         // void executeInvite(Command& cmd, Server& server, User& user);

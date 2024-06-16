@@ -42,5 +42,5 @@ Code Command::executeTopic(Command &cmd, Server &server, User &user)
     (void)cmd;
     (void)server;
     (void)user;
-    return RLP_NICKOK;
+    return RPL_NICKOK;
 }
