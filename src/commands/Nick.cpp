@@ -1,4 +1,5 @@
 #include "../../inc/Command.hpp"
+#include "../../inc/Server.hpp"
 /*
 
 NICK <newNick>
@@ -66,7 +67,13 @@ Code Command::executeNick(Command &cmd, Server &server, User &user)
     }
     (void)server;
     //check is already exist in the server container of Users
+    if (server.isNickInServer(cmd.getArg(1)))
+    {
+        return ERR_NICKNAMEINUSE;
+    }
     user.setOldNick(user.getNickname());
     user.setNickname(cmd.getArg(1));
+    server.updateUsersServerByNick(user.getFd(), cmd.getArg(1));
+
     return RPL_NICKOK;
 }

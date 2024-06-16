@@ -70,7 +70,7 @@ std::string err_erroneusnickname(Server& server, User& user)
 
 std::string err_nicknameinuse(Server& server, User& user)
 {
-    return (createMessage(server, user, ERR_NICKNAMEINUSE) + "Nickname collision" + END);
+    return (createMessage(server, user, ERR_NICKNAMEINUSE) + "Nickname is already in use" + END);
 }
 
 std::string err_needmoreparams(Server& server, User& user)

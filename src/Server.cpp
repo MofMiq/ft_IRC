@@ -312,3 +312,23 @@ void Server::createChannel(const std::string& channelName) {
         _channelsServer[channelName] = Channel(channelName);
     }
 }
+
+bool Server::isNickInServer(const std::string& nick)
+{
+    std::map<std::string, int>::const_iterator it = this->_usersServerByNick.find(nick);
+    if (it != this->_usersServerByNick.end())
+        return true;
+    return false;
+}
+
+void Server::updateUsersServerByNick(int fd, const std::string& newNick)
+{
+    for(std::map<std::string, int>::iterator it = this->_usersServerByNick.begin(); it != this->_usersServerByNick.end(); ++it)
+    {
+        if (it->second == fd)
+        {
+            this->_usersServerByNick.erase(it);
+            this->_usersServerByNick[newNick] = fd;
+        }
+    }
+}
