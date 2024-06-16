@@ -4,21 +4,28 @@
 #include <string>
 //#include "Server.hpp"
 #define MAX_LENGHT 9
+#define MAX_LENGHT 9
+
 class User
 {
 private:
     //USER <usuario> <host> <servidor> <nombre_real>
     int _fd; // File descriptor para el poll
+    //USER <usuario> <host> <servidor> <nombre_real>
+    int _fd; // File descriptor para el poll
     std::string _userName;
     std::string _nickName;
+    std::string _oldNick;
     std::string _hostName;
     std::string _serverName;
     std::string _realName;
-    std::string _oldNick;
 
 public:
     User();
+    User();
     User(int fd);
+    User(int fd, std::string userName, std::string hostName, std::string serverName, std::string realName);
+
     User(int fd, std::string userName, std::string hostName, std::string serverName, std::string realName);
 
     ~User();
@@ -29,6 +36,9 @@ public:
 
     std::string getNickname() const;
     void setNickname(const std::string& nickname); //PA el comando NICK
+
+    std::string getOldNick() const;
+    void setOldNick(const std::string& oldNick); //PA el comando NICK
 
     std::string getHostname() const;
     void setHostname(const std::string& hostname);

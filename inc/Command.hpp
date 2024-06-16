@@ -6,9 +6,13 @@
 #include <vector>
 #include <sstream>
 #include <iostream>
-#include "User.hpp"
-#include "Server.hpp"
+#include "Response.hpp"
 
+#define GREEN "\033[32m"
+#define RED "\033[31m"
+#define YELLOW "\033[33m"
+#define PURPLE "\033[34m"
+#define END "\033[0m"
 
 class Server;
 class User;
@@ -33,7 +37,7 @@ class Command
 
         //Este m�todo toma un comando en forma de cadena (cmd) y lo convierte en el correspondiente valor enumerado (CMD).
         //Es decir, analiza la cadena de comando y la asigna al enum correspondiente.
-        void parseCommand(const std::string& cmd, Server* server, User* user);
+        Code parseCommand(const std::string& cmd, Server* server, User& user);
         
         //Este m�todo ejecuta un comando especificado (cmd) con los argumentos proporcionados (args).
         //Dependiendo del comando recibido, ejecuta la l�gica correspondiente.
@@ -42,10 +46,10 @@ class Command
         //ETC
         
         //marina
-        void executeNick(Command& cmd, Server& server, User& user);
-        void executeTopic(Command& cmd, Server& server, User& user);
-        void executePrivmsg(Command& cmd, Server& server, User& user);
-        void executeMode(Command& cmd, Server& server, User& user);
+        Code executeNick(Command& cmd, Server& server, User& user);
+        Code executeTopic(Command& cmd, Server& server, User& user);
+        Code executePrivmsg(Command& cmd, Server& server, User& user);
+        Code executeMode(Command& cmd, Server& server, User& user);
 
         //ana
          void executeJoin(Command& cmd, Server& server, User& user);

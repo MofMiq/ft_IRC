@@ -1,6 +1,4 @@
-#include "../../inc/Commands.hpp"
-#include "../../inc/Response.hpp"
-
+#include "../../inc/Command.hpp"
 /*
 
 NICK <newNick>
@@ -31,28 +29,47 @@ NICK Wiz                  ; Requesting the new nick "Wiz".
 //pasrseNick()
 //execNick()
 
+bool isAllowedSymbol(char c)
+{
+    if ((c == '[') || (c == ']')
+        || (c == '{') || (c == '}') || (c == '\\') || (c == '|') || (c == '_')
+        || (c == '-') || (c == '`'))
+        return true;
+    return false;
+}
+
 bool validNickname(std::string& nick)
 {
     char c = nick.at(0);
+
     if (std::isdigit(c))
         return false;
+    for (size_t i = 1; i < nick.length(); i++)
+    {
+        c = nick.at(i);
+        if (!std::isalnum(c) && !isAllowedSymbol(c))
+            return false;
+    }
     return true;
 }
 
-void Command::executeNick(Command &cmd, Server &server, User &user)
+Code Command::executeNick(Command &cmd, Server &server, User &user)
 {
-    std::cout << "hola desde NICK" << std::endl;
-
     if (cmd._argCount < 2 || cmd.getArg(1).length() == 0)
     {
-        std::cout << err_nonicknamegiven(server, user) << std::endl;
-        //este mensaje se lo tengo que enviar a pespinos/servidor
+        return ERR_NONICKNAMEGIVEN;
     }
 
     if (!validNickname(cmd.getArg(1)))
     {
-        std::cout << err_nonicknamegiven(server, user) << std::endl;
+        return ERR_ERRONEUSNICKNAME;
     }
-    //validNickname
+    (void)server;
     //check is already exist in the server container of Users
+
+    std::cout << "\n" << RED << "ANTES: executeNick: oldNick: " << user.getOldNick() << " / newNick: " << user.getNickname() << END << std::endl;
+    user.setOldNick(user.getNickname());
+    user.setNickname(cmd.getArg(1));
+    std::cout << "\n" << YELLOW << "DESPUES: executeNick: oldNick: " << user.getOldNick() << " / newNick: " << user.getNickname() << END << std::endl;
+    return RLP_NICKOK;
 }

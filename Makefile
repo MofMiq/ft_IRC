@@ -1,7 +1,7 @@
 NAME	= ircserv
 CC		= c++
 #FALTA EL FLAG -Werror
-CFLAGS	= -Wall -Wextra -std=c++98 
+CFLAGS	= -Wall -Werror -Wextra -std=c++98 
 RM		= rm -rf
 
 GREEN	= \033[;32m
@@ -18,7 +18,7 @@ COMMAND	= Nick Mode Topic Privmsg Join
 
 SERVER	= server
 
-SRC 	= 	main.cpp User.cpp Commands.cpp Response.cpp Server.cpp Channel.cpp\
+SRC 	= 	main.cpp User.cpp Command.cpp Response.cpp Server.cpp Channel.cpp\
 			$(addsuffix .cpp, $(addprefix commands/, $(COMMAND))) \
 
 OBJ 	=	$(addprefix $(OBJ_DIR), $(SRC:.cpp=.o))

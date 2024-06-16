@@ -1,4 +1,4 @@
-#include "../../inc/Commands.hpp"
+#include "../../inc/Command.hpp"
 
 /*
 PRIVMSG <target> [:]<text>
@@ -25,10 +25,11 @@ PRIVMSG #general :yes I'm receiving it ! -> Command to send a message to channel
 
 */
 
-void Command::executePrivmsg(Command& cmd, Server& server, User& user)
+Code Command::executePrivmsg(Command& cmd, Server& server, User& user)
 {
     std::cout << "hola desde PRIVMSG" << std::endl;
     (void)cmd;
     (void)server;
     (void)user;
+    return RLP_NICKOK;
 }
