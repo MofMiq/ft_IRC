@@ -47,7 +47,7 @@ Code Command::parseCommand(const std::string &cmd, Server* server, User& user)
         return executePrivmsg(*this, *server, user);
     else if (cmd == "MODE")
         return executeMode(*this, *server, user);
-    else if (cmd == "MODE")
+    else if (cmd == "JOIN")
         return executeJoin(*this, *server, user);
     return ERR_UNKNOWNCOMMAND;
 }
