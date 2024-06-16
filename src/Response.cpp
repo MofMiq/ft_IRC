@@ -2,7 +2,6 @@
 #include "../inc/Server.hpp"
 #include "../inc/Command.hpp"
 
-
 std::string to_string(int value)
 {
     std::ostringstream os;
@@ -10,46 +9,32 @@ std::string to_string(int value)
     return os.str();
 }
 
-void redirectMessage(Server &server, User &user, Code reply, Command& cmd) //esta funcion no tiene que sacar nada por pantalla per se, pero lo voy a hacer para ir viendo que el parseo funciona
-{
-    if (reply == ERR_NONICKNAMEGIVEN)
-        std::cout << err_nonicknamegiven(server, user) << std::endl;
-    else if (reply == ERR_ERRONEUSNICKNAME)
-        std::cout << err_erroneusnickname(server, user) << std::endl;
-    else if (reply == ERR_NICKNAMEINUSE)
-        std::cout << err_nicknameinuse(server, user) << std::endl;
-    else if (reply == ERR_UNKNOWNCOMMAND)
-        std::cout << err_unknowncommand(server, user) << std::endl;
-    else if (reply == ERR_NEEDMOREPARAMS)
-        std::cout << err_needmoreparams(server, user) << std::endl;
-    else if (reply == RPL_NICKOK)
-        std::cout << rpl_nickok(server, user, cmd) << std::endl;
-    else if (reply == RPL_TOPIC)
-        std::cout << rpl_nickok(server, user, cmd) << std::endl;
-}
+//nombre de servidor code y todo lo demas segun cada mensaje
 
-std::string createMessage(Server &server, User &user, Code Code)
+std::string createMessage(Server &server, User &user, Code code)
 {
+    std::string msg = "";
     std::string from = server.getServerName();
     std::string to = user.getNickname();
-    std::string msg = ":" + from + " " + to_string(Code) + " " + to + " : ";
+    msg = ":" + from + " " + to_string(code) + " " + to + " : ";
     return msg;
 }
 
-std::string createReply(Server &server, User &user, Code Code, Command& cmd)
+std::string createReply(Server &server, User &user, Code code, Command& cmd)
 {
     (void)server;
+    (void)code;
     std::string msg = "";
-    if (Code == 002)
-    {
-        std::string from = user.getOldNick();
-        std::string to = user.getNickname();
-        msg = ": " + from + "!" + user.getUsername() + "@" + cmd.getArg(0) + " " + to;
-    }
-    else if (Code == 332)
-    {
-        msg = user.getNickname() + " " + " has joined a channel"; //aqui hay que pasar el Channel para imprimir su nombre y topic;
-    }
+    std::string from = user.getOldNick();
+    std::string to = user.getNickname();
+    msg = ": " + from + "!" + user.getUsername() + "@" + cmd.getArg(0) + " " + to;
+    return msg;
+}
+
+std::string err_nosuchchannel(Server &server, User &user, const std::string& channelName)
+{
+    (void)server;
+    std::string msg = user.getNickname() + " " + channelName + " : No such channel";
     return msg;
 }
 
@@ -73,9 +58,23 @@ std::string err_nicknameinuse(Server& server, User& user)
     return (createMessage(server, user, ERR_NICKNAMEINUSE) + "Nickname is already in use" + END);
 }
 
+std::string err_notonchannel(Server &server, User &user, const std::string& channelName)
+{
+    (void)server;
+    std::string msg = user.getNickname() + " " + channelName + ": You're not on that channel";
+    return msg;
+}
+
 std::string err_needmoreparams(Server& server, User& user)
 {
     return (createMessage(server, user, ERR_NEEDMOREPARAMS) + "Not enough parameters" + END);
+}
+
+std::string err_chanoprivsneeded(Server &server, User &user, const std::string& channelName)
+{
+    (void)server;
+    std::string msg = user.getNickname() + " " + channelName + ": You're not channel operator";
+    return msg;
 }
 
 std::string rpl_nickok(Server &server, User &user, Command& cmd)
@@ -83,7 +82,23 @@ std::string rpl_nickok(Server &server, User &user, Command& cmd)
     return (createReply(server, user, RPL_NICKOK, cmd) + ": Nick succesfullty changed" + END);
 }
 
-std::string rpl_topic(Server &server, User &user, Command& cmd)
+std::string rpl_notopic(Server &server, User &user, const std::string& channelName)
 {
-    return (createReply(server, user, RPL_TOPIC, cmd) + END);
+    (void)server;
+    std::string msg = user.getNickname() + " " + channelName + " : No topic is set";
+    return msg;
+}
+
+std::string rpl_topic(Server &server, User &user, const std::string& channelName, const std::string& channelTopic)
+{
+    (void)server;
+    std::string msg = user.getNickname() + " " + channelName + " : " + channelTopic;
+    return msg;
+}
+
+std::string rpl_topicwhotime(Server &server, User &user, const std::string& channelName, const std::string& nick)
+{
+    (void)server;
+    std::string msg = user.getNickname() + " " + channelName + " " + nick + " timestamp";
+    return msg;
 }

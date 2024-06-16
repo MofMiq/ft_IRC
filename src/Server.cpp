@@ -277,8 +277,8 @@ void    Server::handle_client_message(int client_socket) {
     Command cmd(message);
     User* user = this->_usersServerByFd[client_socket];
     //Hay que añadir un contenedor de Code para guardar los mensajes de error y respuesta
-    Code code = cmd.parseCommand(cmd.getArg(0), this, *user);
-    redirectMessage(*this, *user, code, cmd); //esto es para poder ver ahora mismo si el parseo y la respuesta estan haciendose bien
+    cmd.parseCommand(cmd.getArg(0), this, *user);
+    //redirectMessage(*this, *user, code, cmd); //esto es para poder ver ahora mismo si el parseo y la respuesta estan haciendose bien
 
     //para poder enviar la respuesta al cliente se usaría algo así
     //enviarRespuestaCliente(cmd.parseCommand(cmd.getArg(0), this, usr1)); */
