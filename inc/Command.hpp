@@ -52,7 +52,7 @@ class Command
         Code executeMode(Command& cmd, Server& server, User& user);
 
         //ana
-        // void executeJoin(Command& cmd, Server& server, User& user);
+         void executeJoin(Command& cmd, Server& server, User& user);
         // void executeUser(Command& cmd, Server& server, User& user);
         // void executeKick(Command& cmd, Server& server, User& user);
         // void executeInvite(Command& cmd, Server& server, User& user);

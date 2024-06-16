@@ -3,9 +3,16 @@
 
 int main(int argc, char **argv)
 {
+
     if (argc != 3) {
         std::cerr << "Usage: " << argv[0] << " <port> <password>" << std::endl;
         return 1;
+    }
+
+    if (std::atoi(argv[1]) == 0 || std::atoi(argv[1]) < 1024 || std::atoi(argv[1]) > 49151)
+    {
+        std::cerr << "Error: invalid port. Port range 1024-49151" << std::endl;
+        return (1);
     }
 
     //int port = std::stoi(argv[1]); //no standard 98

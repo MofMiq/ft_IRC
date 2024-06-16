@@ -48,6 +48,7 @@ void User::setOldNick(const std::string &oldNick)
     this->_oldNick = oldNick;
 }
 
+
 std::string User::getHostname() const
 {
     return this->_hostName;
@@ -61,4 +62,24 @@ void User::setHostname(const std::string &hostname)
 int User::getFd() const
 {
     return this->_fd;
+}
+
+std::string User::getServername() const
+{
+    return (this->_serverName);
+}
+
+void        User::setServername(const std::string& servername)
+{
+    this->_serverName = servername;
+}
+
+std::string User::getRealname() const
+{
+    return (this->_realName);
+}
+
+void        User::setRealname(const std::string& realname)
+{
+    this->_realName = realname;
 }
