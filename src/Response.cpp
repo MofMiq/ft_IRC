@@ -20,8 +20,12 @@ void redirectMessage(Server &server, User &user, Code reply, Command& cmd) //est
         std::cout << err_nicknameinuse(server, user) << std::endl;
     else if (reply == ERR_UNKNOWNCOMMAND)
         std::cout << err_unknowncommand(server, user) << std::endl;
-    else if (reply == RLP_NICKOK)
-        std::cout << rlp_nickok(server, user, cmd) << std::endl;
+    else if (reply == ERR_NEEDMOREPARAMS)
+        std::cout << err_needmoreparams(server, user) << std::endl;
+    else if (reply == RPL_NICKOK)
+        std::cout << rpl_nickok(server, user, cmd) << std::endl;
+    else if (reply == RPL_TOPIC)
+        std::cout << rpl_nickok(server, user, cmd) << std::endl;
 }
 
 std::string createMessage(Server &server, User &user, Code Code)
@@ -35,10 +39,17 @@ std::string createMessage(Server &server, User &user, Code Code)
 std::string createReply(Server &server, User &user, Code Code, Command& cmd)
 {
     (void)server;
-    (void)Code;
-    std::string from = user.getOldNick();
-    std::string to = user.getNickname();
-    std::string msg = ": " + from + "!" + user.getUsername() + "@" + cmd.getArg(0) + " " + to;
+    std::string msg = "";
+    if (Code == 002)
+    {
+        std::string from = user.getOldNick();
+        std::string to = user.getNickname();
+        msg = ": " + from + "!" + user.getUsername() + "@" + cmd.getArg(0) + " " + to;
+    }
+    else if (Code == 332)
+    {
+        msg = user.getNickname() + " " + " has joined a channel"; //aqui hay que pasar el Channel para imprimir su nombre y topic;
+    }
     return msg;
 }
 
@@ -62,7 +73,17 @@ std::string err_nicknameinuse(Server& server, User& user)
     return (createMessage(server, user, ERR_NICKNAMEINUSE) + "Nickname collision" + END);
 }
 
-std::string rlp_nickok(Server &server, User &user, Command& cmd)
+std::string err_needmoreparams(Server& server, User& user)
 {
-    return (createReply(server, user, RLP_NICKOK, cmd) + ": Nick succesfullty changed" + END);
+    return (createMessage(server, user, ERR_NEEDMOREPARAMS) + "Not enough parameters" + END);
+}
+
+std::string rpl_nickok(Server &server, User &user, Command& cmd)
+{
+    return (createReply(server, user, RPL_NICKOK, cmd) + ": Nick succesfullty changed" + END);
+}
+
+std::string rpl_topic(Server &server, User &user, Command& cmd)
+{
+    return (createReply(server, user, RPL_TOPIC, cmd) + END);
 }

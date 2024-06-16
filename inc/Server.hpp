@@ -14,9 +14,10 @@
 # include <cstring>
 # include <fcntl.h>
 # include <algorithm>
-# include "Commands.hpp"
+# include "Command.hpp"
 # include "User.hpp"
 # include "Channel.hpp"
+# include "Response.hpp"
 
 const int MAX_CLIENTS = 100;
 const int BUFFER_SIZE = 1024;

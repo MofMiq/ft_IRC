@@ -274,13 +274,14 @@ void    Server::handle_client_message(int client_socket) {
         }
     }
 
-    //DELETE -> de forma bruta voy a crear un User para poder compilar y probar algo
-    User* usr1 = new User(client_socket); //leaks logicamente
-
     Command cmd(message);
-    cmd.parseCommand(cmd.getArg(0), this, usr1);
+    User* user = this->_usersServerByFd[client_socket];
+    //Hay que añadir un contenedor de Code para guardar los mensajes de error y respuesta
+    Code code = cmd.parseCommand(cmd.getArg(0), this, *user);
+    redirectMessage(*this, *user, code, cmd); //esto es para poder ver ahora mismo si el parseo y la respuesta estan haciendose bien
+
     //para poder enviar la respuesta al cliente se usaría algo así
-    //enviarRespuestaCliente(cmd.parseCommand(cmd.getArg(0), this, usr1));
+    //enviarRespuestaCliente(cmd.parseCommand(cmd.getArg(0), this, usr1)); */
 }
 
 void Server::remove_client(int client_socket) {

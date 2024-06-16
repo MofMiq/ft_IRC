@@ -10,12 +10,13 @@ class Server;
 enum Code
 {
     // Error code for NICK
-    RLP_NICKOK = 002,
+    RPL_NICKOK = 002,
+    RPL_TOPIC = 332,
     ERR_UNKNOWNCOMMAND = 421,
     ERR_NONICKNAMEGIVEN = 431,
     ERR_ERRONEUSNICKNAME = 432,
     ERR_NICKNAMEINUSE = 433,
-    ERR_NICKCOLLISION = 436 //creo que no hace falta
+    ERR_NEEDMOREPARAMS = 461
 };
 
 // the trailer is the post colon (:) message
@@ -35,7 +36,9 @@ std::string err_unknowncommand(Server& server, User& user);
 std::string err_nonicknamegiven(Server& server, User& user);
 std::string err_erroneusnickname(Server& server, User& user);
 std::string err_nicknameinuse(Server& server, User& user);
-std::string rlp_nickok(Server &server, User &user, Command& cmd);
+std::string err_needmoreparams(Server& server, User& user);
+std::string rpl_nickok(Server &server, User &user, Command& cmd);
+std::string rpl_topic(Server &server, User &user, Command& cmd);
 
 
 #endif

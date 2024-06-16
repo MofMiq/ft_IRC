@@ -1,17 +1,18 @@
-#include "../../inc/Commands.hpp"
+#include "../../inc/Command.hpp"
+#include "../../inc/Server.hpp"
 
 
-
-void Command::executeJoin(Command& cmd, Server& server, User& user)
+Code Command::executeJoin(Command& cmd, Server& server, User& user)
 {
     // Verifica si se proporcionaron suficientes argumentos
     if (cmd._argCount < 2) {
-        // No se proporcionaron suficientes argumentos para el comando JOIN
+/*         // No se proporcionaron suficientes argumentos para el comando JOIN
         std::cout << "JOIN: Insufficient arguments" << std::endl;
-        return;
+        return; */
+        return ERR_NEEDMOREPARAMS;
     }
 
-    // Obtén el nombre del canal del segundo argumento
+    // Obtï¿½n el nombre del canal del segundo argumento
     std::string channelName = cmd.getArg(1);
 
     // Verifica si el canal ya existe en el servidor
@@ -26,4 +27,5 @@ void Command::executeJoin(Command& cmd, Server& server, User& user)
         server.addUserToChannel(user, channelName);
         std::cout << "User " << user.getNickname() << " created and joined channel " << channelName << std::endl;
     }
+    return RPL_TOPIC;
 }
