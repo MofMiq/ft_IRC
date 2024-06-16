@@ -197,12 +197,11 @@ private:
 
         //DELETE -> de forma bruta voy a crear un User para poder compilar y probar algo
         User* usr1 = new User(client_socket, "mari", "marih", "maris", "marina"); //leaks logicamente
-        //este comentario es para probar
-        usr1->setNickname("niki");
 
         Code code;
         Command cmd(message);
-        code = cmd.parseCommand(cmd.getArg(0), this, usr1);
+        code = cmd.parseCommand(cmd.getArg(0), this, *usr1);
+        //std::cout << "en Server.hpp: usr1->nick: " << usr1->getNickname() << " / oldNick: " << usr1->getOldNick() << std::endl;
         redirectMessage(*this, *usr1, code, cmd);
 
     }

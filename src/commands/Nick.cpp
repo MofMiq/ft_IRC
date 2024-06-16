@@ -55,23 +55,21 @@ bool validNickname(std::string& nick)
 
 Code Command::executeNick(Command &cmd, Server &server, User &user)
 {
-    std::cout << "hola desde NICK" << std::endl;
     if (cmd._argCount < 2 || cmd.getArg(1).length() == 0)
     {
         return ERR_NONICKNAMEGIVEN;
-        //std::cout << err_nonicknamegiven(server, user) << std::endl;
-        //este mensaje se lo tengo que enviar a pespinos/servidor
     }
 
-    if (validNickname(cmd.getArg(1)))
+    if (!validNickname(cmd.getArg(1)))
     {
         return ERR_ERRONEUSNICKNAME;
-        //std::cout << err_nonicknamegiven(server, user) << std::endl;
     }
     (void)server;
     //check is already exist in the server container of Users
 
+    std::cout << "\n" << RED << "ANTES: executeNick: oldNick: " << user.getOldNick() << " / newNick: " << user.getNickname() << END << std::endl;
     user.setOldNick(user.getNickname());
     user.setNickname(cmd.getArg(1));
+    std::cout << "\n" << YELLOW << "DESPUES: executeNick: oldNick: " << user.getOldNick() << " / newNick: " << user.getNickname() << END << std::endl;
     return RLP_NICKOK;
 }

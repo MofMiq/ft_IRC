@@ -38,7 +38,7 @@ std::string createReply(Server &server, User &user, Code Code, Command& cmd)
     (void)Code;
     std::string from = user.getOldNick();
     std::string to = user.getNickname();
-    std::string msg = ": " + from + "!" + user.getUsername() + "@" + cmd.getArg(0) + to;
+    std::string msg = ": " + from + "!" + user.getUsername() + "@" + cmd.getArg(0) + " " + to;
     return msg;
 }
 
@@ -64,5 +64,5 @@ std::string err_nicknameinuse(Server& server, User& user)
 
 std::string rlp_nickok(Server &server, User &user, Command& cmd)
 {
-    return (createReply(server, user, RLP_NICKOK, cmd) + "Nick succesfullty changed" + END);
+    return (createReply(server, user, RLP_NICKOK, cmd) + ": Nick succesfullty changed" + END);
 }

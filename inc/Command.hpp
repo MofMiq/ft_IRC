@@ -37,7 +37,7 @@ class Command
 
         //Este m�todo toma un comando en forma de cadena (cmd) y lo convierte en el correspondiente valor enumerado (CMD).
         //Es decir, analiza la cadena de comando y la asigna al enum correspondiente.
-        Code parseCommand(const std::string& cmd, Server* server, User* user);
+        Code parseCommand(const std::string& cmd, Server* server, User& user);
         
         //Este m�todo ejecuta un comando especificado (cmd) con los argumentos proporcionados (args).
         //Dependiendo del comando recibido, ejecuta la l�gica correspondiente.
