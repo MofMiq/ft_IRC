@@ -37,25 +37,27 @@ TOPIC #test -> Checking the topic for "#test"
 
 */
 
-Code Command::executeTopic(Command &cmd, Server &server, User &user)
+void Command::executeTopic(Command &cmd, Server &server, User &user)
 {
     std::cout << "hola desde TOPIC" << std::endl;
     if (cmd._argCount == 1)
     {
-        std::cout << err_needmoreparams(server, user);
-        return ERR_NEEDMOREPARAMS;
+        user.enqueueResponse(err_needmoreparams(server, user));
+        std::cout << user.dequeueResponse(); //ahora mismo es para probar?
+        return ;
     }
     if (!server.channelExists(cmd.getArg(1)))
     {
-        std::cout << err_nosuchchannel(server, user, cmd.getArg(1));
-        return ERR_NOSUCHCHANNEL;
+        user.enqueueResponse(err_nosuchchannel(server, user, cmd.getArg(1)));
+        std::cout << user.dequeueResponse(); //ahora mismo es para probar?
+        return;
     }
     if (cmd._argCount < 3)
     {
-        return RPL_NOTOPIC;
+        return ;
     }
     (void)cmd;
     (void)server;
     (void)user;
-    return RPL_NICKOK;
+    return ;
 }

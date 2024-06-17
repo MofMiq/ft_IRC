@@ -37,7 +37,7 @@ class Command
 
         //Este m�todo toma un comando en forma de cadena (cmd) y lo convierte en el correspondiente valor enumerado (CMD).
         //Es decir, analiza la cadena de comando y la asigna al enum correspondiente.
-        Code parseCommand(const std::string& cmd, Server* server, User& user);
+        void parseCommand(const std::string& cmd, Server* server, User& user);
         
         //Este m�todo ejecuta un comando especificado (cmd) con los argumentos proporcionados (args).
         //Dependiendo del comando recibido, ejecuta la l�gica correspondiente.
@@ -46,13 +46,13 @@ class Command
         //ETC
         
         //marina
-        Code executeNick(Command& cmd, Server& server, User& user);
-        Code executeTopic(Command& cmd, Server& server, User& user);
-        Code executePrivmsg(Command& cmd, Server& server, User& user);
-        Code executeMode(Command& cmd, Server& server, User& user);
+        void executeNick(Command& cmd, Server& server, User& user);
+        void executeTopic(Command& cmd, Server& server, User& user);
+        void executePrivmsg(Command& cmd, Server& server, User& user);
+        void executeMode(Command& cmd, Server& server, User& user);
 
         //ana
-        Code executeJoin(Command& cmd, Server& server, User& user);
+        void executeJoin(Command& cmd, Server& server, User& user);
         // void executeUser(Command& cmd, Server& server, User& user);
         // void executeKick(Command& cmd, Server& server, User& user);
         // void executeInvite(Command& cmd, Server& server, User& user);

@@ -25,11 +25,11 @@ PRIVMSG #general :yes I'm receiving it ! -> Command to send a message to channel
 
 */
 
-Code Command::executePrivmsg(Command& cmd, Server& server, User& user)
+void Command::executePrivmsg(Command& cmd, Server& server, User& user)
 {
     std::cout << "hola desde PRIVMSG" << std::endl;
     (void)cmd;
     (void)server;
     (void)user;
-    return RPL_NICKOK;
+    return ;
 }

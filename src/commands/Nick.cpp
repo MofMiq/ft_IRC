@@ -27,8 +27,6 @@ NICK Wiz                  ; Requesting the new nick "Wiz".
 
 */
 
-//pasrseNick()
-//execNick()
 
 bool isAllowedSymbol(char c)
 {
@@ -54,29 +52,32 @@ bool validNickname(std::string& nick)
     return true;
 }
 
-Code Command::executeNick(Command &cmd, Server &server, User &user)
+void Command::executeNick(Command &cmd, Server &server, User &user)
 {
     if (cmd._argCount < 2 || cmd.getArg(1).length() == 0)
     {
-        std::cout << err_nonicknamegiven(server, user);
-        return ERR_NONICKNAMEGIVEN;
+        user.enqueueResponse(err_nonicknamegiven(server, user));
+        std::cout << user.dequeueResponse(); //ahora mismo es para probar?
+        return ;
     }
 
     if (!validNickname(cmd.getArg(1)))
     {
-        std::cout << err_erroneusnickname(server, user);
-        return ERR_ERRONEUSNICKNAME;
+        user.enqueueResponse(err_erroneusnickname(server, user));
+        std::cout << user.dequeueResponse(); //ahora mismo es para probar?
+        return ;
     }
-    //check is already exist in the server container of Users
     if (server.isNickInServer(cmd.getArg(1)))
     {
-        std::cout << err_nicknameinuse(server, user);
-        return ERR_NICKNAMEINUSE;
+        user.enqueueResponse(err_nicknameinuse(server, user));
+        std::cout << user.dequeueResponse(); //ahora mismo es para probar?
+        return ;
     }
     user.setOldNick(user.getNickname());
     user.setNickname(cmd.getArg(1));
     server.updateUsersServerByNick(user.getFd(), cmd.getArg(1));
 
-    std::cout << rpl_nickok(server, user, cmd);
-    return RPL_NICKOK;
+    user.enqueueResponse(rpl_nickok(server, user, cmd));
+    std::cout << user.dequeueResponse(); //ahora mismo es para probar?   
+    return ;
 }

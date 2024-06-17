@@ -1,5 +1,5 @@
 #ifndef CHANNEL_HPP
-#define CHANNEL_HPP
+# define CHANNEL_HPP
 
 #include <string>
 #include <map>
@@ -10,7 +10,7 @@
 
 class Channel {
 private:
- int _clientCount;
+    int _clientCount;
     int _maxClients;
     std::string _name;
     std::string _topic;
@@ -54,6 +54,17 @@ public:
 
     // Verifica si el canal está vacío
     bool isEmpty() const;
+
+    bool getPrivate();
+    void setPrivate(bool cond);
+    bool getTopicPrivate();
+    void setTopicPrivate(bool cond);
+    bool getPassNeeded();
+    void setPassNeeded(bool cond);
+    bool getLimitClient();
+    void setLimitClient(bool cond);
+    int getMaxClient();
+    void getMaxClient(int max);
 };
 
 #endif
