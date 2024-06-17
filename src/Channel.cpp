@@ -50,3 +50,53 @@ std::string Channel::getTopic() const {
 bool Channel::isEmpty() const {
     return _users.empty();
 }
+
+bool Channel::getPrivate()
+{
+    return this->_private;
+}
+
+void Channel::setPrivate(bool cond)
+{
+    this->_private = cond;
+}
+
+bool Channel::getTopicPrivate()
+{
+    return this->_topicPrivate;
+}
+
+void Channel::setTopicPrivate(bool cond)
+{
+    this->_topicPrivate = cond;
+}
+
+bool Channel::getPassNeeded()
+{
+    return this->_passNeeded;
+}
+
+void Channel::setPassNeeded(bool cond)
+{
+    this->_passNeeded = cond;
+}
+
+bool Channel::getLimitClient()
+{
+    return this->_limitClient;
+}
+
+void Channel::setLimitClient(bool cond)
+{
+    this->_limitClient = cond;
+}
+
+int Channel::getMaxClient()
+{
+    return this->_maxClients;
+}
+
+void Channel::getMaxClient(int max)
+{
+    this->_maxClients = max;
+}

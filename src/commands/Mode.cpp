@@ -51,11 +51,11 @@ MODE: is used to set or remove options (or modes) from a given target.
     ERR_INVALIDMODEPARAM (696)
 */
 
-Code Command::executeMode(Command& cmd, Server& server, User& user)
+void Command::executeMode(Command& cmd, Server& server, User& user)
 {
     std::cout << "hola desde MODE" << std::endl;
     (void)cmd;
     (void)server;
     (void)user;
-    return RPL_NICKOK;
+    return ;
 }

@@ -2,6 +2,7 @@
 #define USER_HPP
 
 #include <string>
+#include <queue>
 //#include "Server.hpp"
 #define MAX_LENGHT 9
 #define MAX_LENGHT 9
@@ -17,6 +18,8 @@ private:
     std::string _hostName;
     std::string _serverName;
     std::string _realName;
+    std::queue<std::string> _responses;
+    bool _standBy;
 
 public:
     User();
@@ -45,6 +48,12 @@ public:
     void setRealname(const std::string& realname);
 
     int getFd() const;
+    bool getStandBy();
+    void setStandBy(bool cond);
+
+    bool checkResponsesQueue();
+    void enqueueResponse(const std::string& res);   //meter un msg
+    std::string dequeueResponse();                  //sacar un msg
 };
 
 #endif

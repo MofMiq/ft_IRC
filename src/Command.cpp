@@ -35,19 +35,28 @@ std::string& Command::getArg(int i)
     return this->_args[i];
 }
 
-Code Command::parseCommand(const std::string &cmd, Server* server, User& user)
+void Command::parseCommand(const std::string &cmd, Server* server, User& user)
 {
     if (this->_argCount == 0)
-        return ERR_UNKNOWNCOMMAND;
+    {
+        user.enqueueResponse(err_unknowncommand(*server, user));
+        std::cout << user.dequeueResponse(); //ahora mismo es para probar?
+        return ;
+    }
     if (cmd == "NICK")
-        return executeNick(*this, *server, user);
+        executeNick(*this, *server, user);
     else if (cmd == "TOPIC")
-        return executeTopic(*this, *server, user);
+        executeTopic(*this, *server, user);
     else if (cmd == "PRIVMSG")
-        return executePrivmsg(*this, *server, user);
+        executePrivmsg(*this, *server, user);
     else if (cmd == "MODE")
-        return executeMode(*this, *server, user);
+        executeMode(*this, *server, user);
     else if (cmd == "JOIN")
-        return executeJoin(*this, *server, user);
-    return ERR_UNKNOWNCOMMAND;
+        executeJoin(*this, *server, user);
+    else
+    {
+        user.enqueueResponse(err_unknowncommand(*server, user));
+        std::cout << user.dequeueResponse(); //ahora mismo es para probar?
+    }
+    return ;
 }

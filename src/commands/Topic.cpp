@@ -1,4 +1,5 @@
 #include "../../inc/Command.hpp"
+#include "../../inc/Server.hpp"
 
 /*
 TOPIC <channel> [<newTopic>]
@@ -36,11 +37,27 @@ TOPIC #test -> Checking the topic for "#test"
 
 */
 
-Code Command::executeTopic(Command &cmd, Server &server, User &user)
+void Command::executeTopic(Command &cmd, Server &server, User &user)
 {
     std::cout << "hola desde TOPIC" << std::endl;
+    if (cmd._argCount == 1)
+    {
+        user.enqueueResponse(err_needmoreparams(server, user));
+        std::cout << user.dequeueResponse(); //ahora mismo es para probar?
+        return ;
+    }
+    if (!server.channelExists(cmd.getArg(1)))
+    {
+        user.enqueueResponse(err_nosuchchannel(server, user, cmd.getArg(1)));
+        std::cout << user.dequeueResponse(); //ahora mismo es para probar?
+        return;
+    }
+    if (cmd._argCount < 3)
+    {
+        return ;
+    }
     (void)cmd;
     (void)server;
     (void)user;
-    return RPL_NICKOK;
+    return ;
 }

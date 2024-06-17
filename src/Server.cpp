@@ -182,6 +182,7 @@ std::string     Server::extractNick(std::string strRaw)
 
 
 void    Server::handle_client_message(int client_socket) {
+    bool done = false;
     char buffer[BUFFER_SIZE];
     int bytes_read = read(client_socket, buffer, sizeof(buffer) - 1);
 
@@ -211,8 +212,10 @@ void    Server::handle_client_message(int client_socket) {
         return;
     }
 
+    //anidar las condiciones?
     if (message.find("PASS") != std::string::npos && this->_authenticated == false)
     {
+        done = true;
         std::string userPass = extractPassword(message);
         if (userPass != "")
         {
@@ -240,6 +243,7 @@ void    Server::handle_client_message(int client_socket) {
 
     if (message.find("USER") != std::string::npos && this->_usersServerByFd[client_socket]->getUsername() == "")
     {
+        done = true;
         std::string userName, hostName, serverName, realName;
         extractDataUser(message, userName, hostName, serverName, realName);
         this->_usersServerByFd[client_socket]->setUsername(userName);
@@ -262,6 +266,7 @@ void    Server::handle_client_message(int client_socket) {
     //esta implementación de NICK sirve sólo para la primera vez
     if (message.find("NICK") != std::string::npos && this->_usersServerByFd[client_socket]->getNickname() == "") 
     {
+        done = true;
         std::string nickName;
 
         nickName = extractNick(message);
@@ -273,15 +278,16 @@ void    Server::handle_client_message(int client_socket) {
             std::cout << "NICKNAME DEL CLIENTE = " << this->_usersServerByFd[_usersServerByNick[nickName]]->getNickname() << std::endl;
         }
     }
-
-    Command cmd(message);
-    User* user = this->_usersServerByFd[client_socket];
-    //Hay que añadir un contenedor de Code para guardar los mensajes de error y respuesta
-    Code code = cmd.parseCommand(cmd.getArg(0), this, *user);
-    redirectMessage(*this, *user, code, cmd); //esto es para poder ver ahora mismo si el parseo y la respuesta estan haciendose bien
+    
+    if (done == false)
+    {
+        Command cmd(message);
+        User* user = this->_usersServerByFd[client_socket];
+        cmd.parseCommand(cmd.getArg(0), this, *user);
+    }
 
     //para poder enviar la respuesta al cliente se usaría algo así
-    //enviarRespuestaCliente(cmd.parseCommand(cmd.getArg(0), this, usr1)); */
+    //enviarRespuestaCliente(cmd.parseCommand(cmd.getArg(0), this, usr1));
 }
 
 void Server::remove_client(int client_socket) {
@@ -310,5 +316,25 @@ void Server::addUserToChannel(User& user, const std::string& channelName) {
 void Server::createChannel(const std::string& channelName) {
     if (!channelExists(channelName)) {
         _channelsServer[channelName] = Channel(channelName);
+    }
+}
+
+bool Server::isNickInServer(const std::string& nick)
+{
+    std::map<std::string, int>::const_iterator it = this->_usersServerByNick.find(nick);
+    if (it != this->_usersServerByNick.end())
+        return true;
+    return false;
+}
+
+void Server::updateUsersServerByNick(int fd, const std::string& newNick)
+{
+    for(std::map<std::string, int>::iterator it = this->_usersServerByNick.begin(); it != this->_usersServerByNick.end(); ++it)
+    {
+        if (it->second == fd)
+        {
+            this->_usersServerByNick.erase(it);
+            this->_usersServerByNick[newNick] = fd;
+        }
     }
 }
