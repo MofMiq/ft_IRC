@@ -1,4 +1,5 @@
 #include "../../inc/Command.hpp"
+#include "../../inc/Server.hpp"
 /*
 
 NICK <newNick>
@@ -57,16 +58,25 @@ Code Command::executeNick(Command &cmd, Server &server, User &user)
 {
     if (cmd._argCount < 2 || cmd.getArg(1).length() == 0)
     {
+        std::cout << err_nonicknamegiven(server, user);
         return ERR_NONICKNAMEGIVEN;
     }
 
     if (!validNickname(cmd.getArg(1)))
     {
+        std::cout << err_erroneusnickname(server, user);
         return ERR_ERRONEUSNICKNAME;
     }
-    (void)server;
     //check is already exist in the server container of Users
+    if (server.isNickInServer(cmd.getArg(1)))
+    {
+        std::cout << err_nicknameinuse(server, user);
+        return ERR_NICKNAMEINUSE;
+    }
     user.setOldNick(user.getNickname());
     user.setNickname(cmd.getArg(1));
+    server.updateUsersServerByNick(user.getFd(), cmd.getArg(1));
+
+    std::cout << rpl_nickok(server, user, cmd);
     return RPL_NICKOK;
 }

@@ -51,6 +51,10 @@ public:
     bool channelExists(const std::string& channelName);
     void addUserToChannel(User& user, const std::string& channelName);
     void createChannel(const std::string& channelName);
+
+    //Commands functions
+    bool isNickInServer(const std::string& nick);
+    void updateUsersServerByNick(int fd, const std::string& newNick);
 };
 
 #endif
