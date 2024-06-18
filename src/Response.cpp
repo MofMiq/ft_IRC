@@ -76,17 +76,13 @@ std::string rpl_nickok(Server &server, User &user, Command& cmd)
 
 std::string rpl_notopic(Server &server, User &user, Command &cmd, const std::string& channelName)
 {
-    (void)server;
-    std::string msg = user.getNickname() + " " + channelName + " : No topic is set\n";
-    return (createMessage(server, RPL_NOTOPIC, user, cmd))
-    return msg;
+    return (createMessage(server, RPL_NOTOPIC, user, cmd) + " " + channelName + " : No topic is set\n");
 }
 
 std::string rpl_topic(Server &server, User &user, const std::string& channelName, const std::string& channelTopic)
 {
-    (void)server;
     std::string msg = user.getNickname() + " " + channelName + " : " + channelTopic + "\n";
-    return msg;
+    return (createMessage(server, RPL_NOTOPIC, user, cmd) + " " + channelName + " : No topic is set\n");
 }
 
 std::string rpl_topicwhotime(Server &server, User &user, const std::string& channelName, const std::string& nick)
