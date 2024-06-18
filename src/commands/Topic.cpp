@@ -42,13 +42,13 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
     std::cout << "hola desde TOPIC" << std::endl;
     if (cmd._argCount == 1)
     {
-        user.enqueueResponse(err_needmoreparams(server, user));
+        user.enqueueResponse(err_needmoreparams(server, user, cmd));
         std::cout << user.dequeueResponse(); //ahora mismo es para probar?
         return ;
     }
     if (!server.channelExists(cmd.getArg(1)))
     {
-        user.enqueueResponse(err_nosuchchannel(server, user, cmd.getArg(1)));
+        user.enqueueResponse(err_nosuchchannel(server, user, cmd, cmd.getArg(1)));
         std::cout << user.dequeueResponse(); //ahora mismo es para probar?
         return;
     }

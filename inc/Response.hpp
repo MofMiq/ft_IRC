@@ -32,18 +32,18 @@ enum Code
 
 std::string to_string(int value);
 
-std::string createMessage(Server& server, Code code);
-std::string createReply(Server &server, User &user, Code code, Command& cmd);
+std::string createMessage(Server &server, Code code, User &user, Command &cmd);
+std::string createReply(Server &server, Code code);
 
-std::string err_nosuchchannel(Server &server, User &user, const std::string& channelName);
-std::string err_unknowncommand(Server& server, User& user);
-std::string err_nonicknamegiven(Server& server, User& user);
-std::string err_erroneusnickname(Server& server, User& user);
-std::string err_nicknameinuse(Server& server, User& user);
-std::string err_notonchannel(Server &server, User &user, const std::string& channelName);
-std::string err_needmoreparams(Server& server, User& user);
-std::string err_chanoprivsneeded(Server &server, User &user, const std::string& channelName);
-std::string rpl_nickok(Server &server, User &user, Command& cmd);
+std::string err_nosuchchannel(Server &server, User &user, Command &cmd, const std::string& channelName);
+std::string err_unknowncommand(Server &server, User &user, Command &cmd);
+std::string err_nonicknamegiven(Server &server, User &user, Command &cmd);
+std::string err_erroneusnickname(Server& server, User& user, Command &cmd);
+std::string err_nicknameinuse(Server& server, User& user, Command &cmd);
+std::string err_notonchannel(Server &server, User &user, Command &cmd, const std::string& channelName);
+std::string err_needmoreparams(Server& server, User& user, Command &cmd);
+std::string err_chanoprivsneeded(Server &server, User &user, Command &cmd, const std::string& channelName);
+std::string rpl_nickok(Server &server, User &user);
 std::string rpl_notopic(Server &server, User &user, const std::string& channelName);
 std::string rpl_topic(Server &server, User &user, const std::string& channelName, const std::string& channelTopic);
 std::string rpl_topicwhotime(Server &server, User &user, const std::string& channelName, const std::string& nick);
