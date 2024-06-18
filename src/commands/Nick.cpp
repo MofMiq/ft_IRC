@@ -52,6 +52,8 @@ bool validNickname(std::string& nick)
     return true;
 }
 
+
+//10 caracteres de longuitud para un nick
 void Command::executeNick(Command &cmd, Server &server, User &user)
 {
     if (cmd._argCount < 2 || cmd.getArg(1).length() == 0)

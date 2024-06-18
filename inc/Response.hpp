@@ -32,7 +32,7 @@ enum Code
 
 std::string to_string(int value);
 
-std::string createMessage(Server& server, User& user, Code code);
+std::string createMessage(Server& server, Code code);
 std::string createReply(Server &server, User &user, Code code, Command& cmd);
 
 std::string err_nosuchchannel(Server &server, User &user, const std::string& channelName);
