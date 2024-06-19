@@ -33,11 +33,14 @@ private:
     std::map<int, std::string> clients; // Map from socket to client nickname SE UTILIZA PARA EL POLL
     //std::map<std::string, Channel* > _channelsServer; // Map de NOMBRE CANAL y puntero a CHANNEL correspondiente
     std::map<std::string, int > _usersServerByNick; // Map de NICK a FD
-    std::map<int, User* > _usersServerByFd; // Map de FD y puntero a USER correspondiente
+    // std::map<int, User* > _usersServerByFd; // Map de FD y puntero a USER correspondiente
+    std::map<int, User > _usersServerByFd; // Map de FD y puntero a USER correspondiente
     std::map<std::string, Channel> _channelsServer;
+    std::map<std::string, User> _nickToUser; // Mapa para acceder a los usuarios por nickname TODO
 
 public:
     Server(int port, const std::string& password);
+    void        sendMessageClient(int clientSocket, const std::string& errorMsg);
     bool        start();
     void        run();
     std::string getServerName() const;
@@ -51,6 +54,8 @@ public:
     bool channelExists(const std::string& channelName);
     void addUserToChannel(User& user, const std::string& channelName);
     void createChannel(const std::string& channelName);
+    Channel* getChannel(const std::string& channelName);
+    User* getUserByNick(const std::string& nick);     // Método para obtener un usuario por su nickname
 
     //Commands functions
     bool isNickInServer(const std::string& nick);

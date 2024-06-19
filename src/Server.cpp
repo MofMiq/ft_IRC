@@ -2,6 +2,11 @@
 
 Server::Server(int port, const std::string& password) : port(port), password(password), server_socket(-1), serverName("MyServer") {}
 
+void Server::sendMessageClient(int clientSocket, const std::string& errorMsg) {
+    std::string message = errorMsg + "\r\n";
+    send(clientSocket, message.c_str(), message.length(), 0);
+}
+
 bool    Server::start()
 {
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -65,7 +70,8 @@ void    Server::run()
             if (pollfds[i].revents & POLLIN) {
                 if (pollfds[i].fd == server_socket) {
                     handle_new_connection();
-                } else {
+                }
+                else {
                     handle_client_message(pollfds[i].fd);
                 }
             }
@@ -101,12 +107,14 @@ void    Server::handle_new_connection() {
     pfd.revents = 0;
     pollfds.push_back(pfd);
     clients[client_socket] = "";
-    _usersServerByFd[client_socket] = new User(client_socket);
-    _usersServerByFd[client_socket]->setUsername("");
-    _usersServerByFd[client_socket]->setNickname("");
-    _usersServerByFd[client_socket]->setHostname("");
-    _usersServerByFd[client_socket]->setServername("");
-    _usersServerByFd[client_socket]->setRealname("");
+    // _usersServerByFd[client_socket] = new User(client_socket);
+    _usersServerByFd[client_socket] = User(client_socket);
+    _nickToUser[User(client_socket).getNickname()] = User(client_socket); //TODO
+    _usersServerByFd[client_socket].setUsername("");
+    _usersServerByFd[client_socket].setNickname("");
+    _usersServerByFd[client_socket].setHostname("");
+    _usersServerByFd[client_socket].setServername("");
+    _usersServerByFd[client_socket].setRealname("");
     this->_authenticated = false;
     //falta implementar la eliminación del usuario del mapa _usersServerByFd cuando se elimina el usuario del servidor
 
@@ -147,7 +155,7 @@ void        Server::extractDataUser(std::string strRaw, std::string& userName, s
     size_t start_word = strRaw.find_first_not_of(" \t\n", position);
     size_t end_word = strRaw.find_first_of(" \t\n", start_word);
     userName = strRaw.substr(start_word, end_word - start_word);
-    
+
     start_word = strRaw.find_first_not_of(" \t\n", end_word);
     end_word = strRaw.find_first_of(" \t\n", start_word);
     hostName = strRaw.substr(start_word, end_word - start_word);
@@ -189,7 +197,8 @@ void    Server::handle_client_message(int client_socket) {
     if (bytes_read <= 0) {
         if (bytes_read == 0) {
             std::cout << "Client disconnected" << std::endl;
-        } else {
+        }
+        else {
             perror("read");
         }
 
@@ -206,84 +215,106 @@ void    Server::handle_client_message(int client_socket) {
 
     if (message.find("PASS") == std::string::npos && this->_authenticated == false)
     {
-        std::cout << "EL CLIENTE CON FD -> " << client_socket << " INTENTA EJECUTAR COMANDOS SIN AUTENTICARSE. EXPULSADO" <<std::endl;
+        std::cout << "EL CLIENTE CON FD -> " << client_socket << " INTENTA EJECUTAR COMANDOS SIN AUTENTICARSE. EXPULSADO" << std::endl;
+        sendMessageClient(client_socket, "EXPULSADO. DEBE AUTENTICARSE ANTES DE REALIZAR NINGUNA ACCIÓN");
         close(client_socket);
         remove_client(client_socket);
         return;
     }
 
     //anidar las condiciones?
-    if (message.find("PASS") != std::string::npos && this->_authenticated == false)
+    try
     {
-        done = true;
-        std::string userPass = extractPassword(message);
-        if (userPass != "")
+        if (message.find("PASS") != std::string::npos && this->_authenticated == false)
         {
-            std::cout << "CONTRASEÑA GUARDADA = " << userPass << std::endl;
-            if (userPass == this->password)
+            done = true;
+            std::string userPass = extractPassword(message);
+            if (userPass != "")
             {
-                std::cout << "CONTRASEÑA OK" << std::endl;
-                this->_authenticated = true;
+                std::cout << "CONTRASEÑA GUARDADA = " << userPass << std::endl;
+                if (userPass == this->password)
+                {
+                    std::cout << "CONTRASEÑA OK" << std::endl;
+                    this->_authenticated = true;
+                }
+                else
+                {
+                    std::cout << "CONTRASEÑA ERRONEA" << std::endl;
+                    close(client_socket);
+                    remove_client(client_socket);
+                    return;
+                }
             }
             else
             {
-                std::cout << "CONTRASEÑA ERRONEA" << std::endl;
                 close(client_socket);
                 remove_client(client_socket);
                 return;
             }
         }
-        else
-        {
-            close(client_socket);
-            remove_client(client_socket);
-            return;
-        }  
+    }
+    catch (...)
+    {
+        std::cerr << "ERROR EN PASS" << std::endl;
     }
 
-    if (message.find("USER") != std::string::npos && this->_usersServerByFd[client_socket]->getUsername() == "")
+    try
     {
-        done = true;
-        std::string userName, hostName, serverName, realName;
-        extractDataUser(message, userName, hostName, serverName, realName);
-        this->_usersServerByFd[client_socket]->setUsername(userName);
-        this->_usersServerByFd[client_socket]->setHostname(hostName);
-        this->_usersServerByFd[client_socket]->setServername(serverName);
-        this->_usersServerByFd[client_socket]->setRealname(realName);
-
-        std::cout << "DATOS COMPLETOS DEL USUARIO CON FD -> " << this->_usersServerByFd[client_socket]->getFd() << std::endl;
-        std::cout << "USERNAME -> " << this->_usersServerByFd[client_socket]->getUsername() << std::endl;
-        std::cout << "HOSTNAME -> " << this->_usersServerByFd[client_socket]->getHostname() << std::endl;
-        std::cout << "SERVERNAME -> " << this->_usersServerByFd[client_socket]->getServername() << std::endl;
-        std::cout << "REALNAME -> " << this->_usersServerByFd[client_socket]->getRealname() << std::endl;
-
-        //Añadir usuario al contenedor de usuarios del server
-        //_usersServer[fdCliente] = new User(todos los datos);
-        //hacer una funcion con un mapa que transforme el NICK del usuario en su FD
-        //  este NICK se agrega con el comando NICK que es cuando se crea la equivalencia NICK -> FD en el mapa que se guarda en Server
-    }
-
-    //esta implementación de NICK sirve sólo para la primera vez
-    if (message.find("NICK") != std::string::npos && this->_usersServerByFd[client_socket]->getNickname() == "") 
-    {
-        done = true;
-        std::string nickName;
-
-        nickName = extractNick(message);
-        if (nickName != "")
+        if (message.find("USER") != std::string::npos && this->_usersServerByFd[client_socket].getUsername() == "")
         {
-            std::cout << "NICKNAME EXTRAIDO = " << nickName << std::endl;
-            this->_usersServerByNick[nickName] = client_socket;
-            this->_usersServerByFd[this->_usersServerByNick[nickName]]->setNickname(nickName);
-            std::cout << "NICKNAME DEL CLIENTE = " << this->_usersServerByFd[_usersServerByNick[nickName]]->getNickname() << std::endl;
+            done = true;
+            std::string userName, hostName, serverName, realName;
+            extractDataUser(message, userName, hostName, serverName, realName);
+            this->_usersServerByFd[client_socket].setUsername(userName);
+            this->_usersServerByFd[client_socket].setHostname(hostName);
+            this->_usersServerByFd[client_socket].setServername(serverName);
+            this->_usersServerByFd[client_socket].setRealname(realName);
+
+            std::cout << "DATOS COMPLETOS DEL USUARIO CON FD -> " << this->_usersServerByFd[client_socket].getFd() << std::endl;
+            std::cout << "USERNAME -> " << this->_usersServerByFd[client_socket].getUsername() << std::endl;
+            std::cout << "HOSTNAME -> " << this->_usersServerByFd[client_socket].getHostname() << std::endl;
+            std::cout << "SERVERNAME -> " << this->_usersServerByFd[client_socket].getServername() << std::endl;
+            std::cout << "REALNAME -> " << this->_usersServerByFd[client_socket].getRealname() << std::endl;
+
+            //Añadir usuario al contenedor de usuarios del server
+            //_usersServer[fdCliente] = new User(todos los datos);
+            //hacer una funcion con un mapa que transforme el NICK del usuario en su FD
+            //  este NICK se agrega con el comando NICK que es cuando se crea la equivalencia NICK -> FD en el mapa que se guarda en Server
         }
     }
-    
+    catch (...)
+    {
+        std::cerr << "ERROR EN USER" << std::endl;
+    }
+
+    try
+    {
+        //esta implementación de NICK sirve sólo para la primera vez
+        if (message.find("NICK") != std::string::npos && this->_usersServerByFd[client_socket].getNickname() == "")
+        {
+            done = true;
+            std::string nickName;
+
+            nickName = extractNick(message);
+            if (nickName != "")
+            {
+                std::cout << "NICKNAME EXTRAIDO = " << nickName << std::endl;
+                this->_usersServerByNick[nickName] = client_socket;
+                this->_usersServerByFd[this->_usersServerByNick[nickName]].setNickname(nickName);
+                std::cout << "NICKNAME DEL CLIENTE = " << this->_usersServerByFd[_usersServerByNick[nickName]].getNickname() << std::endl;
+            }
+        }
+    }
+    catch (...)
+    {
+        std::cerr << "ERROR EN NICK" << std::endl;
+    }
+
     if (done == false)
     {
         Command cmd(message);
-        User* user = this->_usersServerByFd[client_socket];
-        cmd.parseCommand(cmd.getArg(0), this, *user);
+        User user = this->_usersServerByFd[client_socket];
+        cmd.parseCommand(cmd.getArg(0), this, user);
     }
 
     //para poder enviar la respuesta al cliente se usaría algo así
@@ -319,6 +350,22 @@ void Server::createChannel(const std::string& channelName) {
     }
 }
 
+Channel* Server::getChannel(const std::string& channelName) {
+    std::map<std::string, Channel>::iterator it = _channelsServer.find(channelName);
+    if (it != _channelsServer.end()) {
+        return &it->second; // Devuelve un puntero al canal si se encuentra
+    }
+    return NULL; // Devuelve NULL si el canal no se encuentra
+}
+
+// Implementación de getUserByNick
+User* Server::getUserByNick(const std::string& nick) {
+    std::map<std::string, User>::iterator it = _nickToUser.find(nick);
+    if (it != _nickToUser.end()) {
+        return &it->second;
+    }
+    return NULL; // Devuelve NULL si no se encuentra el usuario
+}
 bool Server::isNickInServer(const std::string& nick)
 {
     std::map<std::string, int>::const_iterator it = this->_usersServerByNick.find(nick);
@@ -329,7 +376,7 @@ bool Server::isNickInServer(const std::string& nick)
 
 void Server::updateUsersServerByNick(int fd, const std::string& newNick)
 {
-    for(std::map<std::string, int>::iterator it = this->_usersServerByNick.begin(); it != this->_usersServerByNick.end(); ++it)
+    for (std::map<std::string, int>::iterator it = this->_usersServerByNick.begin(); it != this->_usersServerByNick.end(); ++it)
     {
         if (it->second == fd)
         {

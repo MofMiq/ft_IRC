@@ -53,10 +53,33 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
         executeMode(*this, *server, user);
     else if (cmd == "JOIN")
         executeJoin(*this, *server, user);
+    else if (cmd == "KICK")
+        executeKick(*this, *server, user);
+  /*  else if (cmd == "INVITE")
+        executeInvite(*this, *server, *user);
+    else if (cmd == "USER")
+        executeMode(*this, *server, *user);*/
     else
     {
         user.enqueueResponse(err_unknowncommand(*server, user));
         std::cout << user.dequeueResponse(); //ahora mismo es para probar?
     }
     return ;
+}
+
+// Implementación del nuevo método
+std::string Command::getArgsAsString(int startIdx) const {
+    if (startIdx < 0 || startIdx >= static_cast<int>(_args.size())) {
+        return "";
+    }
+
+    std::string result = "";
+    for (int i = startIdx; i < static_cast<int>(_args.size()); ++i) {
+        result += _args[i];
+        if (i < static_cast<int>(_args.size()) - 1) {
+            result += " ";
+        }
+    }
+
+    return result;
 }
