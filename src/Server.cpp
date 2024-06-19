@@ -249,7 +249,7 @@ void    Server::handle_client_message(int client_socket) {
                 close(client_socket);
                 remove_client(client_socket);
                 return;
-            }
+            }  
         }
     }
     catch (...)
@@ -258,7 +258,7 @@ void    Server::handle_client_message(int client_socket) {
     }
 
     try
-    {
+    { 
         if (message.find("USER") != std::string::npos && this->_usersServerByFd[client_socket].getUsername() == "")
         {
             done = true;
@@ -281,7 +281,7 @@ void    Server::handle_client_message(int client_socket) {
             //  este NICK se agrega con el comando NICK que es cuando se crea la equivalencia NICK -> FD en el mapa que se guarda en Server
         }
     }
-    catch (...)
+    catch(...)
     {
         std::cerr << "ERROR EN USER" << std::endl;
     }
@@ -289,7 +289,7 @@ void    Server::handle_client_message(int client_socket) {
     try
     {
         //esta implementación de NICK sirve sólo para la primera vez
-        if (message.find("NICK") != std::string::npos && this->_usersServerByFd[client_socket].getNickname() == "")
+        if (message.find("NICK") != std::string::npos && this->_usersServerByFd[client_socket].getNickname() == "") 
         {
             done = true;
             std::string nickName;
@@ -304,11 +304,10 @@ void    Server::handle_client_message(int client_socket) {
             }
         }
     }
-    catch (...)
+    catch(...)
     {
         std::cerr << "ERROR EN NICK" << std::endl;
     }
-
     if (done == false)
     {
         Command cmd(message);
@@ -341,6 +340,7 @@ void Server::addUserToChannel(User& user, const std::string& channelName) {
         _channelsServer[channelName] = Channel(channelName);
     }
     _channelsServer[channelName].addUser(user);
+    //user._channelIn.push_back(channelName); //struct response?
 }
 
 void Server::createChannel(const std::string& channelName) {

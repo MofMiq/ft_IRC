@@ -39,7 +39,7 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
 {
     if (this->_argCount == 0)
     {
-        user.enqueueResponse(err_unknowncommand(*server, user));
+        user.enqueueResponse(errUnknowncommand(*server, user, *this));
         std::cout << user.dequeueResponse(); //ahora mismo es para probar?
         return ;
     }
@@ -61,7 +61,7 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
         executeMode(*this, *server, *user);*/
     else
     {
-        user.enqueueResponse(err_unknowncommand(*server, user));
+        user.enqueueResponse(errUnknowncommand(*server, user, *this));
         std::cout << user.dequeueResponse(); //ahora mismo es para probar?
     }
     return ;

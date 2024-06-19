@@ -3,12 +3,12 @@
 //Channel::Channel() : _clientCount(0), _name("") {}
 
 //onstructor por defecto
-Channel::Channel() : _clientCount(0), _maxClients(MAXCLI), _name(""), _private(false), _topicPrivate(false),
+Channel::Channel() : _clientCount(0), _maxClients(MAXCLI), _name(""), _topic(""), _private(false), _topicPrivate(false),
 _passNeeded(false), _limitClient(false) {}
 
 // Constructor para inicializar el canal con el nombre dado y el n�mero m�ximo de clientes
 Channel::Channel(const std::string& name, int maxClients)
-    : _clientCount(0), _maxClients(maxClients), _name(name), _private(false), _topicPrivate(false),
+    : _clientCount(0), _maxClients(maxClients), _name(name), _topic(""), _private(false), _topicPrivate(false),
     _passNeeded(false), _limitClient(false) {}
 
 Channel::~Channel() {}
