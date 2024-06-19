@@ -51,6 +51,11 @@ bool Channel::isEmpty() const {
     return _users.empty();
 }
 
+// Verifica si un usuario está en el canal
+bool Channel::isUserInChannel(int userFd) const {
+    return _users.find(userFd) != _users.end();
+}
+
 bool Channel::getPrivate()
 {
     return this->_private;

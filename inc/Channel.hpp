@@ -55,6 +55,8 @@ public:
     // Verifica si el canal está vacío
     bool isEmpty() const;
 
+    bool isUserInChannel(int userFd) const; 
+
     bool getPrivate();
     void setPrivate(bool cond);
     bool getTopicPrivate();

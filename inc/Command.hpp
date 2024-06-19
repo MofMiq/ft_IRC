@@ -34,6 +34,7 @@ class Command
 
 
         std::string& getArg(int i);
+        std::string getArgsAsString(int startIdx) const; 
 
         //Este m�todo toma un comando en forma de cadena (cmd) y lo convierte en el correspondiente valor enumerado (CMD).
         //Es decir, analiza la cadena de comando y la asigna al enum correspondiente.
@@ -54,7 +55,7 @@ class Command
         //ana
         void executeJoin(Command& cmd, Server& server, User& user);
         // void executeUser(Command& cmd, Server& server, User& user);
-        // void executeKick(Command& cmd, Server& server, User& user);
+         void executeKick(Command& cmd, Server& server, User& user);
         // void executeInvite(Command& cmd, Server& server, User& user);
 
 };

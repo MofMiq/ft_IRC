@@ -70,7 +70,8 @@ void    Server::run()
             if (pollfds[i].revents & POLLIN) {
                 if (pollfds[i].fd == server_socket) {
                     handle_new_connection();
-                } else {
+                }
+                else {
                     handle_client_message(pollfds[i].fd);
                 }
             }
@@ -153,7 +154,7 @@ void        Server::extractDataUser(std::string strRaw, std::string& userName, s
     size_t start_word = strRaw.find_first_not_of(" \t\n", position);
     size_t end_word = strRaw.find_first_of(" \t\n", start_word);
     userName = strRaw.substr(start_word, end_word - start_word);
-    
+
     start_word = strRaw.find_first_not_of(" \t\n", end_word);
     end_word = strRaw.find_first_of(" \t\n", start_word);
     hostName = strRaw.substr(start_word, end_word - start_word);
@@ -195,7 +196,8 @@ void    Server::handle_client_message(int client_socket) {
     if (bytes_read <= 0) {
         if (bytes_read == 0) {
             std::cout << "Client disconnected" << std::endl;
-        } else {
+        }
+        else {
             perror("read");
         }
 
@@ -212,7 +214,7 @@ void    Server::handle_client_message(int client_socket) {
 
     if (message.find("PASS") == std::string::npos && this->_authenticated == false)
     {
-        std::cout << "EL CLIENTE CON FD -> " << client_socket << " INTENTA EJECUTAR COMANDOS SIN AUTENTICARSE. EXPULSADO" <<std::endl;
+        std::cout << "EL CLIENTE CON FD -> " << client_socket << " INTENTA EJECUTAR COMANDOS SIN AUTENTICARSE. EXPULSADO" << std::endl;
         sendMessageClient(client_socket, "EXPULSADO. DEBE AUTENTICARSE ANTES DE REALIZAR NINGUNA ACCIÓN");
         close(client_socket);
         remove_client(client_socket);
@@ -250,7 +252,7 @@ void    Server::handle_client_message(int client_socket) {
             }  
         }
     }
-    catch(...)
+    catch (...)
     {
         std::cerr << "ERROR EN PASS" << std::endl;
     }
@@ -306,7 +308,6 @@ void    Server::handle_client_message(int client_socket) {
     {
         std::cerr << "ERROR EN NICK" << std::endl;
     }
-    
     if (done == false)
     {
         Command cmd(message);
@@ -348,6 +349,15 @@ void Server::createChannel(const std::string& channelName) {
     }
 }
 
+Channel* Server::getChannel(const std::string& channelName) {
+    std::map<std::string, Channel>::iterator it = _channelsServer.find(channelName);
+    if (it != _channelsServer.end()) {
+        return &it->second; // Devuelve un puntero al canal si se encuentra
+    }
+    return NULL; // Devuelve NULL si el canal no se encuentra
+}
+
+
 bool Server::isNickInServer(const std::string& nick)
 {
     std::map<std::string, int>::const_iterator it = this->_usersServerByNick.find(nick);
@@ -358,7 +368,7 @@ bool Server::isNickInServer(const std::string& nick)
 
 void Server::updateUsersServerByNick(int fd, const std::string& newNick)
 {
-    for(std::map<std::string, int>::iterator it = this->_usersServerByNick.begin(); it != this->_usersServerByNick.end(); ++it)
+    for (std::map<std::string, int>::iterator it = this->_usersServerByNick.begin(); it != this->_usersServerByNick.end(); ++it)
     {
         if (it->second == fd)
         {
@@ -366,4 +376,9 @@ void Server::updateUsersServerByNick(int fd, const std::string& newNick)
             this->_usersServerByNick[newNick] = fd;
         }
     }
+}
+
+User& Server::getUserByNick(const std::string& nick)
+{
+    return _usersServerByFd[_usersServerByNick[nick]];
 }
