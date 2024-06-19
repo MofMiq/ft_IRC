@@ -10,6 +10,14 @@
 class User
 {
 private:
+/*     typedef struct s_datMsg //struct response?
+    {
+        std::string _text;
+        bool    _onlyOneUser;
+        int     _fdUser;
+        bool    _forChannels;
+        std::vector<std::string> _channelsName;
+    } t_dataMsg; */
     //USER <usuario> <host> <servidor> <nombre_real>
     int _fd; // File descriptor para el poll
     std::string _userName;
@@ -18,10 +26,14 @@ private:
     std::string _hostName;
     std::string _serverName;
     std::string _realName;
+
     std::queue<std::string> _responses;
+    //std::queue<t_dataMsg> _responses; //struct response?
+
     bool _standBy;
 
 public:
+    //std::vector<std::string> _channelIn; //struct response?
     User();
     User(int fd);
     User(int fd, std::string userName, std::string hostName, std::string serverName, std::string realName);

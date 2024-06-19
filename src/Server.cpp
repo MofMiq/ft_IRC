@@ -311,6 +311,7 @@ void Server::addUserToChannel(User& user, const std::string& channelName) {
         _channelsServer[channelName] = Channel(channelName);
     }
     _channelsServer[channelName].addUser(user);
+    //user._channelIn.push_back(channelName); //struct response?
 }
 
 void Server::createChannel(const std::string& channelName) {
