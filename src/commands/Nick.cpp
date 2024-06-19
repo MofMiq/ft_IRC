@@ -58,20 +58,20 @@ void Command::executeNick(Command &cmd, Server &server, User &user)
 {
     if (cmd._argCount < 2 || cmd.getArg(1).length() == 0)
     {
-        user.enqueueResponse(err_nonicknamegiven(server, user, cmd));
+        user.enqueueResponse(errNonicknamegiven(server, user, cmd));
         std::cout << user.dequeueResponse(); //ahora mismo es para probar?
         return ;
     }
 
     if (!validNickname(cmd.getArg(1)))
     {
-        user.enqueueResponse(err_erroneusnickname(server, user, cmd));
+        user.enqueueResponse(errErroneusnickname(server, user, cmd));
         std::cout << user.dequeueResponse(); //ahora mismo es para probar?
         return ;
     }
     if (server.isNickInServer(cmd.getArg(1)))
     {
-        user.enqueueResponse(err_nicknameinuse(server, user, cmd));
+        user.enqueueResponse(errNicknameinuse(server, user, cmd));
         std::cout << user.dequeueResponse(); //ahora mismo es para probar?
         return ;
     }
@@ -79,7 +79,7 @@ void Command::executeNick(Command &cmd, Server &server, User &user)
     user.setNickname(cmd.getArg(1));
     server.updateUsersServerByNick(user.getFd(), cmd.getArg(1));
 
-    user.enqueueResponse(rpl_nickok(server, user));
+    user.enqueueResponse(rplNickok(server, user));
     std::cout << user.dequeueResponse(); //ahora mismo es para probar?   
     return ;
 }

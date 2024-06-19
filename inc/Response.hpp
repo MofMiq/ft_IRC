@@ -19,6 +19,7 @@ enum Code
     ERR_NONICKNAMEGIVEN = 431,
     ERR_ERRONEUSNICKNAME = 432,
     ERR_NICKNAMEINUSE = 433,
+    ERR_USERNOTINCHANNEL = 441,
     ERR_NOTONCHANNEL = 442,
     ERR_NEEDMOREPARAMS = 461,
     ERR_CHANOPRIVSNEEDED = 482
@@ -35,18 +36,19 @@ std::string to_string(int value);
 std::string createMessage(Server &server, Code code, User &user, Command &cmd);
 std::string createReply(Server &server, Code code);
 
-std::string err_nosuchchannel(Server &server, User &user, Command &cmd, const std::string& channelName);
-std::string err_unknowncommand(Server &server, User &user, Command &cmd);
-std::string err_nonicknamegiven(Server &server, User &user, Command &cmd);
-std::string err_erroneusnickname(Server& server, User& user, Command &cmd);
-std::string err_nicknameinuse(Server& server, User& user, Command &cmd);
-std::string err_notonchannel(Server &server, User &user, Command &cmd, const std::string& channelName);
-std::string err_needmoreparams(Server& server, User& user, Command &cmd);
-std::string err_chanoprivsneeded(Server &server, User &user, Command &cmd, const std::string& channelName);
-std::string rpl_nickok(Server &server, User &user);
-std::string rpl_notopic(Server &server, User &user, const std::string& channelName);
-std::string rpl_topic(Server &server, User &user, const std::string& channelName, const std::string& channelTopic);
-std::string rpl_topicwhotime(Server &server, User &user, const std::string& channelName, const std::string& nick);
+std::string errNosuchchannel(Server &server, User &user, Command &cmd, const std::string& channelName);
+std::string errUnknowncommand(Server &server, User &user, Command &cmd);
+std::string errNonicknamegiven(Server &server, User &user, Command &cmd);
+std::string errErroneusnickname(Server& server, User& user, Command &cmd);
+std::string errNicknameinuse(Server& server, User& user, Command &cmd);
+std::string errUsernotinchannel(Server& server, User& user, Command &cmd, const std::string& targetNickname, const std::string& channelName);
+std::string errNotonchannel(Server &server, User &user, Command &cmd, const std::string& channelName);
+std::string errNeedmoreparams(Server& server, User& user, Command &cmd);
+std::string errChanoprivsneeded(Server &server, User &user, Command &cmd, const std::string& channelName);
+std::string rplNickok(Server &server, User &user);
+std::string rplNotopic(Server &server, User &user, const std::string& channelName);
+std::string rplTopic(Server &server, User &user, const std::string& channelName, const std::string& channelTopic);
+std::string rplTopicwhotime(Server &server, User &user, const std::string& channelName, const std::string& nick);
 
 
 #endif
