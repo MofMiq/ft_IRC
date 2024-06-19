@@ -13,7 +13,7 @@
 void Command::executeKick(Command& cmd, Server& server, User& user) {
     // Verifica si se proporcionaron suficientes argumentos
     if (cmd._argCount < 3) {
-        user.enqueueResponse(err_needmoreparams(server, user));
+        user.enqueueResponse(errNeedmoreparams(server, user, cmd));
         return;
     }
 
@@ -22,13 +22,13 @@ void Command::executeKick(Command& cmd, Server& server, User& user) {
 
     // Verifica si el canal existe
     if (channel == NULL) {
-        user.enqueueResponse(err_nosuchchannel(server, user, channelName));
+        user.enqueueResponse(errNosuchchannel(server, user, cmd, channelName));
         return;
     }
 
     // Verifica si el usuario que ejecuta el comando es un operador del canal
     if (!channel->isUserOperator(user.getFd())) {
-        user.enqueueResponse(err_chanoprivsneeded(server, user, channelName));
+        user.enqueueResponse(errChanoprivsneeded(server, user, cmd, channelName));
         return;
     }
 
