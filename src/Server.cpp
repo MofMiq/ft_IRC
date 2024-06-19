@@ -109,7 +109,6 @@ void    Server::handle_new_connection() {
     clients[client_socket] = "";
     // _usersServerByFd[client_socket] = new User(client_socket);
     _usersServerByFd[client_socket] = User(client_socket);
-    _nickToUser[User(client_socket).getNickname()] = User(client_socket); //TODO
     _usersServerByFd[client_socket].setUsername("");
     _usersServerByFd[client_socket].setNickname("");
     _usersServerByFd[client_socket].setHostname("");
@@ -358,14 +357,7 @@ Channel* Server::getChannel(const std::string& channelName) {
     return NULL; // Devuelve NULL si el canal no se encuentra
 }
 
-// Implementación de getUserByNick
-User* Server::getUserByNick(const std::string& nick) {
-    std::map<std::string, User>::iterator it = _nickToUser.find(nick);
-    if (it != _nickToUser.end()) {
-        return &it->second;
-    }
-    return NULL; // Devuelve NULL si no se encuentra el usuario
-}
+
 bool Server::isNickInServer(const std::string& nick)
 {
     std::map<std::string, int>::const_iterator it = this->_usersServerByNick.find(nick);
@@ -384,4 +376,9 @@ void Server::updateUsersServerByNick(int fd, const std::string& newNick)
             this->_usersServerByNick[newNick] = fd;
         }
     }
+}
+
+User& Server::getUserByNick(const std::string& nick)
+{
+    return _usersServerByFd[_usersServerByNick[nick]];
 }
