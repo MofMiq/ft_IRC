@@ -24,6 +24,8 @@ private:
     bool _limitClient; // mode -l
     // mode -o no necesita bool porque es la lista de operadores
 
+    std::string _timestamp;
+
 
 public:
     // Constructor por defecto
@@ -67,6 +69,11 @@ public:
     void setLimitClient(bool cond);
     int getMaxClient();
     void getMaxClient(int max);
+    std::string getTopicTimestamp();
+    void setTopicTimestamp(const std::string& timestamp);
+
+    bool isUserInChannel(int fd);
+    bool isUserAnOperators(int fd);
 };
 
 #endif

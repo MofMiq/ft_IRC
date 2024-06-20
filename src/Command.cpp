@@ -1,4 +1,5 @@
 #include "../inc/Command.hpp"
+#include "../inc/Server.hpp"
 #include <algorithm>
 
 Command::Command(const std::string &msg)
@@ -15,12 +16,14 @@ Command::Command(const std::string &msg)
         this->_args.push_back(token);
     }
     this->_argCount = this->_args.size();
-    std::cout << PURPLE << "Command constructor: argCount: " << this->_argCount << " _args: "; //para probar
+    if (msg.empty())
+        this->_args[0] = "";
+/*     std::cout << PURPLE << "Command constructor: argCount: " << this->_argCount << " _args: "; //para probar
     for (int i = 0; i < this->_argCount; i++)
     {
         std::cout << "arg[" << i << "]: " << this->_args[i] << ' ';
     }
-    std::cout << END << '\n';
+    std::cout << END << '\n'; // borrar*/
 
 }
 
@@ -40,7 +43,8 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
     if (this->_argCount == 0)
     {
         user.enqueueResponse(errUnknowncommand(*server, user, *this));
-        std::cout << user.dequeueResponse(); //ahora mismo es para probar?
+        //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
+        server->sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
     if (cmd == "NICK")
@@ -62,12 +66,13 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
     else
     {
         user.enqueueResponse(errUnknowncommand(*server, user, *this));
-        std::cout << user.dequeueResponse(); //ahora mismo es para probar?
+        //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
+        server->sendMessageClient(user.getFd(), user.dequeueResponse());
     }
     return ;
 }
 
-// Implementación del nuevo método
+// Implementaciï¿½n del nuevo mï¿½todo
 std::string Command::getArgsAsString(int startIdx) const {
     if (startIdx < 0 || startIdx >= static_cast<int>(_args.size())) {
         return "";

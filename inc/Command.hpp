@@ -24,11 +24,11 @@ class Command
         std::string                 _fullMessage;
         std::vector<std::string>    _args; // List de comandos prohibidos
         std::vector<std::string>    _prohibitedCommands; // List de comandos prohibidos
-        int                         _argCount; // numero de parametros que necesita cada comando para funcionar al menos
         
         Command();
 
     public:
+        int                         _argCount; // numero de parametros que necesita cada comando para funcionar al menos
         Command(const std::string& msg); //en el constructor parametrizado spliteamos el fullMessage en el vector de args
         ~Command();
 

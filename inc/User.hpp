@@ -4,9 +4,7 @@
 #include <string>
 #include <queue>
 //#include "Server.hpp"
-#define MAX_LENGHT 9
-#define MAX_LENGHT 9
-
+#define MAX_LENGHT 10
 class User
 {
 private:
