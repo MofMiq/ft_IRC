@@ -33,10 +33,10 @@ void Command::executeKick(Command& cmd, Server& server, User& user) {
     }
 
     std::string targetNickname = cmd.getArg(2);
-    User targetUser = server.getUserByNick(targetNickname); // TODO
+    User* targetUser = server.getUserByNick(targetNickname); // TODO
 
     // Verifica si el usuario objetivo está en el canal
-    if (!channel->isUserInChannel(targetUser.getFd())) { //TODO
+    if (!channel->isUserInChannel(targetUser->getFd())) { //TODO
         //user.enqueueResponse(err_usernotinchannel(server, user, targetNickname, channelName));
         return;
     }
@@ -48,12 +48,12 @@ void Command::executeKick(Command& cmd, Server& server, User& user) {
     }
 
     // Elimina al usuario objetivo del canal
-    channel->removeUser(targetUser.getFd());
+    channel->removeUser(targetUser->getFd());
 
     // Crear mensajes de confirmación e información para ambos usuarios
     std::string kickMessage = user.getNickname() + " has kicked " + targetNickname + " from channel " + channelName + " : " + reason + "\n";
     user.enqueueResponse(kickMessage);
-    targetUser.enqueueResponse(kickMessage);
+    targetUser->enqueueResponse(kickMessage);
 }
 
 

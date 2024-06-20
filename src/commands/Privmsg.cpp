@@ -1,4 +1,5 @@
 #include "../../inc/Command.hpp"
+#include "../../inc/Server.hpp"
 
 /*
 PRIVMSG <target> [:]<text>
@@ -28,8 +29,21 @@ PRIVMSG #general :yes I'm receiving it ! -> Command to send a message to channel
 void Command::executePrivmsg(Command& cmd, Server& server, User& user)
 {
     std::cout << "hola desde PRIVMSG" << std::endl;
-    (void)cmd;
-    (void)server;
-    (void)user;
+    if (cmd._argCount < 3)
+    {
+        user.enqueueResponse(errNeedmoreparams(server, user, cmd));
+        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        return ;
+    }
+    if (cmd.getArg(1)[0] != '#' && !server.isNickInServer(cmd.getArg(1)))
+    {
+        user.enqueueResponse(errNosuchnick(server, user, cmd, cmd.getArg(1)));
+        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+    }
+    else if (cmd.getArg(1)[0] == '#' && server.getChannel(cmd.getArg(1)) == NULL)
+    {
+        user.enqueueResponse(errNosuchnick(server, user, cmd, cmd.getArg(1)));
+        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+    }
     return ;
 }
