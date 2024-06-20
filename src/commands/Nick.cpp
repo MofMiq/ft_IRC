@@ -52,34 +52,39 @@ bool validNickname(std::string& nick)
     return true;
 }
 
-
-//10 caracteres de longuitud para un nick
 void Command::executeNick(Command &cmd, Server &server, User &user)
 {
     if (cmd._argCount < 2 || cmd.getArg(1).length() == 0)
     {
         user.enqueueResponse(errNonicknamegiven(server, user, cmd));
-        std::cout << user.dequeueResponse(); //ahora mismo es para probar?
+        //std::cout << user.dequeueResponse(); //ahora mismo es para probar? //borrar
+        server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
 
-    if (!validNickname(cmd.getArg(1)))
+    if (!validNickname(cmd.getArg(1)) || cmd.getArg(1).length() >= MAX_LENGHT)
     {
         user.enqueueResponse(errErroneusnickname(server, user, cmd));
-        std::cout << user.dequeueResponse(); //ahora mismo es para probar?
+        //std::cout << user.dequeueResponse(); //ahora mismo es para probar?
+        server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
     if (server.isNickInServer(cmd.getArg(1)))
     {
         user.enqueueResponse(errNicknameinuse(server, user, cmd));
-        std::cout << user.dequeueResponse(); //ahora mismo es para probar?
+        //std::cout << user.dequeueResponse(); //ahora mismo es para probar? //borrar
+        server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
     user.setOldNick(user.getNickname());
     user.setNickname(cmd.getArg(1));
     server.updateUsersServerByNick(user.getFd(), cmd.getArg(1));
+    //server._usersServerByFd[server._usersServerByNick[user.getNickname()]].setNickname(user.getNickname()); //para que cambie
+
+    //std::cout << RED << "en NICK: oldNick: " << user.getOldNick() << " / Nick: " << user.getNickname() << END << std::endl; //borrar debug
 
     user.enqueueResponse(rplNickok(server, user));
-    std::cout << user.dequeueResponse(); //ahora mismo es para probar?   
+    //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
+    server.sendMessageClient(user.getFd(), user.dequeueResponse());
     return ;
 }

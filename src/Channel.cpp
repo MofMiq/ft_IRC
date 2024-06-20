@@ -4,12 +4,12 @@
 
 //onstructor por defecto
 Channel::Channel() : _clientCount(0), _maxClients(MAXCLI), _name(""), _topic(""), _private(false), _topicPrivate(false),
-_passNeeded(false), _limitClient(false) {}
+_passNeeded(false), _limitClient(false), _timestamp("") {}
 
 // Constructor para inicializar el canal con el nombre dado y el n�mero m�ximo de clientes
 Channel::Channel(const std::string& name, int maxClients)
     : _clientCount(0), _maxClients(maxClients), _name(name), _topic(""), _private(false), _topicPrivate(false),
-    _passNeeded(false), _limitClient(false) {}
+    _passNeeded(false), _limitClient(false), _timestamp("") {}
 
 Channel::~Channel() {}
 
@@ -104,4 +104,29 @@ int Channel::getMaxClient()
 void Channel::getMaxClient(int max)
 {
     this->_maxClients = max;
+}
+
+std::string Channel::getTopicTimestamp()
+{
+    return this->_timestamp;
+}
+void Channel::setTopicTimestamp(const std::string& timestamp)
+{
+    this->_timestamp = timestamp;
+}
+
+bool Channel::isUserInChannel(int fd)
+{
+    std::map<int, User>::const_iterator it = this->_users.find(fd);
+    if (it != this->_users.end())
+        return true;
+    return false;
+}
+
+bool Channel::isUserAnOperators(int fd)
+{
+    std::set<int>::const_iterator it = this->_operators.find(fd);
+    if (it != this->_operators.end())
+        return true;
+    return false;
 }

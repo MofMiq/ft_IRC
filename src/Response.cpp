@@ -27,7 +27,11 @@ std::string to_string(int value)
 
 std::string createMessage(Server &server, Code code, User &user, Command &cmd)
 {
-    std::string msg = ":" + server.getServerName() + " " + to_string(code) + " " + user.getNickname() + " failed to execute " + cmd.getArg(0) + " ";
+    std::string msg;
+    if (cmd._argCount > 0)
+        msg = ":" + server.getServerName() + " " + to_string(code) + " " + user.getNickname() + " failed to execute " + cmd.getArg(0) + " ";
+    else
+        msg = ":" + server.getServerName() + " " + to_string(code) + " " + user.getNickname() + " failed to execute an empty command ";
     return msg;
 }
 
@@ -82,6 +86,22 @@ std::string errChanoprivsneeded(Server &server, User &user, Command &cmd, const 
     return (createMessage(server, ERR_CHANOPRIVSNEEDED, user, cmd) + channelName + ": You're not channel operator\n");
 }
 
+std::string rplWelcome(Server &server, User &user)
+{
+    return (":" + server.getServerName() + " 001 " + user.getNickname() + ": Welcome to our IRC network :" + user.getNickname() + "!" + user.getUsername() + "@" + user.getHostname() + "\n");
+}
+std::string rplYourHost(Server &server, User &user)
+{
+    return (":" + server.getServerName() + " 002 " + user.getNickname() + ": Your host is " + user.getServername() + ", running version v1.0\n");
+}
+std::string rplCreated(Server &server, User &user)
+{
+    return (":" + server.getServerName() + " 003 " + user.getNickname() + ": This server was created at " + getTimestamp() + "\n");
+}
+std::string rplMyInfo(Server &server, User &user)
+{
+    return (":" + server.getServerName() + " 004 " + user.getNickname() + " " + user.getServername() + " v1.0 Available user modes: , Available channel modes: iklot\n" );
+}
 std::string rplNickok(Server &server, User &user)
 {
     return (createReply(server, RPL_NICKOK) + user.getOldNick() + " Nick succesfully changed to " + user.getNickname() + "\n");
@@ -94,10 +114,10 @@ std::string rplNotopic(Server &server, User &user, const std::string& channelNam
 
 std::string rplTopic(Server &server, User &user, const std::string& channelName, const std::string& channelTopic)
 {
-    return (createReply(server, RPL_TOPIC) + user.getNickname() + " " + channelName + " : " + channelTopic + "\n");
+    return (createReply(server, RPL_TOPIC) + user.getNickname() + " " + channelName + " TOPIC " + channelTopic);
 }
 
-std::string rplTopicwhotime(Server &server, User &user, const std::string& channelName, const std::string& nick)
+std::string rplTopicwhotime(Server &server, User &user, const std::string& channelName, const std::string& nick, const std::string& timestamp)
 {
-    return (createReply(server, RPL_TOPICWHOTIME) + user.getNickname() + " " + channelName + " " + nick + getTimestamp() + "\n");
+    return (createReply(server, RPL_TOPICWHOTIME) + user.getNickname() + " " + channelName + " " + nick + " " + timestamp + "\n");
 }

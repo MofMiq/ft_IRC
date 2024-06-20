@@ -9,8 +9,11 @@ class Server;
 
 enum Code
 {
-    // Error code for NICK
-    RPL_NICKOK = 002,
+    RPL_WELCOME = 001,
+    RPL_YOURHOST = 002,
+    RPL_CREATED = 003,
+    RPL_MYINFO = 004,
+    RPL_NICKOK = 010,
     RPL_NOTOPIC = 331,
     RPL_TOPIC = 332,
     RPL_TOPICWHOTIME = 333,
@@ -31,6 +34,7 @@ enum Code
 
 //clase de Response???
 
+std::string getTimestamp();
 std::string to_string(int value);
 
 std::string createMessage(Server &server, Code code, User &user, Command &cmd);
@@ -45,10 +49,14 @@ std::string errUsernotinchannel(Server& server, User& user, Command &cmd, const 
 std::string errNotonchannel(Server &server, User &user, Command &cmd, const std::string& channelName);
 std::string errNeedmoreparams(Server& server, User& user, Command &cmd);
 std::string errChanoprivsneeded(Server &server, User &user, Command &cmd, const std::string& channelName);
+std::string rplWelcome(Server &server, User &user);
+std::string rplYourHost(Server &server, User &user);
+std::string rplCreated(Server &server, User &user);
+std::string rplMyInfo(Server &server, User &user);
 std::string rplNickok(Server &server, User &user);
 std::string rplNotopic(Server &server, User &user, const std::string& channelName);
 std::string rplTopic(Server &server, User &user, const std::string& channelName, const std::string& channelTopic);
-std::string rplTopicwhotime(Server &server, User &user, const std::string& channelName, const std::string& nick);
+std::string rplTopicwhotime(Server &server, User &user, const std::string& channelName, const std::string& nick, const std::string& timestamp);
 
 
 #endif
