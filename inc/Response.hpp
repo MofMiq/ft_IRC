@@ -19,7 +19,9 @@ enum Code
     RPL_TOPICWHOTIME = 333,
     ERR_NOSUCHNICK = 401,
     ERR_NOSUCHCHANNEL = 403,
-    ERR_CANNOTSENDTOCHAN = 404,
+    ERR_TOOMANYTARGETS = 407,
+    ERR_NORECIPIENT = 411,
+    ERR_NOTEXTTOSEND = 412, 
     ERR_UNKNOWNCOMMAND = 421,
     ERR_NONICKNAMEGIVEN = 431,
     ERR_ERRONEUSNICKNAME = 432,
@@ -44,7 +46,9 @@ std::string createReply(Server &server, Code code);
 
 std::string errNosuchnick(Server &server, User &user, Command &cmd, const std::string& otherNick);
 std::string errNosuchchannel(Server &server, User &user, Command &cmd, const std::string& channelName);
-std::string errCannotsendtochannel(Server &server, User &user, Command &cmd, const std::string& channelName);
+std::string errToomanytargets(Server &server, User &user, Command &cmd);
+std::string errNorecipient(Server &server, User &user, Command &cmd);
+std::string errNotexttosend(Server &server, User &user, Command &cmd);
 std::string errUnknowncommand(Server &server, User &user, Command &cmd);
 std::string errNonicknamegiven(Server &server, User &user, Command &cmd);
 std::string errErroneusnickname(Server& server, User& user, Command &cmd);

@@ -11,8 +11,6 @@ Just one target (user or channel) at time.
 (401) ERR_NOSUCHNICK -> no client can be found
 (402) ERR_NOSUCHSERVER -> no server with that name can be found
 (403) ERR_NOSUCHCHANNEL -> no channel can be found
-(404) ERR_CANNOTSENDTOCHAN -> Indicates that the PRIVMSG could not be delivered to channel. 
-This is generally sent in response to channel modes, such as a channel being moderated(nop) and the client not having permission to speak on the channel(?), or not being joined to a channel with the no external messages mode set(?).
 (407) ERR_TOOMANYTARGETS -> more than one target
 (411) ERR_NORECIPIENT -> no target given
 (412) ERR_NOTEXTTOSEND -> no text given
@@ -28,22 +26,64 @@ PRIVMSG #general :yes I'm receiving it ! -> Command to send a message to channel
 
 void Command::executePrivmsg(Command& cmd, Server& server, User& user)
 {
-    std::cout << "hola desde PRIVMSG" << std::endl;
-    if (cmd._argCount < 3)
+    if (cmd._argCount < 2)
     {
         user.enqueueResponse(errNeedmoreparams(server, user, cmd));
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
-    if (cmd.getArg(1)[0] != '#' && !server.isNickInServer(cmd.getArg(1)))
+    else if (!cmd.getArg(1).empty())
     {
-        user.enqueueResponse(errNosuchnick(server, user, cmd, cmd.getArg(1)));
-        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        if (cmd.getArg(1)[0] == ':')
+        {
+            user.enqueueResponse(errNorecipient(server, user, cmd));
+            server.sendMessageClient(user.getFd(), user.dequeueResponse());
+            return ;
+        }
+        if (cmd.getArg(1)[0] != '#' && !server.isNickInServer(cmd.getArg(1)))
+        {
+            user.enqueueResponse(errNosuchnick(server, user, cmd, cmd.getArg(1)));
+            server.sendMessageClient(user.getFd(), user.dequeueResponse());
+            return ;
+        }
+        else if (cmd.getArg(1)[0] == '#' && server.getChannel(cmd.getArg(1)) == NULL)
+        {
+            user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
+            server.sendMessageClient(user.getFd(), user.dequeueResponse());
+            return ;
+        }
     }
-    else if (cmd.getArg(1)[0] == '#' && server.getChannel(cmd.getArg(1)) == NULL)
+    if (!cmd.getArg(2).empty() && cmd.getArg(2)[0] != ':')
     {
-        user.enqueueResponse(errNosuchnick(server, user, cmd, cmd.getArg(1)));
+        user.enqueueResponse(errToomanytargets(server, user, cmd));
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        return ;
+    }
+    if (cmd.getArgsAsString(2) == ":")
+    {
+        user.enqueueResponse(errNotexttosend(server, user, cmd));
+        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        return ;
+    }
+    
+    if (cmd.getArg(1)[0] != '#')
+    {
+        User rec = server.getUserByNick(cmd.getArg(1));
+        rec.enqueueResponse(":" + server.getServerName() + " " + user.getNickname() + " " + getArg(0) + " " + rec.getNickname() + " " + cmd.getArgsAsString(2) + "\n");
+        server.sendMessageClient(rec.getFd(), rec.dequeueResponse());
+    }
+    else if (cmd.getArg(1)[0] == '#')
+    {
+        Channel* tmp = server.getChannel(cmd.getArg(1));
+        if (tmp)
+        {
+            for (std::map<int, User>::iterator it = tmp->_users.begin(); it != tmp->_users.end(); ++it)
+            {
+                it->second.enqueueResponse(":" + server.getServerName() + " " + user.getNickname() + " " + getArg(0) + " " + tmp->getName() + " " + cmd.getArgsAsString(2) + "\n");
+                server.sendMessageClient(it->first, it->second.dequeueResponse());
+            }
+        }
+        //delete tmp?
     }
     return ;
 }

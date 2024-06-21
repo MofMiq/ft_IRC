@@ -15,7 +15,6 @@ private:
     std::string _name;
     std::string _topic;
     std::string _pass;
-    std::map<int, User> _users; // Contenedor de usuarios usando un mapa para acceso rápido por file descriptor
     std::set<int> _operators; // Conjunto de operadores usando file descriptor
 
     bool _private; // mode -i
@@ -28,6 +27,7 @@ private:
 
 
 public:
+    std::map<int, User> _users; // Contenedor de usuarios usando un mapa para acceso rápido por file descriptor
     // Constructor por defecto
     Channel();
 

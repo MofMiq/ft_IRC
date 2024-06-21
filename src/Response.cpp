@@ -51,11 +51,18 @@ std::string errNosuchchannel(Server &server, User &user, Command &cmd, const std
     return (createMessage(server, ERR_NOSUCHCHANNEL, user, cmd) + channelName + " : No such channel\n");
 }
 
-std::string errCannotsendtochannel(Server &server, User &user, Command &cmd, const std::string& channelName)
+std::string errToomanytargets(Server &server, User &user, Command &cmd)
 {
-    return (createMessage(server, ERR_CANNOTSENDTOCHAN, user, cmd) + channelName + " : Cannot send to channel\n"); //poner channel name al final?
+    return (createMessage(server, ERR_TOOMANYTARGETS, user, cmd) + ": Too many targets\n");
 }
-
+std::string errNorecipient(Server &server, User &user, Command &cmd)
+{
+    return (createMessage(server, ERR_NORECIPIENT, user, cmd) + ": :No recipient given\n");
+}
+std::string errNotexttosend(Server &server, User &user, Command &cmd)
+{
+    return (createMessage(server, ERR_UNKNOWNCOMMAND, user, cmd) + ": No text to send\n");
+}
 std::string errUnknowncommand(Server &server, User &user, Command &cmd)
 {
     return (createMessage(server, ERR_UNKNOWNCOMMAND, user, cmd) + ": Unknown command\n");

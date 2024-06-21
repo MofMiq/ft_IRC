@@ -318,14 +318,6 @@ void    Server::handle_client_message(int client_socket) {
         User* user = this->_usersServerByFd[client_socket];
         cmd.parseCommand(cmd.getArg(0), this, *user);
     }
-    /* for (std::map<std::string, int>::iterator it = _usersServerByNick.begin(); it != _usersServerByNick.end(); ++it) {
-    std::cout << YELLOW << "Key (Nick): " << it->first << ", Value (FD): " << it->second << std::endl;
-    } //borrar debug
-    for (std::map<int, User>::iterator it = _usersServerByFd.begin(); it != _usersServerByFd.end(); ++it) {
-    std::cout << "Key (FD): " << it->first << ", Value (User): " << it->second.getNickname() << END << std::endl;
-    } //borrar debug */
-    //para poder enviar la respuesta al cliente se usaría algo así
-    //enviarRespuestaCliente(cmd.parseCommand(cmd.getArg(0), this, usr1));
 }
 
 void Server::remove_client(int client_socket) {
