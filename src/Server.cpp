@@ -383,12 +383,11 @@ void Server::updateUsersServerByNick(int fd, const std::string& newNick)
         {
             this->_usersServerByNick.erase(it);
             this->_usersServerByNick[newNick] = fd;
-            //std::cout << "Key: " << newNick << ", Value: " << fd << std::endl; //borrar debug
         }
     }
 }
 
-User* Server::getUserByNick(const std::string& nick)
+User& Server::getUserByNick(const std::string& nick)
 {
-    return _usersServerByFd[_usersServerByNick[nick]];
+    return *_usersServerByFd[_usersServerByNick[nick]];
 }
