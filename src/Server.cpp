@@ -107,13 +107,13 @@ void    Server::handle_new_connection() {
     pfd.revents = 0;
     pollfds.push_back(pfd);
     clients[client_socket] = "";
-    // _usersServerByFd[client_socket] = new User(client_socket);
-    _usersServerByFd[client_socket] = User(client_socket);
-    _usersServerByFd[client_socket].setUsername("");
-    _usersServerByFd[client_socket].setNickname("");
-    _usersServerByFd[client_socket].setHostname("");
-    _usersServerByFd[client_socket].setServername("");
-    _usersServerByFd[client_socket].setRealname("");
+    _usersServerByFd[client_socket] = new User(client_socket);
+    //_usersServerByFd[client_socket] = User(client_socket);
+    _usersServerByFd[client_socket]->setUsername("");
+    _usersServerByFd[client_socket]->setNickname("");
+    _usersServerByFd[client_socket]->setHostname("");
+    _usersServerByFd[client_socket]->setServername("");
+    _usersServerByFd[client_socket]->setRealname("");
     this->_authenticated = false;
     //falta implementar la eliminación del usuario del mapa _usersServerByFd cuando se elimina el usuario del servidor
 
@@ -259,21 +259,21 @@ void    Server::handle_client_message(int client_socket) {
 
     try
     { 
-        if (message.find("USER") != std::string::npos && this->_usersServerByFd[client_socket].getUsername() == "")
+        if (message.find("USER") != std::string::npos && this->_usersServerByFd[client_socket]->getUsername() == "")
         {
             done = true;
             std::string userName, hostName, serverName, realName;
             extractDataUser(message, userName, hostName, serverName, realName);
-            this->_usersServerByFd[client_socket].setUsername(userName);
-            this->_usersServerByFd[client_socket].setHostname(hostName);
-            this->_usersServerByFd[client_socket].setServername(serverName);
-            this->_usersServerByFd[client_socket].setRealname(realName);
+            this->_usersServerByFd[client_socket]->setUsername(userName);
+            this->_usersServerByFd[client_socket]->setHostname(hostName);
+            this->_usersServerByFd[client_socket]->setServername(serverName);
+            this->_usersServerByFd[client_socket]->setRealname(realName);
 
-            std::cout << "DATOS COMPLETOS DEL USUARIO CON FD -> " << this->_usersServerByFd[client_socket].getFd() << std::endl;
-            std::cout << "USERNAME -> " << this->_usersServerByFd[client_socket].getUsername() << std::endl;
-            std::cout << "HOSTNAME -> " << this->_usersServerByFd[client_socket].getHostname() << std::endl;
-            std::cout << "SERVERNAME -> " << this->_usersServerByFd[client_socket].getServername() << std::endl;
-            std::cout << "REALNAME -> " << this->_usersServerByFd[client_socket].getRealname() << std::endl;
+            std::cout << "DATOS COMPLETOS DEL USUARIO CON FD -> " << this->_usersServerByFd[client_socket]->getFd() << std::endl;
+            std::cout << "USERNAME -> " << this->_usersServerByFd[client_socket]->getUsername() << std::endl;
+            std::cout << "HOSTNAME -> " << this->_usersServerByFd[client_socket]->getHostname() << std::endl;
+            std::cout << "SERVERNAME -> " << this->_usersServerByFd[client_socket]->getServername() << std::endl;
+            std::cout << "REALNAME -> " << this->_usersServerByFd[client_socket]->getRealname() << std::endl;
 
             //Añadir usuario al contenedor de usuarios del server
             //_usersServer[fdCliente] = new User(todos los datos);
@@ -289,7 +289,7 @@ void    Server::handle_client_message(int client_socket) {
     try
     {
         //esta implementación de NICK sirve sólo para la primera vez
-        if (message.find("NICK") != std::string::npos && this->_usersServerByFd[client_socket].getNickname() == "") 
+        if (message.find("NICK") != std::string::npos && this->_usersServerByFd[client_socket]->getNickname() == "") 
         {
             done = true;
             std::string nickName;
@@ -299,12 +299,12 @@ void    Server::handle_client_message(int client_socket) {
             {
                 std::cout << "NICKNAME EXTRAIDO = " << nickName << std::endl;
                 this->_usersServerByNick[nickName] = client_socket;
-                this->_usersServerByFd[this->_usersServerByNick[nickName]].setNickname(nickName);
-                std::cout << "NICKNAME DEL CLIENTE = " << this->_usersServerByFd[_usersServerByNick[nickName]].getNickname() << std::endl;
-                std::cout << rplWelcome(*this, this->_usersServerByFd[this->_usersServerByNick[nickName]]);
-                std::cout << rplYourHost(*this, this->_usersServerByFd[this->_usersServerByNick[nickName]]);
-                std::cout << rplCreated(*this, this->_usersServerByFd[this->_usersServerByNick[nickName]]);
-                std::cout << rplMyInfo(*this, this->_usersServerByFd[this->_usersServerByNick[nickName]]);
+                this->_usersServerByFd[this->_usersServerByNick[nickName]]->setNickname(nickName);
+                std::cout << "NICKNAME DEL CLIENTE = " << this->_usersServerByFd[_usersServerByNick[nickName]]->getNickname() << std::endl;
+                std::cout << rplWelcome(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]);
+                std::cout << rplYourHost(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]);
+                std::cout << rplCreated(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]);
+                std::cout << rplMyInfo(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]);
             }
         }
     }
@@ -315,8 +315,8 @@ void    Server::handle_client_message(int client_socket) {
     if (done == false)
     {
         Command cmd(message);
-        User user = this->_usersServerByFd[client_socket];
-        cmd.parseCommand(cmd.getArg(0), this, user);
+        User* user = this->_usersServerByFd[client_socket];
+        cmd.parseCommand(cmd.getArg(0), this, *user);
     }
     /* for (std::map<std::string, int>::iterator it = _usersServerByNick.begin(); it != _usersServerByNick.end(); ++it) {
     std::cout << YELLOW << "Key (Nick): " << it->first << ", Value (FD): " << it->second << std::endl;
@@ -383,12 +383,11 @@ void Server::updateUsersServerByNick(int fd, const std::string& newNick)
         {
             this->_usersServerByNick.erase(it);
             this->_usersServerByNick[newNick] = fd;
-            //std::cout << "Key: " << newNick << ", Value: " << fd << std::endl; //borrar debug
         }
     }
 }
 
 User& Server::getUserByNick(const std::string& nick)
 {
-    return _usersServerByFd[_usersServerByNick[nick]];
+    return *_usersServerByFd[_usersServerByNick[nick]];
 }

@@ -41,9 +41,19 @@ std::string createReply(Server &server, Code code)
     return msg;
 }
 
-std::string errNosuchchannel(Server &server, User &user, Command &cmd, const std::string& channelName)
+std::string errNosuchnick(Server &server, User &user, Command &cmd, const std::string& otherNick)//poner otherNick name al final?
+{
+    return (createMessage(server, ERR_NOSUCHNICK, user, cmd) + otherNick + ": No such nick/channel\n");
+}
+
+std::string errNosuchchannel(Server &server, User &user, Command &cmd, const std::string& channelName)//poner channel name al final?
 {
     return (createMessage(server, ERR_NOSUCHCHANNEL, user, cmd) + channelName + " : No such channel\n");
+}
+
+std::string errCannotsendtochannel(Server &server, User &user, Command &cmd, const std::string& channelName)
+{
+    return (createMessage(server, ERR_CANNOTSENDTOCHAN, user, cmd) + channelName + " : Cannot send to channel\n"); //poner channel name al final?
 }
 
 std::string errUnknowncommand(Server &server, User &user, Command &cmd)

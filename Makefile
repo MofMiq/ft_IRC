@@ -1,6 +1,5 @@
 NAME	= ircserv
 CC		= c++
-#FALTA EL FLAG -Werror
 CFLAGS	= -Wall -Werror -Wextra -std=c++98 
 RM		= rm -rf
 
