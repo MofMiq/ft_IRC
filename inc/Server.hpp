@@ -55,6 +55,9 @@ public:
     void addUserToChannel(User& user, const std::string& channelName);
     void createChannel(const std::string& channelName);
     Channel* getChannel(const std::string& channelName);
+    bool isUserInChannelServer(User& user, const std::string& channelName);
+    void ShowChannelsAndUsers() const;
+    void setOperator(const User& user, const std::string& channelName);
     
     User& getUserByNick(const std::string& nick);   // Metodo para obtener un usuario por su nickname
 

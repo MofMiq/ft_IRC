@@ -42,8 +42,13 @@ public:
     // Elimina un usuario del canal
     void removeUser(int userFd);
 
+    std::vector<User> getUsers() const;
+
     // Verifica si un usuario es operador del canal
     bool isUserOperator(int userFd) const;
+
+    // Añade un operador al canal
+    void addOperator(int userFd);
 
     // Establece el topic del canal
     void setTopic(const std::string& topic);

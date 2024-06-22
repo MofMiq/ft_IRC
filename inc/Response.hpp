@@ -27,7 +27,8 @@ enum Code
     ERR_USERNOTINCHANNEL = 441,
     ERR_NOTONCHANNEL = 442,
     ERR_NEEDMOREPARAMS = 461,
-    ERR_CHANOPRIVSNEEDED = 482
+    ERR_CHANOPRIVSNEEDED = 482,
+    ERR_BADCHANNELKEY = 475
 };
 
 // the trailer is the post colon (:) message
@@ -53,6 +54,7 @@ std::string errUsernotinchannel(Server& server, User& user, Command &cmd, const 
 std::string errNotonchannel(Server &server, User &user, Command &cmd, const std::string& channelName);
 std::string errNeedmoreparams(Server& server, User& user, Command &cmd);
 std::string errChanoprivsneeded(Server &server, User &user, Command &cmd, const std::string& channelName);
+std::string errBadChannelKey(Server& server, User& user, Command& cmd, const std::string& channelName);
 std::string rplWelcome(Server &server, User &user);
 std::string rplYourHost(Server &server, User &user);
 std::string rplCreated(Server &server, User &user);
