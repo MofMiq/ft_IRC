@@ -43,49 +43,49 @@ std::string createReply(Server &server, Code code)
 
 std::string errNosuchnick(Server &server, User &user, Command &cmd, const std::string& otherNick)//poner otherNick name al final?
 {
-    return (createMessage(server, ERR_NOSUCHNICK, user, cmd) + otherNick + ": No such nick/channel\n");
+    return (createMessage(server, ERR_NOSUCHNICK, user, cmd) + otherNick + ": No such nick/channel");
 }
 
 std::string errNosuchchannel(Server &server, User &user, Command &cmd, const std::string& channelName)//poner channel name al final?
 {
-    return (createMessage(server, ERR_NOSUCHCHANNEL, user, cmd) + channelName + " : No such channel\n");
+    return (createMessage(server, ERR_NOSUCHCHANNEL, user, cmd) + channelName + " : No such channel");
 }
 
 std::string errToomanytargets(Server &server, User &user, Command &cmd)
 {
-    return (createMessage(server, ERR_TOOMANYTARGETS, user, cmd) + ": Too many targets\n");
+    return (createMessage(server, ERR_TOOMANYTARGETS, user, cmd) + ": Too many targets");
 }
 std::string errNorecipient(Server &server, User &user, Command &cmd)
 {
-    return (createMessage(server, ERR_NORECIPIENT, user, cmd) + ": :No recipient given\n");
+    return (createMessage(server, ERR_NORECIPIENT, user, cmd) + ": :No recipient given");
 }
 std::string errNotexttosend(Server &server, User &user, Command &cmd)
 {
-    return (createMessage(server, ERR_UNKNOWNCOMMAND, user, cmd) + ": No text to send\n");
+    return (createMessage(server, ERR_UNKNOWNCOMMAND, user, cmd) + ": No text to send");
 }
 std::string errUnknowncommand(Server &server, User &user, Command &cmd)
 {
-    return (createMessage(server, ERR_UNKNOWNCOMMAND, user, cmd) + ": Unknown command\n");
+    return (createMessage(server, ERR_UNKNOWNCOMMAND, user, cmd) + ": Unknown command");
 }
 
 std::string errNonicknamegiven(Server &server, User &user, Command &cmd)
 {
-    return (createMessage(server, ERR_NONICKNAMEGIVEN, user, cmd) + ": No nickname given\n");
+    return (createMessage(server, ERR_NONICKNAMEGIVEN, user, cmd) + ": No nickname given");
 }
 
 std::string errErroneusnickname(Server& server, User& user, Command &cmd)
 {
-    return (createMessage(server, ERR_ERRONEUSNICKNAME, user, cmd) + ": Erroneus nickname\n");
+    return (createMessage(server, ERR_ERRONEUSNICKNAME, user, cmd) + ": Erroneus nickname");
 }
 
 std::string errNicknameinuse(Server& server, User& user, Command &cmd)
 {
-    return (createMessage(server, ERR_NICKNAMEINUSE, user, cmd) + ": Nickname is already in use\n");
+    return (createMessage(server, ERR_NICKNAMEINUSE, user, cmd) + ": Nickname is already in use");
 }
 
 std::string errNotonchannel(Server &server, User &user, Command &cmd, const std::string& channelName)
 {
-    return (createMessage(server, ERR_NOTONCHANNEL, user, cmd) + channelName + ": You're not on that channel\n");
+    return (createMessage(server, ERR_NOTONCHANNEL, user, cmd) + channelName + ": You're not on that channel");
 }
 
 std::string errUsernotinchannel(Server& server, User& user, Command &cmd, const std::string& targetNickname, const std::string& channelName)
@@ -95,17 +95,17 @@ std::string errUsernotinchannel(Server& server, User& user, Command &cmd, const 
 
 std::string errNeedmoreparams(Server& server, User& user, Command &cmd)
 {
-    return (createMessage(server, ERR_NEEDMOREPARAMS, user, cmd) + ": Not enough parameters\n");
+    return (createMessage(server, ERR_NEEDMOREPARAMS, user, cmd) + ": Not enough parameters");
 }
 
 std::string errChanoprivsneeded(Server &server, User &user, Command &cmd, const std::string& channelName)
 {
-    return (createMessage(server, ERR_CHANOPRIVSNEEDED, user, cmd) + channelName + ": You're not channel operator\n");
+    return (createMessage(server, ERR_CHANOPRIVSNEEDED, user, cmd) + channelName + ": You're not channel operator");
 }
 
 std::string rplWelcome(Server &server, User &user)
 {
-    return (":" + server.getServerName() + " 001 " + user.getNickname() + ": Welcome to our IRC network :" + user.getNickname() + "!" + user.getUsername() + "@" + user.getHostname() + "\n");
+    return (":" + server.getServerName() + " 001 " + user.getNickname() + ": Welcome to our IRC network :" + user.getNickname() + "!" + user.getUsername() + "@" + user.getHostname()) + "\n";
 }
 std::string rplYourHost(Server &server, User &user)
 {
@@ -117,16 +117,16 @@ std::string rplCreated(Server &server, User &user)
 }
 std::string rplMyInfo(Server &server, User &user)
 {
-    return (":" + server.getServerName() + " 004 " + user.getNickname() + " " + user.getServername() + " v1.0 Available user modes: , Available channel modes: iklot\n" );
+    return (":" + server.getServerName() + " 004 " + user.getNickname() + " " + user.getServername() + " v1.0 Available user modes: , Available channel modes: iklot\n");
 }
 std::string rplNickok(Server &server, User &user)
 {
-    return (createReply(server, RPL_NICKOK) + user.getOldNick() + " Nick succesfully changed to " + user.getNickname() + "\n");
+    return (createReply(server, RPL_NICKOK) + user.getOldNick() + " Nick succesfully changed to " + user.getNickname());
 }
 
 std::string rplNotopic(Server &server, User &user, const std::string& channelName)
 {
-    return (createReply(server, RPL_NOTOPIC) + user.getNickname() + " " + channelName + " : No topic is set\n");
+    return (createReply(server, RPL_NOTOPIC) + user.getNickname() + " " + channelName + " : No topic is set");
 }
 
 std::string rplTopic(Server &server, User &user, const std::string& channelName, const std::string& channelTopic)
@@ -136,5 +136,5 @@ std::string rplTopic(Server &server, User &user, const std::string& channelName,
 
 std::string rplTopicwhotime(Server &server, User &user, const std::string& channelName, const std::string& nick, const std::string& timestamp)
 {
-    return (createReply(server, RPL_TOPICWHOTIME) + user.getNickname() + " " + channelName + " " + nick + " " + timestamp + "\n");
+    return (createReply(server, RPL_TOPICWHOTIME) + user.getNickname() + " " + channelName + " " + nick + " " + timestamp);
 }

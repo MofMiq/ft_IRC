@@ -26,33 +26,35 @@ PRIVMSG #general :yes I'm receiving it ! -> Command to send a message to channel
 
 void Command::executePrivmsg(Command& cmd, Server& server, User& user)
 {
-    if (cmd._argCount < 2)
+  if (cmd._argCount <= 2)
+  {
+    user.enqueueResponse(errNeedmoreparams(server, user, cmd));
+    server.sendMessageClient(user.getFd(), user.dequeueResponse());
+    return ;
+  }
+  else if (!cmd.getArg(1).empty())
+  {
+    if (cmd.getArg(1)[0] == ':')
     {
-        user.enqueueResponse(errNeedmoreparams(server, user, cmd));
+        user.enqueueResponse(errNorecipient(server, user, cmd));
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
-    else if (!cmd.getArg(1).empty())
+    if (cmd.getArg(1)[0] != '#' && !server.isNickInServer(cmd.getArg(1)))
     {
-        if (cmd.getArg(1)[0] == ':')
-        {
-            user.enqueueResponse(errNorecipient(server, user, cmd));
-            server.sendMessageClient(user.getFd(), user.dequeueResponse());
-            return ;
-        }
-        if (cmd.getArg(1)[0] != '#' && !server.isNickInServer(cmd.getArg(1)))
-        {
-            user.enqueueResponse(errNosuchnick(server, user, cmd, cmd.getArg(1)));
-            server.sendMessageClient(user.getFd(), user.dequeueResponse());
-            return ;
-        }
-        else if (cmd.getArg(1)[0] == '#' && server.getChannel(cmd.getArg(1)) == NULL)
-        {
-            user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
-            server.sendMessageClient(user.getFd(), user.dequeueResponse());
-            return ;
-        }
+        user.enqueueResponse(errNosuchnick(server, user, cmd, cmd.getArg(1)));
+        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        return ;
     }
+    else if (cmd.getArg(1)[0] == '#' && server.getChannel(cmd.getArg(1)) == NULL)
+    {
+        user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
+        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        return ;
+    }
+  }
+  if (cmd._argCount > 2)
+  {
     if (!cmd.getArg(2).empty() && cmd.getArg(2)[0] != ':')
     {
         user.enqueueResponse(errToomanytargets(server, user, cmd));
@@ -69,7 +71,7 @@ void Command::executePrivmsg(Command& cmd, Server& server, User& user)
     if (cmd.getArg(1)[0] != '#')
     {
         User rec = server.getUserByNick(cmd.getArg(1));
-        rec.enqueueResponse(":" + server.getServerName() + " " + user.getNickname() + " " + getArg(0) + " " + rec.getNickname() + " " + cmd.getArgsAsString(2) + "\n");
+        rec.enqueueResponse(":" + server.getServerName() + " " + user.getNickname() + " " + getArg(0) + " " + rec.getNickname() + " " + cmd.getArgsAsString(2) + "\n");  //borrar salto de linea?
         server.sendMessageClient(rec.getFd(), rec.dequeueResponse());
     }
     else if (cmd.getArg(1)[0] == '#')
@@ -79,11 +81,11 @@ void Command::executePrivmsg(Command& cmd, Server& server, User& user)
         {
             for (std::map<int, User>::iterator it = tmp->_users.begin(); it != tmp->_users.end(); ++it)
             {
-                it->second.enqueueResponse(":" + server.getServerName() + " " + user.getNickname() + " " + getArg(0) + " " + tmp->getName() + " " + cmd.getArgsAsString(2) + "\n");
+                it->second.enqueueResponse(":" + server.getServerName() + " " + user.getNickname() + " " + getArg(0) + " " + tmp->getName() + " " + cmd.getArgsAsString(2) + "\n"); //borrar salto de linea?
                 server.sendMessageClient(it->first, it->second.dequeueResponse());
             }
         }
-        //delete tmp?
     }
-    return ;
+  }
+  return ;
 }
