@@ -24,6 +24,8 @@ PRIVMSG #general :yes I'm receiving it ! -> Command to send a message to channel
 
 */
 
+//void sendMessageToChannels(Server& server, User& user, Command& cmd, std::vector<Channel*>&); //borrar forward declaration
+
 void Command::executePrivmsg(Command& cmd, Server& server, User& user)
 {
   if (cmd._argCount <= 2)
@@ -46,7 +48,7 @@ void Command::executePrivmsg(Command& cmd, Server& server, User& user)
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
-    else if (cmd.getArg(1)[0] == '#' && server.getChannel(cmd.getArg(1)) == NULL)
+    else if (cmd.getArg(1)[0] == '#' && !server.getChannel(cmd.getArg(1)))
     {
         user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
@@ -71,20 +73,15 @@ void Command::executePrivmsg(Command& cmd, Server& server, User& user)
     if (cmd.getArg(1)[0] != '#')
     {
         User rec = server.getUserByNick(cmd.getArg(1));
-        rec.enqueueResponse(":" + server.getServerName() + " " + user.getNickname() + " " + getArg(0) + " " + rec.getNickname() + " " + cmd.getArgsAsString(2) + "\n");  //borrar salto de linea?
+        rec.enqueueResponse(":" + server.getServerName() + " " + user.getNickname() + " " + getArg(0) + " " + rec.getNickname() + " " + cmd.getArgsAsString(2));  //borrar salto de linea?
         server.sendMessageClient(rec.getFd(), rec.dequeueResponse());
     }
-    else if (cmd.getArg(1)[0] == '#')
+    else if (cmd.getArg(1)[0] == '#' && server.getChannel(cmd.getArg(1)))
     {
-        Channel* tmp = server.getChannel(cmd.getArg(1));
-        if (tmp)
-        {
-            for (std::map<int, User>::iterator it = tmp->_users.begin(); it != tmp->_users.end(); ++it)
-            {
-                it->second.enqueueResponse(":" + server.getServerName() + " " + user.getNickname() + " " + getArg(0) + " " + tmp->getName() + " " + cmd.getArgsAsString(2) + "\n"); //borrar salto de linea?
-                server.sendMessageClient(it->first, it->second.dequeueResponse());
-            }
-        }
+        std::vector<Channel*> aux;
+        aux.push_back(server.getChannel(cmd.getArg(1)));
+        std::string reply = ":" + server.getServerName() + " " + user.getNickname() + " " + cmd.getArg(0) + " " + cmd.getArg(1) + " " + cmd.getArgsAsString(2);
+        sendMessageToChannels(server, user, aux, reply);
     }
   }
   return ;

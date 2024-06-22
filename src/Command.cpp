@@ -43,7 +43,6 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
     if (this->_argCount == 0)
     {
         user.enqueueResponse(errUnknowncommand(*server, user, *this));
-        //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
         server->sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
@@ -59,6 +58,8 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
         executeJoin(*this, *server, user);
     else if (cmd == "KICK")
         executeKick(*this, *server, user);
+    else if (cmd == "test") //borrar debug
+        server->getAllChannelsUserIn(user.getFd());
   /*  else if (cmd == "INVITE")
         executeInvite(*this, *server, *user);
     else if (cmd == "USER")
@@ -66,7 +67,6 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
     else
     {
         user.enqueueResponse(errUnknowncommand(*server, user, *this));
-        //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
         server->sendMessageClient(user.getFd(), user.dequeueResponse());
     }
     return ;
@@ -88,3 +88,19 @@ std::string Command::getArgsAsString(int startIdx) const {
 
     return result;
 }
+
+void Command::sendMessageToChannels(Server& server, User& user, const std::vector<Channel*>& channels, const std::string& reply)
+{
+  for (size_t i = 0; i < channels.size(); i++)
+  {
+    Channel* c = channels[i];
+    for (std::map<int, User>::iterator it = c->_users.begin(); it != c->_users.end(); ++it)
+    {
+        if (it->second.getFd() != user.getFd())
+        {
+            it->second.enqueueResponse(reply);
+            server.sendMessageClient(it->first, it->second.dequeueResponse());
+        }
+    }
+  }
+} 

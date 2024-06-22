@@ -383,3 +383,18 @@ User& Server::getUserByNick(const std::string& nick)
 {
     return *_usersServerByFd[_usersServerByNick[nick]];
 }
+
+std::vector<Channel*> Server::getAllChannelsUserIn(int fd)
+{
+    std::vector<Channel*> channelsUserIn;
+    for (std::map<std::string, Channel>::iterator it = this->_channelsServer.begin(); it != this->_channelsServer.end(); ++it)
+    {
+        if (it->second.isUserInChannel(fd))
+            channelsUserIn.push_back(&(it->second));
+    }
+    for(std::vector<Channel*>::iterator it = channelsUserIn.begin(); it != channelsUserIn.end(); ++it) //borrar debug
+    {
+        std::cout << PURPLE << (*it)->getName() << END << std::endl;
+    }
+    return channelsUserIn;
+}

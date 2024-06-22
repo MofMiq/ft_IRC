@@ -59,6 +59,7 @@ public:
     //Commands functions
     bool isNickInServer(const std::string& nick);
     void updateUsersServerByNick(int fd, const std::string& newNick);
+    std::vector<Channel*> getAllChannelsUserIn(int fd);
 };
 
 #endif
