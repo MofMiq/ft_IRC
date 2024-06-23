@@ -26,10 +26,23 @@ void Channel::removeUser(int userFd) {
     _operators.erase(userFd);
 }
 
+std::vector<User> Channel::getUsers() const {
+    std::vector<User> userList;
+    for (std::map<int, User>::const_iterator it = _users.begin(); it != _users.end(); ++it) {
+        userList.push_back(it->second);
+    }
+    return userList;
+}
+
 // Verifica si un usuario es operador del canal
 bool Channel::isUserOperator(int userFd) const {
     return _operators.find(userFd) != _operators.end();
 }
+
+void Channel::addOperator(int userFd) {
+    _operators.insert(userFd);
+}
+
 
 // Establece el topic del canal
 void Channel::setTopic(const std::string& topic) {
