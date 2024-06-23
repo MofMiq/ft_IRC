@@ -7,60 +7,70 @@
 /* KICK <canal> <usuario> [:<razón>]
 <canal> es el nombre del canal del cual se quiere expulsar al usuario.
 <usuario> es el nick del usuario que se quiere expulsar.
-:<razón> (opcional) es un mensaje opcional que describe la razón de la expulsión.*/
+:<razón> (opcional) es un mensaje opcional que describe la razón de la expulsión.
 
+Expulsar usuario de canal:
+KICK #general John :Breaking rules
+
+Expulsar mas de 1 usuario:
+KICK #general John,Jane :Breaking rules
+
+Sin comentario:
+KICK #general John
+KICK #general John,Jane
+*/
 
 void Command::executeKick(Command& cmd, Server& server, User& user) {
     // Verifica si se proporcionaron suficientes argumentos
     if (cmd._argCount < 3) {
         user.enqueueResponse(errNeedmoreparams(server, user, cmd));
+        //std::cout << user.dequeueResponse();
+        server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;
     }
 
+    // Obtener el nombre del canal y los usuarios objetivo
     std::string channelName = cmd.getArg(1);
-    Channel* channel = server.getChannel(channelName); //TODO
+    std::string usersStr = cmd.getArg(2);
+    //La razon solo si hay
+    // getArgsAsString para pillar todos el resto de parametros que contiene el msj
+    std::string reason = (cmd._argCount > 3) ? cmd.getArgsAsString(3) : "Kicked by operator";
 
     // Verifica si el canal existe
-    if (channel == NULL) {
+    if (!server.channelExists(channelName)) {
         user.enqueueResponse(errNosuchchannel(server, user, cmd, channelName));
+        //std::cout << user.dequeueResponse();
+        server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;
     }
 
-    // Verifica si el usuario que ejecuta el comando es un operador del canal
+    Channel* channel = server.getChannel(channelName);
+    // Verifica si el usuario que envia el comando es operador del canal
     if (!channel->isUserOperator(user.getFd())) {
         user.enqueueResponse(errChanoprivsneeded(server, user, cmd, channelName));
+        //std::cout << user.dequeueResponse();
+        server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;
     }
 
-    std::string targetNickname = cmd.getArg(2);
-    User targetUser = server.getUserByNick(targetNickname); // TODO
-
-    // Verifica si el usuario objetivo está en el canal
-    if (!channel->isUserInChannel(targetUser.getFd())) { //TODO
-        //user.enqueueResponse(err_usernotinchannel(server, user, targetNickname, channelName));
-        return;
+    // Divide la lista de user
+    //while pa cada user
+    std::stringstream ss(usersStr);
+    std::string targetNickname;
+    while (std::getline(ss, targetNickname, ',')) {
+        // Verifica si el usuario está en el canal
+        User* targetUser = server.getUserByNick(targetNickname);
+        if (targetUser == NULL || !channel->isUserInChannel(targetUser->getFd()))
+        {
+            user.enqueueResponse(errUsernotinchannel(server, user, cmd, targetNickname, channelName));
+            //std::cout << user.dequeueResponse();
+            server.sendMessageClient(user.getFd(), user.dequeueResponse());
+            continue;
+        }
+        // Elimina al usuario del canal 
+        channel->removeUser(targetUser->getFd());
+        std::string kickMessage = user.getNickname() + " has kicked " + targetNickname + " from channel " + channelName + " : " + reason + "\n";
+        std::cout << kickMessage;
     }
-
-    // Obtén la razón para el KICK, si hay alguna
-    std::string reason = cmd.getArgsAsString(3); //TODO
-    if (reason.empty()) {
-        reason = "No reason given"; // Mensaje por defecto si no se proporciona razón
-    }
-
-    // Elimina al usuario objetivo del canal
-    channel->removeUser(targetUser.getFd());
-
-    // Crear mensajes de confirmación e información para ambos usuarios
-    std::string kickMessage = user.getNickname() + " has kicked " + targetNickname + " from channel " + channelName + " : " + reason + "\n";
-    user.enqueueResponse(kickMessage);
-    targetUser.enqueueResponse(kickMessage);
+    server.ShowChannelsAndUsers();
 }
-
-
-//// Cambia el nickname de un usuario
-//void Server::changeUserNick(int userFd, const std::string& newNick) {
-//    User& user = _users[userFd];
-//    _nickToUser.erase(user.getNickname()); // Elimina el viejo nickname del mapa
-//    user.setNickname(newNick); // Actualiza el nickname del usuario
-//    _nickToUser[newNick] = user; // Añade el nuevo nickname al mapa
-//}

@@ -72,19 +72,17 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
     return ;
 }
 
-// Implementaci�n del nuevo m�todo
-std::string Command::getArgsAsString(int startIdx) const {
-    if (startIdx < 0 || startIdx >= static_cast<int>(_args.size())) {
+// Metodo para sacar comandos desde startIdx hasta el final en un solo string
+std::string Command::getArgsAsString(int startIdx) const
+{
+    if (startIdx < 0 || startIdx >= static_cast<int>(_args.size()))
         return "";
-    }
-
     std::string result = "";
-    for (int i = startIdx; i < static_cast<int>(_args.size()); ++i) {
+    for (int i = startIdx; i < static_cast<int>(_args.size()); ++i)
+    {
         result += _args[i];
-        if (i < static_cast<int>(_args.size()) - 1) {
+        if (i < static_cast<int>(_args.size()) - 1)
             result += " ";
-        }
     }
-
     return result;
 }
