@@ -59,7 +59,7 @@ public:
     void ShowChannelsAndUsers() const;
     void setOperator(const User& user, const std::string& channelName);
     
-    User& getUserByNick(const std::string& nick);   // Metodo para obtener un usuario por su nickname
+    User* getUserByNick(const std::string& nick);   // Metodo para obtener un usuario por su nickname
 
     //Commands functions
     bool isNickInServer(const std::string& nick);

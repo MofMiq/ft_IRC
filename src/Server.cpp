@@ -415,7 +415,17 @@ void Server::updateUsersServerByNick(int fd, const std::string& newNick)
     }
 }
 
-User& Server::getUserByNick(const std::string& nick)
+//Cambiado pq da segfault si no existia el user, hay q recorrer antes y ver si existe
+User* Server::getUserByNick(const std::string& nick)
 {
-    return *_usersServerByFd[_usersServerByNick[nick]];
+    std::map<std::string, int>::iterator it = _usersServerByNick.find(nick);
+    if (it == _usersServerByNick.end()) {
+        return NULL;  // Nick no encontrado
+    }
+    int fd = it->second;
+    std::map<int, User*>::iterator userIt = _usersServerByFd.find(fd);
+    if (userIt == _usersServerByFd.end()) {
+        return NULL;  // FD no encontrado
+    }
+    return userIt->second;
 }
