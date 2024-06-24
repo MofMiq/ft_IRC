@@ -57,7 +57,15 @@ void Command::executeKick(Command& cmd, Server& server, User& user) {
     //while pa cada user
     std::stringstream ss(usersStr);
     std::string targetNickname;
-    while (std::getline(ss, targetNickname, ',')) {
+    while (std::getline(ss, targetNickname, ','))
+    {
+        if (targetNickname == user.getNickname())
+        {
+            user.enqueueResponse("You cannot kick yourself from the channel !!!");
+            //std::cout << user.dequeueResponse();
+            server.sendMessageClient(user.getFd(), user.dequeueResponse());
+            continue;
+        }
         // Verifica si el usuario está en el canal
         User* targetUser = server.getUserByNick(targetNickname);
         if (targetUser == NULL || !channel->isUserInChannel(targetUser->getFd()))
@@ -71,6 +79,14 @@ void Command::executeKick(Command& cmd, Server& server, User& user) {
         channel->removeUser(targetUser->getFd());
         std::string kickMessage = user.getNickname() + " has kicked " + targetNickname + " from channel " + channelName + " : " + reason + "\n";
         std::cout << kickMessage;
+
+        // Esto es para notificar a los usuarios del canal sobre la expulsion
+        std::vector<User> users = channel->getUsers();
+        for (std::vector<User>::const_iterator it = users.begin(); it != users.end(); ++it) {
+            server.sendMessageClient(it->getFd(), kickMessage);
+        }
+        //Y tb hay q notificar al pobre q ha sido expulsado
+        server.sendMessageClient(targetUser->getFd(), kickMessage);
     }
     server.ShowChannelsAndUsers();
 }
