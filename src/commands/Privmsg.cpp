@@ -72,9 +72,9 @@ void Command::executePrivmsg(Command& cmd, Server& server, User& user)
     
     if (cmd.getArg(1)[0] != '#')
     {
-        User rec = server.getUserByNick(cmd.getArg(1));
-        rec.enqueueResponse(":" + server.getServerName() + " " + user.getNickname() + " " + getArg(0) + " " + rec.getNickname() + " " + cmd.getArgsAsString(2));  //borrar salto de linea?
-        server.sendMessageClient(rec.getFd(), rec.dequeueResponse());
+        User* rec = server.getUserByNick(cmd.getArg(1));
+        rec->enqueueResponse(":" + server.getServerName() + " " + user.getNickname() + " " + getArg(0) + " " + rec->getNickname() + " " + cmd.getArgsAsString(2));  //borrar salto de linea?
+        server.sendMessageClient(rec->getFd(), rec->dequeueResponse());
     }
     else if (cmd.getArg(1)[0] == '#' && server.getChannel(cmd.getArg(1)))
     {

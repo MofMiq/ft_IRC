@@ -94,22 +94,22 @@ void Command::executeMode(Command& cmd, Server& server, User& user)
         }
         else if (cmd.getArg(2) == "+o" && cmd._argCount == 4/*&& !cmd.getArg(3).empty()*/)
         {
-            if (channel->isUserInChannel(server.getUserByNick(cmd.getArg(3)).getFd()))
+            if (channel->isUserInChannel(server.getUserByNick(cmd.getArg(3))->getFd()))
             {
-                User tmp = server.getUserByNick(cmd.getArg(3));
-                channel->addOperatorToChannel(tmp.getFd());
-                std::cout << RED << "NOW " << tmp.getNickname() << " IS AN OPERATOR OF " << channel->getName() << END << std::endl;
+                User* tmp = server.getUserByNick(cmd.getArg(3));
+                channel->addOperatorToChannel(tmp->getFd());
+                std::cout << RED << "NOW " << tmp->getNickname() << " IS AN OPERATOR OF " << channel->getName() << END << std::endl;
             }
 
         }
         else if (cmd.getArg(2) == "-o" && cmd._argCount == 4/*&& !cmd.getArg(3).empty()*/)
         {
 
-            if (channel->isUserInChannel(server.getUserByNick(cmd.getArg(3)).getFd()))
+            if (channel->isUserInChannel(server.getUserByNick(cmd.getArg(3))->getFd()))
             {
-                User tmp = server.getUserByNick(cmd.getArg(3));
-                channel->removeOperatorToChannel(tmp.getFd());
-                std::cout << RED << "NOW " << tmp.getNickname() << " ISN'T AN OPERATOR OF " << channel->getName() << END << std::endl;
+                User* tmp = server.getUserByNick(cmd.getArg(3));
+                channel->removeOperatorToChannel(tmp->getFd());
+                std::cout << RED << "NOW " << tmp->getNickname() << " ISN'T AN OPERATOR OF " << channel->getName() << END << std::endl;
             }
         }
         else if (cmd.getArg(2) == "+l" && cmd._argCount == 4/*&& !cmd.getArg(3).empty()*/)
