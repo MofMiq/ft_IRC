@@ -37,8 +37,6 @@ private:
  //   std::map<std::string, User> _nickToUser; // Mapa para acceder a los usuarios por nickname TODO
 
 public:
-    //std::map<std::string, int > _usersServerByNick; // Map de NICK a FD -> para que cambie
-    //std::map<int, User > _usersServerByFd; // Map de FD y puntero a USER correspondiente
     Server(int port, const std::string& password);
     void        sendMessageClient(int clientSocket, const std::string& errorMsg);
     bool        start();
@@ -64,6 +62,7 @@ public:
     //Commands functions
     bool isNickInServer(const std::string& nick);
     void updateUsersServerByNick(int fd, const std::string& newNick);
+    std::vector<Channel*> getAllChannelsUserIn(int fd);
 };
 
 #endif

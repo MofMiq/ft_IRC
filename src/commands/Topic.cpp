@@ -36,20 +36,19 @@ TOPIC #test : -> Clearing the topic on "#test"
 TOPIC #test -> Checking the topic for "#test"
 
 */
+void enqueueSomeMsgs(Server& server, User& user, Channel& channel, const std::string& extra);
 
 void Command::executeTopic(Command &cmd, Server &server, User &user)
 {
     if (cmd._argCount == 1)
     {
         user.enqueueResponse(errNeedmoreparams(server, user, cmd));
-        //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
     if (!server.channelExists(cmd.getArg(1)))
     {
         user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
-        //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;
     }
@@ -58,15 +57,12 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
     if (!tmp->isUserInChannel(user.getFd()))
     {
         user.enqueueResponse(errNotonchannel(server, user, cmd, tmp->getName()));
-        //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
-        //delete tmp?
         return;
     }
     if (tmp->getTopicPrivate() && !tmp->isUserOperator(user.getFd())) //esta condicion no la puedo probar ahora mismo en verdad, falta MODE y que JOIN añada a los operators
     {
         user.enqueueResponse(errChanoprivsneeded(server, user, cmd, tmp->getName()));
-        //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
@@ -78,19 +74,16 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
             if (tmp->getTopic().empty())
             {
                 user.enqueueResponse(rplNotopic(server, user, tmp->getName()));
-                //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
                 server.sendMessageClient(user.getFd(), user.dequeueResponse());
             }
-            else
+            else //este else muestra el topic si ya esta establecido
             {
-                user.enqueueResponse(rplTopic(server, user, tmp->getName(), tmp->getTopic()));
-                //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
+                enqueueSomeMsgs(server, user, *tmp, "");
+/*                 user.enqueueResponse(rplTopic(server, user, tmp->getName(), tmp->getTopic()));
                 server.sendMessageClient(user.getFd(), user.dequeueResponse());
                 user.enqueueResponse(rplTopicwhotime(server, user, tmp->getName(), user.getNickname(), tmp->getTopicTimestamp()));
-                //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
-                server.sendMessageClient(user.getFd(), user.dequeueResponse());
+                server.sendMessageClient(user.getFd(), user.dequeueResponse()); */
             }
-            //delete tmp?
             return ;
         }
         return ;
@@ -102,12 +95,13 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
         if (cmd.getArg(2) == ":")
         {
             tmp->setTopic("");
-            user.enqueueResponse(rplTopic(server, user, tmp->getName(), tmp->getTopic()) + " :Topic has been cleared\n");
-            //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
+            enqueueSomeMsgs(server, user, *tmp, " :Topic has been cleared");
+    /*         user.enqueueResponse(rplTopic(server, user, tmp->getName(), tmp->getTopic()) + " :Topic has been cleared\n");
             server.sendMessageClient(user.getFd(), user.dequeueResponse());
             user.enqueueResponse(rplTopicwhotime(server, user, tmp->getName(), user.getNickname(), tmp->getTopicTimestamp()));
-            //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
-            server.sendMessageClient(user.getFd(), user.dequeueResponse());
+            server.sendMessageClient(user.getFd(), user.dequeueResponse()); */
+            sendMessageToChannels(server, user, server.getAllChannelsUserIn(user.getFd()), rplTopic(server, user, tmp->getName(), tmp->getTopic()) + " :Topic has been cleared");
+            sendMessageToChannels(server, user, server.getAllChannelsUserIn(user.getFd()), rplTopicwhotime(server, user, tmp->getName(), user.getNickname(), tmp->getTopicTimestamp()));
         }
         else
         {
@@ -115,20 +109,31 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
             std::string newTopic = cmd.getArgsAsString(2);
             newTopic.erase(0, 1);
             tmp->setTopic(newTopic);
-            user.enqueueResponse(rplTopic(server, user, tmp->getName(), tmp->getTopic()) + " :Topic has been succesfully changed\n");
-            //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
+            enqueueSomeMsgs(server, user, *tmp, " :Topic has been succesfully changed");
+/*             user.enqueueResponse(rplTopic(server, user, tmp->getName(), tmp->getTopic()) + " :Topic has been succesfully changed\n");
             server.sendMessageClient(user.getFd(), user.dequeueResponse());
             user.enqueueResponse(rplTopicwhotime(server, user, tmp->getName(), user.getNickname(), tmp->getTopicTimestamp()));
-            //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
-            server.sendMessageClient(user.getFd(), user.dequeueResponse());
+            server.sendMessageClient(user.getFd(), user.dequeueResponse()); */
+
+            std::vector<Channel*> aux;
+            aux.push_back(server.getChannel(tmp->getName()));
+            sendMessageToChannels(server, user, server.getAllChannelsUserIn(user.getFd()), rplTopic(server, user, tmp->getName(), tmp->getTopic()) + " :Topic has been succesfully changed");
+            sendMessageToChannels(server, user, server.getAllChannelsUserIn(user.getFd()), rplTopicwhotime(server, user, tmp->getName(), user.getNickname(), tmp->getTopicTimestamp()));
         }
     }
     else
     {
         user.enqueueResponse(errNeedmoreparams(server, user, cmd));
-        //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
     return ;
+}
+
+void enqueueSomeMsgs(Server& server, User& user, Channel& channel, const std::string& extra)
+{
+    user.enqueueResponse(rplTopic(server, user, channel.getName(), channel.getTopic()) + extra);
+    server.sendMessageClient(user.getFd(), user.dequeueResponse());
+    user.enqueueResponse(rplTopicwhotime(server, user, channel.getName(), user.getNickname(), channel.getTopicTimestamp()));
+    server.sendMessageClient(user.getFd(), user.dequeueResponse());    
 }

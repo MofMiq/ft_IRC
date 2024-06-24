@@ -3,13 +3,13 @@
 //Channel::Channel() : _clientCount(0), _name("") {}
 
 //onstructor por defecto
-Channel::Channel() : _clientCount(0), _maxClients(MAXCLI), _name(""), _topic(""), _private(false), _topicPrivate(false),
-_passNeeded(false), _limitClient(false), _timestamp("") {}
+Channel::Channel() : _clientCount(0), _maxClients(MAXCLI), _name(""), _topic(""), _pass(""), _private(false), _topicPrivate(false),
+_passNeeded(false), _timestamp("") {}
 
 // Constructor para inicializar el canal con el nombre dado y el n�mero m�ximo de clientes
 Channel::Channel(const std::string& name, int maxClients)
-    : _clientCount(0), _maxClients(maxClients), _name(name), _topic(""), _private(false), _topicPrivate(false),
-    _passNeeded(false), _limitClient(false), _timestamp("") {}
+    : _clientCount(0), _maxClients(maxClients), _name(name), _topic(""), _pass(""), _private(false), _topicPrivate(false),
+    _passNeeded(false), _timestamp("") {}
 
 Channel::~Channel() {}
 
@@ -59,6 +59,16 @@ std::string Channel::getTopic() const {
     return _topic;
 }
 
+std::string Channel::getPass() const
+{
+    return this->_pass;
+}
+
+void Channel::setPass(const std::string& pass)
+{
+    this->_pass = pass;
+}
+
 // Verifica si el canal est� vac�o
 bool Channel::isEmpty() const {
     return _users.empty();
@@ -99,22 +109,12 @@ void Channel::setPassNeeded(bool cond)
     this->_passNeeded = cond;
 }
 
-bool Channel::getLimitClient()
-{
-    return this->_limitClient;
-}
-
-void Channel::setLimitClient(bool cond)
-{
-    this->_limitClient = cond;
-}
-
 int Channel::getMaxClient()
 {
     return this->_maxClients;
 }
 
-void Channel::getMaxClient(int max)
+void Channel::setMaxClient(int max)
 {
     this->_maxClients = max;
 }
@@ -142,4 +142,14 @@ bool Channel::isUserAnOperators(int fd)
     if (it != this->_operators.end())
         return true;
     return false;
+}
+
+void Channel::addOperatorToChannel(int fd)
+{
+   this->_operators.insert(fd);
+}
+
+void Channel::removeOperatorToChannel(int fd)
+{
+   this->_operators.erase(fd);
 }

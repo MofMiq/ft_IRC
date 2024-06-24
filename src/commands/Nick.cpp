@@ -7,7 +7,7 @@ NICK <newNick>
 NICK: is used to give the client a nickname o change the previous one.
 (431)ERR_NONICKNAMEGIVEN: does not receive the <nickname> parameter with the NICK command and ignore
 
-(432)ERR_ERRONEUSNICKNAME: containing invalid characters:  -, [, ], \, ``, {, }, ^, _, y |
+(432)ERR_ERRONEOUSNICKNAME: containing invalid characters:  -, [, ], \, ``, {, }, ^, _, y |
 
 Servers MUST allow at least all alphanumerical characters, square and curly brackets ([]{}), backslashes (\), and pipe (|)
 characters in nicknames, and MAY disallow digits as the first character.
@@ -41,7 +41,7 @@ bool validNickname(std::string& nick)
 {
     char c = nick.at(0);
 
-    if (std::isdigit(c))
+    if (std::isdigit(c) || (!isAllowedSymbol(c) && !isalpha(c)))
         return false;
     for (size_t i = 1; i < nick.length(); i++)
     {
@@ -57,34 +57,28 @@ void Command::executeNick(Command &cmd, Server &server, User &user)
     if (cmd._argCount < 2 || cmd.getArg(1).length() == 0)
     {
         user.enqueueResponse(errNonicknamegiven(server, user, cmd));
-        //std::cout << user.dequeueResponse(); //ahora mismo es para probar? //borrar
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
 
     if (!validNickname(cmd.getArg(1)) || cmd.getArg(1).length() >= MAX_LENGHT)
     {
-        user.enqueueResponse(errErroneusnickname(server, user, cmd));
-        //std::cout << user.dequeueResponse(); //ahora mismo es para probar?
+        user.enqueueResponse(errErroneousnickname(server, user, cmd));
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
     if (server.isNickInServer(cmd.getArg(1)))
     {
         user.enqueueResponse(errNicknameinuse(server, user, cmd));
-        //std::cout << user.dequeueResponse(); //ahora mismo es para probar? //borrar
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
     user.setOldNick(user.getNickname());
     user.setNickname(cmd.getArg(1));
     server.updateUsersServerByNick(user.getFd(), cmd.getArg(1));
-    //server._usersServerByFd[server._usersServerByNick[user.getNickname()]].setNickname(user.getNickname()); //para que cambie
-
-    //std::cout << RED << "en NICK: oldNick: " << user.getOldNick() << " / Nick: " << user.getNickname() << END << std::endl; //borrar debug
 
     user.enqueueResponse(rplNickok(server, user));
-    //std::cout << user.dequeueResponse(); //ahora mismo es para probar? borrar
     server.sendMessageClient(user.getFd(), user.dequeueResponse());
+    sendMessageToChannels(server, user, server.getAllChannelsUserIn(user.getFd()), rplNickok(server, user));
     return ;
 }

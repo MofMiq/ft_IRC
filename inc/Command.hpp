@@ -7,6 +7,7 @@
 #include <sstream>
 #include <iostream>
 #include "Response.hpp"
+#include "Channel.hpp"
 
 #define GREEN "\033[32m"
 #define RED "\033[31m"
@@ -35,7 +36,7 @@ class Command
 
         std::string& getArg(int i);
         std::string getArgsAsString(int startIdx) const; 
-
+        void sendMessageToChannels(Server& server, User& user, const std::vector<Channel*>&, const std::string& reply);
         //Este m�todo toma un comando en forma de cadena (cmd) y lo convierte en el correspondiente valor enumerado (CMD).
         //Es decir, analiza la cadena de comando y la asigna al enum correspondiente.
         void parseCommand(const std::string& cmd, Server* server, User& user);
