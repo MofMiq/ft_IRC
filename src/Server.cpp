@@ -301,10 +301,10 @@ void    Server::handle_client_message(int client_socket) {
                 this->_usersServerByNick[nickName] = client_socket;
                 this->_usersServerByFd[this->_usersServerByNick[nickName]]->setNickname(nickName);
                 std::cout << "NICKNAME DEL CLIENTE = " << this->_usersServerByFd[_usersServerByNick[nickName]]->getNickname() << std::endl;
-                std::cout << rplWelcome(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]);
-                std::cout << rplYourHost(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]);
-                std::cout << rplCreated(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]);
-                std::cout << rplMyInfo(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]);
+                sendMessageClient(client_socket, rplWelcome(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]));
+                sendMessageClient(client_socket, rplYourHost(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]));
+                sendMessageClient(client_socket, rplCreated(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]));
+                sendMessageClient(client_socket, rplMyInfo(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]));
             }
         }
     }

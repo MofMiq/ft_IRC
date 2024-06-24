@@ -7,7 +7,7 @@ NICK <newNick>
 NICK: is used to give the client a nickname o change the previous one.
 (431)ERR_NONICKNAMEGIVEN: does not receive the <nickname> parameter with the NICK command and ignore
 
-(432)ERR_ERRONEUSNICKNAME: containing invalid characters:  -, [, ], \, ``, {, }, ^, _, y |
+(432)ERR_ERRONEOUSNICKNAME: containing invalid characters:  -, [, ], \, ``, {, }, ^, _, y |
 
 Servers MUST allow at least all alphanumerical characters, square and curly brackets ([]{}), backslashes (\), and pipe (|)
 characters in nicknames, and MAY disallow digits as the first character.
@@ -41,7 +41,7 @@ bool validNickname(std::string& nick)
 {
     char c = nick.at(0);
 
-    if (std::isdigit(c))
+    if (std::isdigit(c) || (!isAllowedSymbol(c) && !isalpha(c)))
         return false;
     for (size_t i = 1; i < nick.length(); i++)
     {
@@ -63,7 +63,7 @@ void Command::executeNick(Command &cmd, Server &server, User &user)
 
     if (!validNickname(cmd.getArg(1)) || cmd.getArg(1).length() >= MAX_LENGHT)
     {
-        user.enqueueResponse(errErroneusnickname(server, user, cmd));
+        user.enqueueResponse(errErroneousnickname(server, user, cmd));
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }

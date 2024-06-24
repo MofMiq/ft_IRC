@@ -20,7 +20,6 @@ private:
     bool _private; // mode -i
     bool _topicPrivate; // mode -t
     bool _passNeeded; // mode -k -> argumento extra para INVITE pero lo establece MODE
-    bool _limitClient; // mode -l
     // mode -o no necesita bool porque es la lista de operadores
 
     std::string _timestamp;
@@ -54,6 +53,9 @@ public:
     // Obtiene el topic del canal
     std::string getTopic() const;
 
+    std::string getPass() const;
+    void setPass(const std::string& pass);
+
     // Verifica si el canal está vacío
     bool isEmpty() const;
 
@@ -65,15 +67,15 @@ public:
     void setTopicPrivate(bool cond);
     bool getPassNeeded();
     void setPassNeeded(bool cond);
-    bool getLimitClient();
-    void setLimitClient(bool cond);
     int getMaxClient();
-    void getMaxClient(int max);
+    void setMaxClient(int max);
     std::string getTopicTimestamp();
     void setTopicTimestamp(const std::string& timestamp);
 
     bool isUserInChannel(int fd);
     bool isUserAnOperators(int fd);
+    void addOperatorToChannel(int fd);
+    void removeOperatorToChannel(int fd);
 };
 
 #endif

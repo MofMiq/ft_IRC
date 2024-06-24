@@ -24,7 +24,7 @@ enum Code
     ERR_NOTEXTTOSEND = 412, 
     ERR_UNKNOWNCOMMAND = 421,
     ERR_NONICKNAMEGIVEN = 431,
-    ERR_ERRONEUSNICKNAME = 432,
+    ERR_ERRONEOUSNICKNAME = 432,
     ERR_NICKNAMEINUSE = 433,
     ERR_USERNOTINCHANNEL = 441,
     ERR_NOTONCHANNEL = 442,
@@ -51,7 +51,7 @@ std::string errNorecipient(Server &server, User &user, Command &cmd);
 std::string errNotexttosend(Server &server, User &user, Command &cmd);
 std::string errUnknowncommand(Server &server, User &user, Command &cmd);
 std::string errNonicknamegiven(Server &server, User &user, Command &cmd);
-std::string errErroneusnickname(Server& server, User& user, Command &cmd);
+std::string errErroneousnickname(Server& server, User& user, Command &cmd);
 std::string errNicknameinuse(Server& server, User& user, Command &cmd);
 std::string errUsernotinchannel(Server& server, User& user, Command &cmd, const std::string& targetNickname, const std::string& channelName);
 std::string errNotonchannel(Server &server, User &user, Command &cmd, const std::string& channelName);

@@ -73,9 +73,9 @@ std::string errNonicknamegiven(Server &server, User &user, Command &cmd)
     return (createMessage(server, ERR_NONICKNAMEGIVEN, user, cmd) + ": No nickname given");
 }
 
-std::string errErroneusnickname(Server& server, User& user, Command &cmd)
+std::string errErroneousnickname(Server& server, User& user, Command &cmd)
 {
-    return (createMessage(server, ERR_ERRONEUSNICKNAME, user, cmd) + ": Erroneus nickname");
+    return (createMessage(server, ERR_ERRONEOUSNICKNAME, user, cmd) + ": Erroneous nickname");
 }
 
 std::string errNicknameinuse(Server& server, User& user, Command &cmd)
@@ -105,19 +105,19 @@ std::string errChanoprivsneeded(Server &server, User &user, Command &cmd, const 
 
 std::string rplWelcome(Server &server, User &user)
 {
-    return (":" + server.getServerName() + " 001 " + user.getNickname() + ": Welcome to our IRC network :" + user.getNickname() + "!" + user.getUsername() + "@" + user.getHostname()) + "\n";
+    return (":" + server.getServerName() + " 001 " + user.getNickname() + ": Welcome to our IRC network :" + user.getNickname() + "!" + user.getUsername() + "@" + user.getHostname());
 }
 std::string rplYourHost(Server &server, User &user)
 {
-    return (":" + server.getServerName() + " 002 " + user.getNickname() + ": Your host is " + user.getServername() + ", running version v1.0\n");
+    return (":" + server.getServerName() + " 002 " + user.getNickname() + ": Your host is " + user.getServername() + ", running version v1.0");
 }
 std::string rplCreated(Server &server, User &user)
 {
-    return (":" + server.getServerName() + " 003 " + user.getNickname() + ": This server was created at " + getTimestamp() + "\n");
+    return (":" + server.getServerName() + " 003 " + user.getNickname() + ": This server was created at " + getTimestamp());
 }
 std::string rplMyInfo(Server &server, User &user)
 {
-    return (":" + server.getServerName() + " 004 " + user.getNickname() + " " + user.getServername() + " v1.0 Available user modes: , Available channel modes: iklot\n");
+    return (":" + server.getServerName() + " 004 " + user.getNickname() + " " + user.getServername() + " v1.0 Available user modes: , Available channel modes: iklot");
 }
 std::string rplNickok(Server &server, User &user)
 {
