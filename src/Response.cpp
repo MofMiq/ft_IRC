@@ -103,6 +103,11 @@ std::string errChanoprivsneeded(Server &server, User &user, Command &cmd, const 
     return (createMessage(server, ERR_CHANOPRIVSNEEDED, user, cmd) + channelName + ": You're not channel operator");
 }
 
+std::string errBadChannelKey(Server& server, User& user, Command& cmd, const std::string& channelName)
+{
+    return (createMessage(server, ERR_BADCHANNELKEY, user, cmd) + channelName + ":Cannot join channel (+k)\n");
+}
+
 std::string rplWelcome(Server &server, User &user)
 {
     return (":" + server.getServerName() + " 001 " + user.getNickname() + ": Welcome to our IRC network :" + user.getNickname() + "!" + user.getUsername() + "@" + user.getHostname());

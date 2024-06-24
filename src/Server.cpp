@@ -358,6 +358,34 @@ Channel* Server::getChannel(const std::string& channelName) {
     return NULL; // Devuelve NULL si el canal no se encuentra
 }
 
+bool Server::isUserInChannelServer(User& user, const std::string& channelName)
+{
+    return _channelsServer[channelName].isUserInChannel(user.getFd());
+}
+
+void Server::ShowChannelsAndUsers() const {
+    std::cout << "List of channels and users:" << std::endl;
+    for (std::map<std::string, Channel>::const_iterator it = _channelsServer.begin(); it != _channelsServer.end(); ++it)
+    {
+        const std::string& channelName = it->first;
+        const Channel& channel = it->second;
+        std::vector<User> users = channel.getUsers();
+        std::cout << "Channel: " << channelName << std::endl;
+        for (std::vector<User>::const_iterator userIt = users.begin(); userIt != users.end(); ++userIt)
+        {
+            const User& user = *userIt;
+            std::cout << " - User: " << user.getNickname() << " (FD: " << user.getFd() << ")"; 
+            if(channel.isUserOperator(user.getFd()))
+                std::cout <<" IS OPERATOR";
+            std::cout << std::endl;
+        }
+    }
+}
+
+// Asigna el rol de operador a un usuario en un canal
+void Server::setOperator(const User& user, const std::string& channelName) {
+    _channelsServer[channelName].addOperator(user.getFd());
+}
 
 bool Server::isNickInServer(const std::string& nick)
 {
@@ -379,9 +407,19 @@ void Server::updateUsersServerByNick(int fd, const std::string& newNick)
     }
 }
 
-User& Server::getUserByNick(const std::string& nick)
+//Cambiado pq da segfault si no existia el user, hay q recorrer antes y ver si existe
+User* Server::getUserByNick(const std::string& nick)
 {
-    return *_usersServerByFd[_usersServerByNick[nick]];
+    std::map<std::string, int>::iterator it = _usersServerByNick.find(nick);
+    if (it == _usersServerByNick.end()) {
+        return NULL;  // Nick no encontrado
+    }
+    int fd = it->second;
+    std::map<int, User*>::iterator userIt = _usersServerByFd.find(fd);
+    if (userIt == _usersServerByFd.end()) {
+        return NULL;  // FD no encontrado
+    }
+    return userIt->second;
 }
 
 std::vector<Channel*> Server::getAllChannelsUserIn(int fd)
