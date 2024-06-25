@@ -63,6 +63,10 @@ public:
     bool isNickInServer(const std::string& nick);
     void updateUsersServerByNick(int fd, const std::string& newNick);
     std::vector<Channel*> getAllChannelsUserIn(int fd);
+
+    //FUNCIONES PARA DEPURACION
+    void    printUSBN(std::map < std::string, int >& map);
+    void    printUSBF(std::map < int, User* >& map);
 };
 
 #endif
