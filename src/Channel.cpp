@@ -69,9 +69,14 @@ void Channel::setPass(const std::string& pass)
     this->_pass = pass;
 }
 
-// Verifica si el canal est� vac�o
+// Verifica si el canal esta vacio
 bool Channel::isEmpty() const {
     return _users.empty();
+}
+
+// Función para verificar si el canal esta lleno
+bool Channel::isFull() const {
+    return _users.size() >= static_cast<size_t>(_maxClients);
 }
 
 // Verifica si un usuario está en el canal
