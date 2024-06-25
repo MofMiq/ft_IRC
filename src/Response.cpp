@@ -102,10 +102,17 @@ std::string errChanoprivsneeded(Server &server, User &user, Command &cmd, const 
 {
     return (createMessage(server, ERR_CHANOPRIVSNEEDED, user, cmd) + channelName + ": You're not channel operator");
 }
-
+std::string errChannelIsFull(Server& server, User& user, Command& cmd, const std::string& channelName)
+{
+    return (createMessage(server, ERR_CHANNELISFULL, user, cmd) + user.getNickname() + " " + channelName + " :Cannot join channel (+l)");
+}
 std::string errBadChannelKey(Server& server, User& user, Command& cmd, const std::string& channelName)
 {
-    return (createMessage(server, ERR_BADCHANNELKEY, user, cmd) + channelName + ":Cannot join channel (+k)\n");
+    return (createMessage(server, ERR_BADCHANNELKEY, user, cmd) + user.getNickname() + " " + channelName + ":Cannot join channel (+k)\n");
+}
+std::string errBadChannelMask(Server& server, User& user, Command& cmd, const std::string& channelName)
+{
+    return (createMessage(server, ERR_BADCHANMASK, user, cmd) + channelName + " :Bad Channel Mask");
 }
 
 std::string rplWelcome(Server &server, User &user)

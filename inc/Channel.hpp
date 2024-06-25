@@ -64,6 +64,9 @@ public:
     // Verifica si el canal está vacío
     bool isEmpty() const;
 
+    // Verifica si el canal está lleno
+    bool isFull() const;
+
     bool isUserInChannel(int userFd) const; 
 
     bool getPrivate();
