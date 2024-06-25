@@ -54,24 +54,21 @@ bool validNickname(std::string& nick)
 
 void Command::executeNick(Command &cmd, Server &server, User &user)
 {
-    if (cmd._argCount < 2 || cmd.getArg(1).length() == 0)
+    if (cmd._argCount < 2/* || cmd.getArg(1).length() == 0*/)
     {
         user.enqueueResponse(errNonicknamegiven(server, user, cmd));
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
-        return ;
     }
 
-    if (!validNickname(cmd.getArg(1)) || cmd.getArg(1).length() >= MAX_LENGHT)
+    else if (!validNickname(cmd.getArg(1)) || cmd.getArg(1).length() >= MAX_LENGHT)
     {
         user.enqueueResponse(errErroneousnickname(server, user, cmd));
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
-        return ;
     }
-    if (server.isNickInServer(cmd.getArg(1)))
+    else if (server.isNickInServer(cmd.getArg(1)))
     {
         user.enqueueResponse(errNicknameinuse(server, user, cmd));
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
-        return ;
     }
     user.setOldNick(user.getNickname());
     user.setNickname(cmd.getArg(1));

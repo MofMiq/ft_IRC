@@ -35,7 +35,7 @@ void Command::executeJoin(Command& cmd, Server& server, User& user)
         /*         // No se proporcionaron suficientes argumentos para el comando JOIN
                 std::cout << "JOIN: Insufficient arguments" << std::endl;
                 return; */
-        user.enqueueResponse(errNeedmoreparams(server, user, cmd));
+        user.enqueueResponse(errNeedmoreparams(server, user, cmd, 0));
         //std::cout << user.dequeueResponse();
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;

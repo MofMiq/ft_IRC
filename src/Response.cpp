@@ -65,7 +65,7 @@ std::string errNotexttosend(Server &server, User &user, Command &cmd)
 }
 std::string errUnknowncommand(Server &server, User &user, Command &cmd)
 {
-    return (createMessage(server, ERR_UNKNOWNCOMMAND, user, cmd) + ": Unknown command");
+    return (createMessage(server, ERR_UNKNOWNCOMMAND, user, cmd) + ": Unknown command" + "\nThis are the COMMANDS we have available:\nUSER NICK JOIN TOPIC INVITE PRIVMSG KICK MODE (itklo)"); //debug
 }
 
 std::string errNonicknamegiven(Server &server, User &user, Command &cmd)
@@ -93,9 +93,12 @@ std::string errUsernotinchannel(Server& server, User& user, Command &cmd, const 
     return (createMessage(server, ERR_USERNOTINCHANNEL, user, cmd) + targetNickname + " " + channelName + ": They aren't on that channel");
 }
 
-std::string errNeedmoreparams(Server& server, User& user, Command &cmd)
+std::string errNeedmoreparams(Server& server, User& user, Command &cmd, int i)
 {
-    return (createMessage(server, ERR_NEEDMOREPARAMS, user, cmd) + ": Not enough parameters");
+    std::string msg = createMessage(server, ERR_NEEDMOREPARAMS, user, cmd) + ": Not enough parameters";
+    if (i == 2)
+        msg += "\nUsage: TOPIC <channel> :[new topic]";
+    return msg;
 }
 
 std::string errChanoprivsneeded(Server &server, User &user, Command &cmd, const std::string& channelName)
@@ -122,7 +125,7 @@ std::string rplCreated(Server &server, User &user)
 }
 std::string rplMyInfo(Server &server, User &user)
 {
-    return (":" + server.getServerName() + " 004 " + user.getNickname() + " " + user.getServername() + " v1.0 Available user modes: , Available channel modes: iklot");
+    return (":" + server.getServerName() + " 004 " + user.getNickname() + " " + user.getServername() + " v1.0 Available user modes: , Available channel modes: itklo");
 }
 std::string rplNickok(Server &server, User &user)
 {

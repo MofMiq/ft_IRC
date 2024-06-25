@@ -30,7 +30,7 @@ void Command::executePrivmsg(Command& cmd, Server& server, User& user)
 {
   if (cmd._argCount <= 2)
   {
-    user.enqueueResponse(errNeedmoreparams(server, user, cmd));
+    user.enqueueResponse(errNeedmoreparams(server, user, cmd, 0));
     server.sendMessageClient(user.getFd(), user.dequeueResponse());
     return ;
   }
