@@ -2,7 +2,8 @@
 
 Server::Server(int port, const std::string& password) : port(port), password(password), server_socket(-1), serverName("MyServer") {}
 
-void Server::sendMessageClient(int clientSocket, const std::string& errorMsg) {
+void Server::sendMessageClient(int clientSocket, const std::string& errorMsg) 
+{
     std::string message = errorMsg + "\r\n";
     send(clientSocket, message.c_str(), message.length(), 0);
 }
@@ -79,11 +80,13 @@ void    Server::run()
     }
 }
 
-std::string     Server::getServerName() const {
+std::string     Server::getServerName() const 
+{
     return this->serverName;
 }
 
-void    Server::handle_new_connection() {
+void    Server::handle_new_connection() 
+{
     sockaddr_in client_addr;
     socklen_t client_len = sizeof(client_addr);
     int client_socket = accept(server_socket, (struct sockaddr*)&client_addr, &client_len);
@@ -188,7 +191,8 @@ std::string     Server::extractNick(std::string strRaw)
 }
 
 
-void    Server::handle_client_message(int client_socket) {
+void    Server::handle_client_message(int client_socket) 
+{
     bool done = false;
     char buffer[BUFFER_SIZE];
     int bytes_read = read(client_socket, buffer, sizeof(buffer) - 1);
@@ -301,6 +305,7 @@ void    Server::handle_client_message(int client_socket) {
                 this->_usersServerByNick[nickName] = client_socket;
                 this->_usersServerByFd[this->_usersServerByNick[nickName]]->setNickname(nickName);
                 std::cout << "NICKNAME DEL CLIENTE = " << this->_usersServerByFd[_usersServerByNick[nickName]]->getNickname() << std::endl;
+                clients[client_socket] = nickName;
                 sendMessageClient(client_socket, rplWelcome(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]));
                 sendMessageClient(client_socket, rplYourHost(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]));
                 sendMessageClient(client_socket, rplCreated(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]));
@@ -320,23 +325,59 @@ void    Server::handle_client_message(int client_socket) {
     }
 }
 
-void Server::remove_client(int client_socket) {
-    std::vector<struct pollfd>::iterator it;
-    for (it = pollfds.begin(); it != pollfds.end(); ++it) {
+void    Server::printUSBN(std::map < std::string, int >& map)
+{
+    std::cout << "IMPRIMIENDO CONTENIDO DE USERS_BY_NICK" << std::endl;
+    for (std::map < std::string, int >::iterator it = map.begin(); it != map.end(); it++)
+    {
+        std::cout << "[" << it->first << "] -> " << it->second << std::endl;
+    }
+}
+
+void    Server::printUSBF(std::map < int, User* >& map)
+{
+    std::cout << "IMPRIMIENDO CONTENIDO DE USERS_BY_FD" << std::endl;
+    for (std::map < int, User* >::iterator it = map.begin(); it != map.end(); it++)
+    {
+        std::cout << "[" << it->first << "] -> " << it->second << std::endl;
+    }
+}
+
+void Server::remove_client(int client_socket) 
+{
+    for (std::vector<struct pollfd>::iterator it = pollfds.begin(); it != pollfds.end(); ++it) {
         if (it->fd == client_socket) {
             pollfds.erase(it);
             break;
         }
     }
+
+    // std::cout << "ESTADO DE LOS MAPAS ANTES DE ELIMINAR ELEMENTOS" << std::endl;
+    // printUSBF(_usersServerByFd);
+    // printUSBN(_usersServerByNick);
+
+    // std::cout << "client_socket = " << client_socket << std::endl;
+    // std::cout << "clients[client_socket] = " << clients[client_socket] << std::endl;
+
+    if (_usersServerByNick.find(clients[client_socket]) != _usersServerByNick.end())
+        _usersServerByNick.erase(clients[client_socket]);
+    if (_usersServerByFd.find(client_socket) != _usersServerByFd.end())
+        _usersServerByFd.erase(client_socket);
     clients.erase(client_socket);
+
+    // std::cout << "ESTADO DE LOS MAPAS DESPUES DE ELIMINAR ELEMENTOS" << std::endl;
+    // printUSBF(_usersServerByFd);
+    // printUSBN(_usersServerByNick);
 }
 
 
-bool Server::channelExists(const std::string& channelName) {
+bool Server::channelExists(const std::string& channelName) 
+{
     return _channelsServer.find(channelName) != _channelsServer.end();
 }
 
-void Server::addUserToChannel(User& user, const std::string& channelName) {
+void Server::addUserToChannel(User& user, const std::string& channelName) 
+{
     if (!channelExists(channelName)) {
         _channelsServer[channelName] = Channel(channelName);
     }
@@ -344,13 +385,15 @@ void Server::addUserToChannel(User& user, const std::string& channelName) {
     //user._channelIn.push_back(channelName); //struct response?
 }
 
-void Server::createChannel(const std::string& channelName) {
+void Server::createChannel(const std::string& channelName) 
+{
     if (!channelExists(channelName)) {
         _channelsServer[channelName] = Channel(channelName);
     }
 }
 
-Channel* Server::getChannel(const std::string& channelName) {
+Channel* Server::getChannel(const std::string& channelName) 
+{
     std::map<std::string, Channel>::iterator it = _channelsServer.find(channelName);
     if (it != _channelsServer.end()) {
         return &it->second; // Devuelve un puntero al canal si se encuentra
@@ -363,7 +406,8 @@ bool Server::isUserInChannelServer(User& user, const std::string& channelName)
     return _channelsServer[channelName].isUserInChannel(user.getFd());
 }
 
-void Server::ShowChannelsAndUsers() const {
+void Server::ShowChannelsAndUsers() const 
+{
     std::cout << "List of channels and users:" << std::endl;
     for (std::map<std::string, Channel>::const_iterator it = _channelsServer.begin(); it != _channelsServer.end(); ++it)
     {
@@ -383,7 +427,8 @@ void Server::ShowChannelsAndUsers() const {
 }
 
 // Asigna el rol de operador a un usuario en un canal
-void Server::setOperator(const User& user, const std::string& channelName) {
+void Server::setOperator(const User& user, const std::string& channelName) 
+{
     _channelsServer[channelName].addOperator(user.getFd());
 }
 
@@ -436,3 +481,4 @@ std::vector<Channel*> Server::getAllChannelsUserIn(int fd)
     }
     return channelsUserIn;
 }
+
