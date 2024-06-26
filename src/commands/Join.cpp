@@ -41,7 +41,7 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
     // Verifica si se proporcionan suficientes argumentos
     if (cmd._argCount < 2)
     {
-        user.enqueueResponse(errNeedmoreparams(server, user, cmd));
+        user.enqueueResponse(errNeedmoreparams(server, user, cmd, 0));
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;
     }

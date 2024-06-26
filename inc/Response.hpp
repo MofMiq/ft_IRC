@@ -58,7 +58,7 @@ std::string errErroneousnickname(Server& server, User& user, Command &cmd);
 std::string errNicknameinuse(Server& server, User& user, Command &cmd);
 std::string errUsernotinchannel(Server& server, User& user, Command &cmd, const std::string& targetNickname, const std::string& channelName);
 std::string errNotonchannel(Server &server, User &user, Command &cmd, const std::string& channelName);
-std::string errNeedmoreparams(Server& server, User& user, Command &cmd);
+std::string errNeedmoreparams(Server& server, User& user, Command &cmd, int i);
 std::string errChannelIsFull(Server& server, User& user, Command& cmd, const std::string& channelName);
 std::string errBadChannelKey(Server& server, User& user, Command& cmd, const std::string& channelName);
 std::string errBadChannelMask(Server& server, User& user, Command& cmd, const std::string& channelName);
