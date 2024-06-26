@@ -363,8 +363,8 @@ void Server::remove_client(int client_socket)
         _usersServerByNick.erase(clients[client_socket]);
     if (_usersServerByFd.find(client_socket) != _usersServerByFd.end())
     {
-	    delete _usersServerByFd[client_socket];
-            _usersServerByFd.erase(client_socket);
+        delete _usersServerByFd[client_socket];
+        _usersServerByFd.erase(client_socket);
     }
     clients.erase(client_socket);
 
