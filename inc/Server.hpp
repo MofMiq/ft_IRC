@@ -51,11 +51,12 @@ public:
 
     bool channelExists(const std::string& channelName);
     void addUserToChannel(User& user, const std::string& channelName);
-    void createChannel(const std::string& channelName);
+    void createChannel(const std::string& channelName, const std::string& key);
     Channel* getChannel(const std::string& channelName);
     bool isUserInChannelServer(User& user, const std::string& channelName);
     void ShowChannelsAndUsers() const;
     void setOperator(const User& user, const std::string& channelName);
+    bool checkChannelKey(const std::string& channelName, const std::string& key);
     
     User* getUserByNick(const std::string& nick);   // Metodo para obtener un usuario por su nickname
 
@@ -63,6 +64,10 @@ public:
     bool isNickInServer(const std::string& nick);
     void updateUsersServerByNick(int fd, const std::string& newNick);
     std::vector<Channel*> getAllChannelsUserIn(int fd);
+
+    //FUNCIONES PARA DEPURACION
+    void    printUSBN(std::map < std::string, int >& map);
+    void    printUSBF(std::map < int, User* >& map);
 };
 
 #endif
