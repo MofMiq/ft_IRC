@@ -7,6 +7,8 @@ Command::Command(const std::string &msg)
     //guardp en un tempral el msg para despues poder quitarle los saltos de linea en caso de que los haya
     std::string tmp = msg;
     tmp.erase(std::remove(tmp.begin(), tmp.end(), '\n'), tmp.end());
+    tmp.erase(std::remove(tmp.begin(), tmp.end(), '\"'), tmp.end());
+    tmp.erase(std::remove(tmp.begin(), tmp.end(), '\''), tmp.end());
     //procedo a dividir el string por espacios para sacar los argumentos del comando
     std::istringstream iss(tmp);
     std::string token;
@@ -23,7 +25,7 @@ Command::Command(const std::string &msg)
     {
         std::cout << "arg[" << i << "]: " << this->_args[i] << ' ';
     }
-    std::cout << END << '\n'; // borrar*/
+    std::cout << END << '\n'; // borrar */
 
 }
 

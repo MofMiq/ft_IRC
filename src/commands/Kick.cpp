@@ -23,7 +23,7 @@ KICK #general John,Jane
 void Command::executeKick(Command& cmd, Server& server, User& user) {
     // Verifica si se proporcionaron suficientes argumentos
     if (cmd._argCount < 3) {
-        user.enqueueResponse(errNeedmoreparams(server, user, cmd));
+        user.enqueueResponse(errNeedmoreparams(server, user, cmd, 0));
         //std::cout << user.dequeueResponse();
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;

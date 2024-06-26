@@ -388,12 +388,18 @@ void Server::addUserToChannel(User& user, const std::string& channelName)
     //user._channelIn.push_back(channelName); //struct response?
 }
 
-void Server::createChannel(const std::string& channelName) 
+void Server::createChannel(const std::string& channelName, const std::string& key)
 {
-    if (!channelExists(channelName)) {
-        _channelsServer[channelName] = Channel(channelName);
+    //if (!channelExists(channelName))
+    //    _channelsServer[channelName] = Channel(channelName);
+    Channel newChannel(channelName);
+    if (!key.empty()) {
+        newChannel.setPassNeeded(true);
+        newChannel.setPass(key);
     }
+    _channelsServer[channelName] = newChannel;
 }
+
 
 Channel* Server::getChannel(const std::string& channelName) 
 {
@@ -433,6 +439,20 @@ void Server::ShowChannelsAndUsers() const
 void Server::setOperator(const User& user, const std::string& channelName) 
 {
     _channelsServer[channelName].addOperator(user.getFd());
+}
+
+bool Server::checkChannelKey(const std::string& channelName, const std::string& key)
+{
+    // Obtener la referencia al canal
+    Channel& channel = _channelsServer[channelName];
+    //Si el canal no necesita clave devolver true directamente
+    if (!channel.getPassNeeded())
+        return true;
+    // Verificar si la clave del canal coincide
+    if (channel.getPass() == key)
+        return true;
+    //Si llega aqui no coincide, devuelve false
+    return false;
 }
 
 bool Server::isNickInServer(const std::string& nick)
