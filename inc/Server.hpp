@@ -49,24 +49,24 @@ public:
     void        handle_client_message(int client_socket);
     void        remove_client(int client_socket);
 
-    bool channelExists(const std::string& channelName);
-    void addUserToChannel(User& user, const std::string& channelName);
-    void createChannel(const std::string& channelName);
-    Channel* getChannel(const std::string& channelName);
-    bool isUserInChannelServer(User& user, const std::string& channelName);
-    void ShowChannelsAndUsers() const;
-    void setOperator(const User& user, const std::string& channelName);
+    bool        channelExists(const std::string& channelName);
+    void        addUserToChannel(User& user, const std::string& channelName);
+    void        createChannel(const std::string& channelName);
+    Channel*    getChannel(const std::string& channelName);
+    bool        isUserInChannelServer(User& user, const std::string& channelName);
+    void        ShowChannelsAndUsers() const;
+    void        setOperator(const User& user, const std::string& channelName);
     
-    User* getUserByNick(const std::string& nick);   // Metodo para obtener un usuario por su nickname
+    User*       getUserByNick(const std::string& nick);   // Metodo para obtener un usuario por su nickname
 
     //Commands functions
-    bool isNickInServer(const std::string& nick);
-    void updateUsersServerByNick(int fd, const std::string& newNick);
+    bool        isNickInServer(const std::string& nick);
+    void        updateUsersServerByNick(int fd, const std::string& newNick);
     std::vector<Channel*> getAllChannelsUserIn(int fd);
 
     //FUNCIONES PARA DEPURACION
-    void    printUSBN(std::map < std::string, int >& map);
-    void    printUSBF(std::map < int, User* >& map);
+    void        printUSBN(std::map < std::string, int >& map);
+    void        printUSBF(std::map < int, User* >& map);
 };
 
 #endif

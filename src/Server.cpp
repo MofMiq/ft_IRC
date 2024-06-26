@@ -362,7 +362,10 @@ void Server::remove_client(int client_socket)
     if (_usersServerByNick.find(clients[client_socket]) != _usersServerByNick.end())
         _usersServerByNick.erase(clients[client_socket]);
     if (_usersServerByFd.find(client_socket) != _usersServerByFd.end())
+    {
+        delete _usersServerByFd[client_socket];
         _usersServerByFd.erase(client_socket);
+    }
     clients.erase(client_socket);
 
     // std::cout << "ESTADO DE LOS MAPAS DESPUES DE ELIMINAR ELEMENTOS" << std::endl;
