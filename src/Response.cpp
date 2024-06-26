@@ -43,7 +43,7 @@ std::string createReply(Server &server, Code code)
 
 std::string errNosuchnick(Server &server, User &user, Command &cmd, const std::string& otherNick)//poner otherNick name al final?
 {
-    return (createMessage(server, ERR_NOSUCHNICK, user, cmd) + otherNick + ": No such nick/channel");
+    return (createMessage(server, ERR_NOSUCHNICK, user, cmd) + otherNick + ": No such nick");
 }
 
 std::string errNosuchchannel(Server &server, User &user, Command &cmd, const std::string& channelName)//poner channel name al final?
@@ -57,7 +57,7 @@ std::string errToomanytargets(Server &server, User &user, Command &cmd)
 }
 std::string errNorecipient(Server &server, User &user, Command &cmd)
 {
-    return (createMessage(server, ERR_NORECIPIENT, user, cmd) + ": :No recipient given");
+    return (createMessage(server, ERR_NORECIPIENT, user, cmd) + ": No recipient given");
 }
 std::string errNotexttosend(Server &server, User &user, Command &cmd)
 {
@@ -98,6 +98,8 @@ std::string errNeedmoreparams(Server& server, User& user, Command &cmd, int i)
     std::string msg = createMessage(server, ERR_NEEDMOREPARAMS, user, cmd) + ": Not enough parameters";
     if (i == 2)
         msg += "\nUsage: TOPIC <channel> :[new topic]";
+    else if (i == 3)
+        msg += "\nUsage: PRIVMSG <user>/<channel> :<the message you want to send]>";
     return msg;
 }
 

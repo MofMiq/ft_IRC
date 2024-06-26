@@ -75,9 +75,9 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
         }
         else //este else muestra el topic si ya esta establecido
             enqueueSomeMsgs(server, user, *tmp, "");
-        return ;
+        //return ;
     }
-    if (cmd._argCount >= 3 && cmd.getArg(2)[0] == ':')
+    else if (cmd._argCount >= 3 && cmd.getArg(2)[0] == ':')
     {
         tmp->setTopicTimestamp(getTimestamp());
         if (cmd.getArgsAsString(2) == ":")
@@ -102,7 +102,6 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
     {
         user.enqueueResponse(errNeedmoreparams(server, user, cmd, 2));
         server.sendMessageClient(user.getFd(), user.dequeueResponse());
-        return ;
     }
     return ;
 }
