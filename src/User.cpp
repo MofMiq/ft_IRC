@@ -2,11 +2,11 @@
 #include <stdexcept>
 #include <iostream>
 
-User::User()
+User::User() : _standBy(false)
 {
 }
 
-User::User(int fd) : _fd(fd)
+User::User(int fd) : _fd(fd), _standBy(false)
 {
 }
 
@@ -117,4 +117,9 @@ std::string User::getRealname() const
 void        User::setRealname(const std::string& realname)
 {
     this->_realName = realname;
+}
+
+int     User::getQueueSize()
+{
+    return (this->_responses.size());
 }
