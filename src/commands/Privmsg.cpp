@@ -24,7 +24,10 @@ PRIVMSG #general :yes I'm receiving it ! -> Command to send a message to channel
 
 */
 
-//void sendMessageToChannels(Server& server, User& user, Command& cmd, std::vector<Channel*>&); //borrar forward declaration
+bool isChannelChar(char c)
+{
+  return c == '#' || c == '&';
+}
 
 void Command::executePrivmsg(Command& cmd, Server& server, User& user)
 {
