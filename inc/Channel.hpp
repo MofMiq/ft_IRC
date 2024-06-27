@@ -23,6 +23,7 @@ private:
     // mode -o no necesita bool porque es la lista de operadores
 
     std::string _timestamp;
+    std::string _creationTime;
 
 
 public:

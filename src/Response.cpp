@@ -1,6 +1,7 @@
 #include "../inc/Response.hpp"
 #include "../inc/Server.hpp"
 #include "../inc/Command.hpp"
+#include "../inc/Channel.hpp"
 #include <ctime>
 #include <sstream>
 #include <iomanip>
@@ -139,6 +140,14 @@ std::string rplMyInfo(Server &server, User &user)
 std::string rplNickok(Server &server, User &user)
 {
     return (createReply(server, RPL_NICKOK) + user.getOldNick() + " Nick succesfully changed to " + user.getNickname());
+}
+std::string rplChannelmodeis(Server &server, User &user, Command& cmd, Channel& channel)
+{
+    return (createReply(server, RPL_CHANNELMODEIS) + " " + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + " Available channel modes: itklo <key> <client count> <user>"); //escribir mensaje
+}
+std::string rplCreationtime(Server &server, User &user, Command& cmd, Channel& channel)
+{
+    return (createReply(server, RPL_CREATIONTIME) + " " + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + " "); //escribir mensaje
 }
 
 std::string rplNotopic(Server &server, User &user, const std::string& channelName)

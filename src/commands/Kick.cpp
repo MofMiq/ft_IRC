@@ -25,7 +25,7 @@ void Command::executeKick(Command& cmd, Server& server, User& user) {
     if (cmd._argCount < 3) {
         user.enqueueResponse(errNeedmoreparams(server, user, cmd, 0));
         //std::cout << user.dequeueResponse();
-        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;
     }
 
@@ -40,7 +40,7 @@ void Command::executeKick(Command& cmd, Server& server, User& user) {
     if (!server.channelExists(channelName)) {
         user.enqueueResponse(errNosuchchannel(server, user, cmd, channelName));
         //std::cout << user.dequeueResponse();
-        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;
     }
 
@@ -49,7 +49,7 @@ void Command::executeKick(Command& cmd, Server& server, User& user) {
     if (!channel->isUserOperator(user.getFd())) {
         user.enqueueResponse(errChanoprivsneeded(server, user, cmd, channelName));
         //std::cout << user.dequeueResponse();
-        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;
     }
 
@@ -63,7 +63,7 @@ void Command::executeKick(Command& cmd, Server& server, User& user) {
         {
             user.enqueueResponse("You cannot kick yourself from the channel !!!");
             //std::cout << user.dequeueResponse();
-            server.sendMessageClient(user.getFd(), user.dequeueResponse());
+            //server.sendMessageClient(user.getFd(), user.dequeueResponse());
             continue;
         }
         // Verifica si el usuario está en el canal
@@ -72,7 +72,7 @@ void Command::executeKick(Command& cmd, Server& server, User& user) {
         {
             user.enqueueResponse(errUsernotinchannel(server, user, cmd, targetNickname, channelName));
             //std::cout << user.dequeueResponse();
-            server.sendMessageClient(user.getFd(), user.dequeueResponse());
+            //server.sendMessageClient(user.getFd(), user.dequeueResponse());
             continue;
         }
         // Elimina al usuario del canal 
@@ -82,10 +82,13 @@ void Command::executeKick(Command& cmd, Server& server, User& user) {
 
         // Esto es para notificar a los usuarios del canal sobre la expulsion
         std::vector<User> users = channel->getUsers();
-        for (std::vector<User>::const_iterator it = users.begin(); it != users.end(); ++it)
+/*         for (std::vector<User>::const_iterator it = users.begin(); it != users.end(); ++it)
             server.sendMessageClient(it->getFd(), kickMessage);
         //Y tb hay q notificar al pobre q ha sido expulsado
-        server.sendMessageClient(targetUser->getFd(), kickMessage);
+        server.sendMessageClient(targetUser->getFd(), kickMessage); */
+        std::vector<Channel*> aux;
+        aux.push_back(server.getChannel(channel->getName()));
+        sendMessageToChannels(server, user, aux, kickMessage);
     }
     server.ShowChannelsAndUsers();
 }

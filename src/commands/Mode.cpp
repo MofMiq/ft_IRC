@@ -54,78 +54,91 @@ MODE: is used to set or remove options (or modes) from a given target.
 
 void Command::executeMode(Command& cmd, Server& server, User& user)
 {
-    (void)user;
-    std::cout << "hola desde MODE" << std::endl;
-    if (cmd._argCount >= 3)
-    {
-        //server.channelExists(cmd.getArg(1))
-        Channel* channel = server.getChannel(cmd.getArg(1));
-        if (cmd.getArg(2) == "+i")
-        {
-            channel->setPrivate(true);
-            std::cout << RED << "NOW " << channel->getName() << " IS PRIVATE" << END << std::endl;//borrar debug
-        }
-        else if (cmd.getArg(2) == "-i")
-        {
-            channel->setPrivate(false);
-            std::cout << RED << "NOW " << channel->getName() << " IS PUBLIC" << END << std::endl;//borrar debug
-        }
-        else if (cmd.getArg(2) == "+t")
-        {
-            channel->setTopicPrivate(true);
-            std::cout << RED << "NOW " << channel->getName() << " 'S TOPIC IS PRIVATE" << END << std::endl;//borrar debug
-        }
-        else if (cmd.getArg(2) == "-t")
-        {
-            channel->setTopicPrivate(false);
-            std::cout << RED << "NOW " << channel->getName() << " 'S TOPIC IS PUBLIC" << END << std::endl;//borrar debug
-        }
-        else if (cmd.getArg(2) == "+k" && cmd._argCount == 4/*&& !cmd.getArg(3).empty()*/)
-        {
-            channel->setPassNeeded(true);
-            channel->setPass(cmd.getArg(3));
-            std::cout << RED << "NOW " << channel->getName() << " HAS A PASSWORD: " << channel->getPass() << END << std::endl;//borrar debug
-        }
-        else if (cmd.getArg(2) == "-k")
-        {
-            channel->setPassNeeded(false);
-            channel->setPass("");
-            std::cout << RED << "NOW " << channel->getName() << " DOESN'T HAS A PASSWORD" << END << std::endl;//borrar debug
-        }
-        else if (cmd.getArg(2) == "+o" && cmd._argCount == 4/*&& !cmd.getArg(3).empty()*/)
-        {
-            if (channel->isUserInChannel(server.getUserByNick(cmd.getArg(3))->getFd()))
-            {
-                User* tmp = server.getUserByNick(cmd.getArg(3));
-                channel->addOperatorToChannel(tmp->getFd());
-                std::cout << RED << "NOW " << tmp->getNickname() << " IS AN OPERATOR OF " << channel->getName() << END << std::endl;//borrar debug
-            }
-
-        }
-        else if (cmd.getArg(2) == "-o" && cmd._argCount == 4/*&& !cmd.getArg(3).empty()*/)
-        {
-
-            if (channel->isUserInChannel(server.getUserByNick(cmd.getArg(3))->getFd()))
-            {
-                User* tmp = server.getUserByNick(cmd.getArg(3));
-                channel->removeOperatorToChannel(tmp->getFd());
-                std::cout << RED << "NOW " << tmp->getNickname() << " ISN'T AN OPERATOR OF " << channel->getName() << END << std::endl;//borrar debug
-            }
-        }
-        else if (cmd.getArg(2) == "+l" && cmd._argCount == 4/*&& !cmd.getArg(3).empty()*/)
-        {
-            int aux = std::atoi(cmd.getArg(3).c_str());
-            if (aux > 0 && aux < MAX_CLIENTS)
-            {
-                channel->setMaxClient(std::atoi(cmd.getArg(3).c_str()));
-                std::cout << RED << "NOW " << channel->getName() << " HAS NEW USER'S LIMIT: " << channel->getMaxClient() << END << std::endl;//borrar debug
-            }
-        }
-        else if (cmd.getArg(2) == "-l")
-        {
-            channel->setMaxClient(MAX_CLIENTS);
-            std::cout << RED << "NOW " << channel->getName() << " DOESN'T HAS NEW USER'S LIMIT: " << channel->getMaxClient() << END << std::endl;//borrar debug
-        }
-    }
-    return ;
+	if (cmd._argCount < 2)
+	{
+		user.enqueueResponse(errNeedmoreparams(server, user, cmd, 4));
+		//server.sendMessageClient(user.getFd(), user.dequeueResponse());
+	}
+	else if (cmd._argCount == 2) //hacer mejor esta mierda
+	{
+		Channel* tmp = server.getChannel(cmd.getArg(1));
+		if (tmp)
+			user.enqueueResponse(rplChannelmodeis(server, user, cmd , *tmp));
+		//server.sendMessageClient(user.getFd(), user.dequeueResponse());
+	}
+	else
+	{
+		if (!server.channelExists(cmd.getArg(1)))
+		{
+			user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
+			//server.sendMessageClient(user.getFd(), user.dequeueResponse());
+			return ;
+		}
+		Channel* channel = server.getChannel(cmd.getArg(1));
+		if (cmd.getArg(2) == "+i")
+		{
+			channel->setPrivate(true);
+			std::cout << RED << "NOW " << channel->getName() << " IS PRIVATE" << END << std::endl;//borrar debug
+		}
+		else if (cmd.getArg(2) == "-i")
+		{
+			channel->setPrivate(false);
+			std::cout << RED << "NOW " << channel->getName() << " IS PUBLIC" << END << std::endl;//borrar debug
+		}
+		else if (cmd.getArg(2) == "+t")
+		{
+			channel->setTopicPrivate(true);
+			std::cout << RED << "NOW " << channel->getName() << " 'S TOPIC IS PRIVATE" << END << std::endl;//borrar debug
+		}
+		else if (cmd.getArg(2) == "-t")
+		{
+			channel->setTopicPrivate(false);
+			std::cout << RED << "NOW " << channel->getName() << " 'S TOPIC IS PUBLIC" << END << std::endl;//borrar debug
+		}
+		else if (cmd.getArg(2) == "+k" && cmd._argCount == 4/*&& !cmd.getArg(3).empty()*/)
+		{
+			channel->setPassNeeded(true);
+			channel->setPass(cmd.getArg(3));
+			std::cout << RED << "NOW " << channel->getName() << " HAS A PASSWORD: " << channel->getPass() << END << std::endl;//borrar debug
+		}
+		else if (cmd.getArg(2) == "-k")
+		{
+			channel->setPassNeeded(false);
+			channel->setPass("");
+			std::cout << RED << "NOW " << channel->getName() << " DOESN'T HAS A PASSWORD" << END << std::endl;//borrar debug
+		}
+		else if (cmd.getArg(2) == "+o" && cmd._argCount == 4/*&& !cmd.getArg(3).empty()*/)
+		{
+			if (channel->isUserInChannel(server.getUserByNick(cmd.getArg(3))->getFd()))
+			{
+				User* tmp = server.getUserByNick(cmd.getArg(3));
+				channel->addOperatorToChannel(tmp->getFd());
+				std::cout << RED << "NOW " << tmp->getNickname() << " IS AN OPERATOR OF " << channel->getName() << END << std::endl;//borrar debug
+			}
+		}
+		else if (cmd.getArg(2) == "-o" && cmd._argCount == 4/*&& !cmd.getArg(3).empty()*/)
+		{
+			if (channel->isUserInChannel(server.getUserByNick(cmd.getArg(3))->getFd()))
+			{
+				User* tmp = server.getUserByNick(cmd.getArg(3));
+				channel->removeOperatorToChannel(tmp->getFd());
+				std::cout << RED << "NOW " << tmp->getNickname() << " ISN'T AN OPERATOR OF " << channel->getName() << END << std::endl;//borrar debug
+			}
+		}
+		else if (cmd.getArg(2) == "+l" && cmd._argCount == 4/*&& !cmd.getArg(3).empty()*/)
+		{
+			int aux = std::atoi(cmd.getArg(3).c_str());
+			if (aux > 0 && aux < MAX_CLIENTS)
+			{
+				channel->setMaxClient(std::atoi(cmd.getArg(3).c_str()));
+				std::cout << RED << "NOW " << channel->getName() << " HAS NEW USER'S LIMIT: " << channel->getMaxClient() << END << std::endl;//borrar debug
+			}
+		}
+		else if (cmd.getArg(2) == "-l")
+		{
+			channel->setMaxClient(MAX_CLIENTS);
+			std::cout << RED << "NOW " << channel->getName() << " DOESN'T HAS NEW USER'S LIMIT: " << channel->getMaxClient() << END << std::endl;//borrar debug
+		}
+	}
+  return ;
 }

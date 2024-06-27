@@ -6,6 +6,7 @@
 
 class Command;
 class Server;
+class Channel;
 
 enum Code
 {
@@ -14,6 +15,8 @@ enum Code
     RPL_CREATED = 003,
     RPL_MYINFO = 004,
     RPL_NICKOK = 010,
+    RPL_CHANNELMODEIS = 324,
+    RPL_CREATIONTIME = 329,
     RPL_NOTOPIC = 331,
     RPL_TOPIC = 332,
     RPL_TOPICWHOTIME = 333,
@@ -68,6 +71,8 @@ std::string rplYourHost(Server &server, User &user);
 std::string rplCreated(Server &server, User &user);
 std::string rplMyInfo(Server &server, User &user);
 std::string rplNickok(Server &server, User &user);
+std::string rplChannelmodeis(Server &server, User &user, Command& cmd, Channel& channel);
+std::string rplCreationtime(Server &server, User &user, Command& cmd, Channel& channel);
 std::string rplNotopic(Server &server, User &user, const std::string& channelName);
 std::string rplTopic(Server &server, User &user, const std::string& channelName, const std::string& channelTopic);
 std::string rplTopicwhotime(Server &server, User &user, const std::string& channelName, const std::string& nick, const std::string& timestamp);

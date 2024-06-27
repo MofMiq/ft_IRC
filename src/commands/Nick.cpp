@@ -57,25 +57,25 @@ void Command::executeNick(Command &cmd, Server &server, User &user)
     if (cmd._argCount < 2/* || cmd.getArg(1).length() == 0*/)
     {
         user.enqueueResponse(errNonicknamegiven(server, user, cmd));
-        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
     }
 
     else if (!validNickname(cmd.getArg(1)) || cmd.getArg(1).length() >= MAX_LENGHT)
     {
         user.enqueueResponse(errErroneousnickname(server, user, cmd));
-        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
     }
     else if (server.isNickInServer(cmd.getArg(1)))
     {
         user.enqueueResponse(errNicknameinuse(server, user, cmd));
-        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
     }
     user.setOldNick(user.getNickname());
     user.setNickname(cmd.getArg(1));
     server.updateUsersServerByNick(user.getFd(), cmd.getArg(1));
 
     user.enqueueResponse(rplNickok(server, user));
-    server.sendMessageClient(user.getFd(), user.dequeueResponse());
+    //server.sendMessageClient(user.getFd(), user.dequeueResponse());
     sendMessageToChannels(server, user, server.getAllChannelsUserIn(user.getFd()), rplNickok(server, user));
     return ;
 }
