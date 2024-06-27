@@ -55,6 +55,7 @@ public:
 
     bool checkResponsesQueue();
     //void enqueueResponse(Compose& cmp);   //meter un msg
+    int     getQueueSize();
     void enqueueResponse(const std::string& res);   //meter un msg
     //Compose& dequeueResponse();                  //sacar un msg
     std::string dequeueResponse();                  //sacar un msg

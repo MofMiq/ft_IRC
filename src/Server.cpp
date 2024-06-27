@@ -58,6 +58,42 @@ bool    Server::start()
     return true;
 }
 
+std::vector < Channel* >   Server::getAllChannels()
+{
+    std::vector < Channel* > channels;
+
+    for (std::map<std::string, Channel>::iterator it = this->_channelsServer.begin(); it != this->_channelsServer.end(); it++)
+    {
+        channels.push_back(&it->second);
+    }
+
+    return (channels);
+}
+
+void    Server::checkQueue()
+{
+    std::vector < Channel* > channels;
+
+    channels = getAllChannels();
+
+    //std::cout << "TOTAL DE CANALES -> " << channels.size() << std::endl;
+
+    for (size_t i = 0; i < channels.size(); i++)
+    {
+        Channel* c = channels[i];
+        for (std::map<int, User>::iterator it = c->_users.begin(); it != c->_users.end(); ++it)
+        {
+                if (it->second.getStandBy() == false)
+                {
+                    while (it->second.getQueueSize() > 0)
+                    {
+                        sendMessageClient(it->second.getFd(), it->second.dequeueResponse());
+                    }
+                }
+        }
+    }
+}
+
 void    Server::run()
 {
     while (true) {
@@ -77,6 +113,7 @@ void    Server::run()
                 }
             }
         }
+        checkQueue();
     }
 }
 

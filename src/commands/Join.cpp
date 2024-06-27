@@ -112,6 +112,7 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
             // Notificar al nuevo usuario que se ha unido al canal
             std::string joinMessage = ":" + user.getNickname() + " JOIN " + channelName + "\n";
             user.enqueueResponse(joinMessage);
+            server.checkQueue();
             //server.sendMessageClient(user.getFd(), joinMessage);
         }
     }

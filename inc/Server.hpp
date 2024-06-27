@@ -40,6 +40,8 @@ public:
     Server(int port, const std::string& password);
     void        sendMessageClient(int clientSocket, const std::string& errorMsg);
     bool        start();
+    std::vector < Channel* >    getAllChannels();
+    void        checkQueue();
     void        run();
     std::string getServerName() const;
     void        handle_new_connection();
