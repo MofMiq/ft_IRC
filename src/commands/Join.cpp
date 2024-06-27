@@ -42,7 +42,7 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
     if (cmd._argCount < 2)
     {
         user.enqueueResponse(errNeedmoreparams(server, user, cmd, 0));
-        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;
     }
 
@@ -62,7 +62,7 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
         // Validar el nombre del canal
         if (!isValidChannelName(channelName)) {
             user.enqueueResponse(errBadChannelMask(server, user, cmd, channelName));
-            server.sendMessageClient(user.getFd(), user.dequeueResponse());
+            //server.sendMessageClient(user.getFd(), user.dequeueResponse());
             continue;
         }
 
@@ -72,14 +72,14 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
             if (!server.checkChannelKey(channelName, key))
             {
                 user.enqueueResponse(errBadChannelKey(server, user, cmd, channelName));
-                server.sendMessageClient(user.getFd(), user.dequeueResponse());
+                //server.sendMessageClient(user.getFd(), user.dequeueResponse());
                 continue;
             }
             // Verifica si el canal esta lleno
             Channel* channel = server.getChannel(channelName);
             if (channel->isFull()) {
                 user.enqueueResponse(errChannelIsFull(server, user, cmd, channelName));
-                server.sendMessageClient(user.getFd(), user.dequeueResponse());
+                //server.sendMessageClient(user.getFd(), user.dequeueResponse());
                 continue;
             }
             // Verifica si el usuario ya esta en el canal
@@ -94,9 +94,12 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
             std::string joinMessage = ":" + user.getNickname() + " JOIN " + channelName + "\n";
             //channel->broadcastMessage(joinMessage, user.getFd());
              // Esto es para notificar a los usuarios del canal sobre la Union
-            std::vector<User> users = channel->getUsers();
+/*             std::vector<User> users = channel->getUsers();
             for (std::vector<User>::const_iterator it = users.begin(); it != users.end(); ++it)
-                server.sendMessageClient(it->getFd(), joinMessage);
+                server.sendMessageClient(it->getFd(), joinMessage); */
+            std::vector<Channel*> aux;
+            aux.push_back(server.getChannel(channel->getName()));
+            sendMessageToChannels(server, user, aux, joinMessage);
         }
         else
         {
@@ -108,7 +111,8 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
             std::cout << "User " << user.getNickname() << " created and joined channel " << channelName << std::endl;
             // Notificar al nuevo usuario que se ha unido al canal
             std::string joinMessage = ":" + user.getNickname() + " JOIN " + channelName + "\n";
-            server.sendMessageClient(user.getFd(), joinMessage);
+            user.enqueueResponse(joinMessage);
+            //server.sendMessageClient(user.getFd(), joinMessage);
         }
     }
     server.ShowChannelsAndUsers();

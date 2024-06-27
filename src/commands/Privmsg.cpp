@@ -31,46 +31,46 @@ void Command::executePrivmsg(Command& cmd, Server& server, User& user)
   if (cmd._argCount < 2)
   {
     user.enqueueResponse(errNeedmoreparams(server, user, cmd, 3));
-    server.sendMessageClient(user.getFd(), user.dequeueResponse());
+    //server.sendMessageClient(user.getFd(), user.dequeueResponse());
     return ;
   }
   if (cmd.getArg(1)[0] == ':')
   {
     user.enqueueResponse(errNorecipient(server, user, cmd));
-    server.sendMessageClient(user.getFd(), user.dequeueResponse());
+    //server.sendMessageClient(user.getFd(), user.dequeueResponse());
   }
   else if (cmd.getArg(1)[0] != '#' && !server.isNickInServer(cmd.getArg(1)))
   {
     user.enqueueResponse(errNosuchnick(server, user, cmd, cmd.getArg(1)));
-    server.sendMessageClient(user.getFd(), user.dequeueResponse());
+    //server.sendMessageClient(user.getFd(), user.dequeueResponse());
   }
   else if (cmd.getArg(1)[0] == '#' && !server.channelExists(cmd.getArg(1)))
   {
     user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
-    server.sendMessageClient(user.getFd(), user.dequeueResponse());
+    //server.sendMessageClient(user.getFd(), user.dequeueResponse());
   }
   else if (cmd._argCount == 2)
   {
     user.enqueueResponse(errNeedmoreparams(server, user, cmd, 3));
-    server.sendMessageClient(user.getFd(), user.dequeueResponse());
+    //server.sendMessageClient(user.getFd(), user.dequeueResponse());
   }
   else if (cmd._argCount >= 3)
   {
     if (!cmd.getArg(2).empty() && cmd.getArg(2)[0] != ':')
     {
       user.enqueueResponse(errToomanytargets(server, user, cmd));
-      server.sendMessageClient(user.getFd(), user.dequeueResponse());
+      //server.sendMessageClient(user.getFd(), user.dequeueResponse());
     }
     else if (cmd.getArgsAsString(2) == ":")
     {
       user.enqueueResponse(errNotexttosend(server, user, cmd));
-      server.sendMessageClient(user.getFd(), user.dequeueResponse());
+      //server.sendMessageClient(user.getFd(), user.dequeueResponse());
     }
     else if (cmd.getArg(1)[0] != '#')
     {
       User* rec = server.getUserByNick(cmd.getArg(1));
       rec->enqueueResponse(":" + server.getServerName() + " " + user.getNickname() + " " + getArg(0) + " " + rec->getNickname() + " " + cmd.getArgsAsString(2));  //borrar salto de linea?
-      server.sendMessageClient(rec->getFd(), rec->dequeueResponse());
+      //server.sendMessageClient(rec->getFd(), rec->dequeueResponse());
     }
     else if (cmd.getArg(1)[0] == '#' && server.getChannel(cmd.getArg(1)))
     {

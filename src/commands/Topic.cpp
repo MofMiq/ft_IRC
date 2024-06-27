@@ -43,27 +43,27 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
     if (cmd._argCount == 1)
     {
         user.enqueueResponse(errNeedmoreparams(server, user, cmd, 2));
-        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
     std::string channelName = cmd.getArg(1);
     if (!server.channelExists(channelName))
     {
         user.enqueueResponse(errNosuchchannel(server, user, cmd, channelName));
-        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;
     }
     Channel* tmp = server.getChannel(channelName);
     if (!tmp->isUserInChannel(user.getFd()))
     {
         user.enqueueResponse(errNotonchannel(server, user, cmd, tmp->getName()));
-        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;
     }
     if (tmp->getTopicPrivate() && !tmp->isUserOperator(user.getFd()))
     {
         user.enqueueResponse(errChanoprivsneeded(server, user, cmd, tmp->getName()));
-        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
     if (cmd._argCount == 2)
@@ -71,7 +71,7 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
         if (tmp->getTopic().empty())
         {
             user.enqueueResponse(rplNotopic(server, user, tmp->getName()));
-            server.sendMessageClient(user.getFd(), user.dequeueResponse());
+            //server.sendMessageClient(user.getFd(), user.dequeueResponse());
         }
         else //este else muestra el topic si ya esta establecido
             enqueueSomeMsgs(server, user, *tmp, "");
@@ -101,7 +101,7 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
     else
     {
         user.enqueueResponse(errNeedmoreparams(server, user, cmd, 2));
-        server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
     }
     return ;
 }
@@ -109,7 +109,7 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
 void enqueueSomeMsgs(Server& server, User& user, Channel& channel, const std::string& extra)
 {
     user.enqueueResponse(rplTopic(server, user, channel.getName(), channel.getTopic()) + extra);
-    server.sendMessageClient(user.getFd(), user.dequeueResponse());
+    //server.sendMessageClient(user.getFd(), user.dequeueResponse());
     user.enqueueResponse(rplTopicwhotime(server, user, channel.getName(), user.getNickname(), channel.getTopicTimestamp()));
-    server.sendMessageClient(user.getFd(), user.dequeueResponse());    
+    //server.sendMessageClient(user.getFd(), user.dequeueResponse());    
 }
