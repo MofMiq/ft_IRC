@@ -70,12 +70,15 @@ void Command::executeNick(Command &cmd, Server &server, User &user)
         user.enqueueResponse(errNicknameinuse(server, user, cmd));
         //server.sendMessageClient(user.getFd(), user.dequeueResponse());
     }
-    user.setOldNick(user.getNickname());
-    user.setNickname(cmd.getArg(1));
-    server.updateUsersServerByNick(user.getFd(), cmd.getArg(1));
+    else 
+    {
+        user.setOldNick(user.getNickname());
+        user.setNickname(cmd.getArg(1));
+        server.updateUsersServerByNick(user.getFd(), cmd.getArg(1));
 
-    user.enqueueResponse(rplNickok(server, user));
-    //server.sendMessageClient(user.getFd(), user.dequeueResponse());
-    sendMessageToChannels(server, user, server.getAllChannelsUserIn(user.getFd()), rplNickok(server, user));
+        user.enqueueResponse(rplNickok(server, user));
+        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
+        sendMessageToChannels(server, user, server.getAllChannelsUserIn(user.getFd()), rplNickok(server, user));
+    }
     return ;
 }
