@@ -42,7 +42,7 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
 	if (this->_argCount == 0)
 	{
 		user.enqueueResponse(errUnknowncommand(*server, user, *this));
-		server->sendMessageClient(user.getFd(), user.dequeueResponse());
+		//server->sendMessageClient(user.getFd(), user.dequeueResponse());
 		return ;
 	}
 	else if (cmd == "NICK")
@@ -66,7 +66,7 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
 	else
 	{
 		user.enqueueResponse(errUnknowncommand(*server, user, *this));
-		server->sendMessageClient(user.getFd(), user.dequeueResponse());
+		//server->sendMessageClient(user.getFd(), user.dequeueResponse());
 	}
 	return ;
 }
@@ -86,19 +86,25 @@ std::string Command::getArgsAsString(int startIdx) const
 	return result;
 }
 
-void Command::sendMessageToChannels(Server& server, User& user, const std::vector<Channel*>& channels, const std::string& reply)
+void Command::sendMessageToChannels(User& user, const std::vector<Channel*>& channels, const std::string& reply)
 {
-	(void) server; // borrar server, ya que en cuanto no llamamos a sendMessageClient ya no hace falta
   for (size_t i = 0; i < channels.size(); i++)
   {
     Channel* c = channels[i];
-    for (std::map<int, User>::iterator it = c->_users.begin(); it != c->_users.end(); ++it)
+    for (std::map<int, User*>::iterator it = c->_users.begin(); it != c->_users.end(); ++it)
     {
-			if (it->second.getFd() != user.getFd())
-			{
-				it->second.enqueueResponse(reply);
-				//server.sendMessageClient(it->first, it->second.dequeueResponse());
-			}
+			if (it->second->getFd() != user.getFd())
+				it->second->enqueueResponse(reply);
     }
   }
-} 
+}
+
+
+bool Command::isAllowedSymbol(char c)
+{
+    if ((c == '[') || (c == ']')
+        || (c == '{') || (c == '}') || (c == '\\') || (c == '|') || (c == '_')
+        || (c == '-') || (c == '`'))
+        return true;
+    return false;
+}

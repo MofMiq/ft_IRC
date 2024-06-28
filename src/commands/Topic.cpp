@@ -43,39 +43,31 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
     if (cmd._argCount == 1)
     {
         user.enqueueResponse(errNeedmoreparams(server, user, cmd, 2));
-        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
     std::string channelName = cmd.getArg(1);
     if (!server.channelExists(channelName))
     {
         user.enqueueResponse(errNosuchchannel(server, user, cmd, channelName));
-        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;
     }
     Channel* tmp = server.getChannel(channelName);
     if (!tmp->isUserInChannel(user.getFd()))
     {
         user.enqueueResponse(errNotonchannel(server, user, cmd, tmp->getName()));
-        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;
     }
     if (tmp->getTopicPrivate() && !tmp->isUserOperator(user.getFd()))
     {
         user.enqueueResponse(errChanoprivsneeded(server, user, cmd, tmp->getName()));
-        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return ;
     }
     if (cmd._argCount == 2)
     {
         if (tmp->getTopic().empty())
-        {
             user.enqueueResponse(rplNotopic(server, user, tmp->getName()));
-            //server.sendMessageClient(user.getFd(), user.dequeueResponse());
-        }
-        else //este else muestra el topic si ya esta establecido
+        else
             enqueueSomeMsgs(server, user, *tmp, "");
-        //return ;
     }
     else if (cmd._argCount >= 3 && cmd.getArg(2)[0] == ':')
     {
@@ -84,8 +76,8 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
         {
             tmp->setTopic("");
             enqueueSomeMsgs(server, user, *tmp, " :Topic has been cleared");
-            sendMessageToChannels(server, user, server.getAllChannelsUserIn(user.getFd()), rplTopic(server, user, tmp->getName(), tmp->getTopic()) + " :Topic has been cleared");
-            sendMessageToChannels(server, user, server.getAllChannelsUserIn(user.getFd()), rplTopicwhotime(server, user, tmp->getName(), user.getNickname(), tmp->getTopicTimestamp()));
+            sendMessageToChannels(user, server.getAllChannelsUserIn(user.getFd()), rplTopic(server, user, tmp->getName(), tmp->getTopic()) + " :Topic has been cleared");
+            sendMessageToChannels(user, server.getAllChannelsUserIn(user.getFd()), rplTopicwhotime(server, user, tmp->getName(), user.getNickname(), tmp->getTopicTimestamp()));
         }
         else
         {
@@ -94,22 +86,17 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
 
             std::vector<Channel*> aux;
             aux.push_back(server.getChannel(tmp->getName()));
-            sendMessageToChannels(server, user, server.getAllChannelsUserIn(user.getFd()), rplTopic(server, user, tmp->getName(), tmp->getTopic()) + " :Topic has been succesfully changed");
-            sendMessageToChannels(server, user, server.getAllChannelsUserIn(user.getFd()), rplTopicwhotime(server, user, tmp->getName(), user.getNickname(), tmp->getTopicTimestamp()));
+            sendMessageToChannels(user, server.getAllChannelsUserIn(user.getFd()), rplTopic(server, user, tmp->getName(), tmp->getTopic()) + " :Topic has been succesfully changed");
+            sendMessageToChannels(user, server.getAllChannelsUserIn(user.getFd()), rplTopicwhotime(server, user, tmp->getName(), user.getNickname(), tmp->getTopicTimestamp()));
         }
     }
     else
-    {
         user.enqueueResponse(errNeedmoreparams(server, user, cmd, 2));
-        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
-    }
     return ;
 }
 
 void enqueueSomeMsgs(Server& server, User& user, Channel& channel, const std::string& extra)
 {
     user.enqueueResponse(rplTopic(server, user, channel.getName(), channel.getTopic()) + extra);
-    //server.sendMessageClient(user.getFd(), user.dequeueResponse());
-    user.enqueueResponse(rplTopicwhotime(server, user, channel.getName(), user.getNickname(), channel.getTopicTimestamp()));
-    //server.sendMessageClient(user.getFd(), user.dequeueResponse());    
+    user.enqueueResponse(rplTopicwhotime(server, user, channel.getName(), user.getNickname(), channel.getTopicTimestamp()));    
 }

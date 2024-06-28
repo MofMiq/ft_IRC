@@ -114,7 +114,7 @@ std::string errChannelIsFull(Server& server, User& user, Command& cmd, const std
 }
 std::string errBadChannelKey(Server& server, User& user, Command& cmd, const std::string& channelName)
 {
-    return (createMessage(server, ERR_BADCHANNELKEY, user, cmd) + user.getNickname() + " " + channelName + ":Cannot join channel (+k)\n");
+    return (createMessage(server, ERR_BADCHANNELKEY, user, cmd) + user.getNickname() + " " + channelName + ":Cannot join channel (+k)");
 }
 std::string errBadChannelMask(Server& server, User& user, Command& cmd, const std::string& channelName)
 {

@@ -14,8 +14,8 @@ Channel::Channel(const std::string& name, int maxClients)
 Channel::~Channel() {}
 
 // A�ade un usuario al canal
-void Channel::addUser(const User& user) {
-    _users[user.getFd()] = user;
+void Channel::addUser(User* user) {
+    _users[user->getFd()] = user;
     _clientCount++;
 }
 
@@ -26,9 +26,9 @@ void Channel::removeUser(int userFd) {
     _operators.erase(userFd);
 }
 
-std::vector<User> Channel::getUsers() const {
-    std::vector<User> userList;
-    for (std::map<int, User>::const_iterator it = _users.begin(); it != _users.end(); ++it) {
+std::vector<User*> Channel::getUsers() const {
+    std::vector<User*> userList;
+    for (std::map<int, User*>::const_iterator it = _users.begin(); it != _users.end(); ++it) {
         userList.push_back(it->second);
     }
     return userList;
@@ -135,7 +135,7 @@ void Channel::setTopicTimestamp(const std::string& timestamp)
 
 bool Channel::isUserInChannel(int fd)
 {
-    std::map<int, User>::const_iterator it = this->_users.find(fd);
+    std::map<int, User*>::const_iterator it = this->_users.find(fd);
     if (it != this->_users.end())
         return true;
     return false;

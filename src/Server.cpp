@@ -58,63 +58,41 @@ bool    Server::start()
     return true;
 }
 
-std::vector < Channel* >   Server::getAllChannels()
-{
-    std::vector < Channel* > channels;
-
-    for (std::map<std::string, Channel>::iterator it = this->_channelsServer.begin(); it != this->_channelsServer.end(); it++)
-    {
-        channels.push_back(&it->second);
-    }
-
-    return (channels);
-}
-
 void    Server::checkQueue()
 {
-    std::vector < Channel* > channels;
-
-    channels = getAllChannels();
-
-    //std::cout << "TOTAL DE CANALES -> " << channels.size() << std::endl;
-
-    for (size_t i = 0; i < channels.size(); i++)
-    {
-        Channel* c = channels[i];
-        for (std::map<int, User>::iterator it = c->_users.begin(); it != c->_users.end(); ++it)
-        {
-                if (it->second.getStandBy() == false)
-                {
-                    while (it->second.getQueueSize() > 0)
-                    {
-                        sendMessageClient(it->second.getFd(), it->second.dequeueResponse());
-                    }
-                }
-        }
-    }
+	for (std::map<int, User* >::iterator it = this->_usersServerByFd.begin(); it != this->_usersServerByFd.end(); ++it)
+	{
+		if (it->second->getStandBy() == false)
+		{
+			while (it->second->getQueueSize() > 0)
+			{
+				sendMessageClient(it->second->getFd(), it->second->dequeueResponse());
+			}
+		}
+	}
 }
 
 void    Server::run()
 {
-    while (true) {
-        int poll_count = poll(pollfds.data(), pollfds.size(), -1);
-        if (poll_count == -1) {
-            perror("poll");
-            break;
-        }
+	while (true) {
+		int poll_count = poll(pollfds.data(), pollfds.size(), -1);
+		if (poll_count == -1) {
+			perror("poll");
+			break;
+		}
 
-        for (size_t i = 0; i < pollfds.size(); ++i) {
-            if (pollfds[i].revents & POLLIN) {
-                if (pollfds[i].fd == server_socket) {
-                    handle_new_connection();
-                }
-                else {
-                    handle_client_message(pollfds[i].fd);
-                }
-            }
-        }
-        checkQueue();
-    }
+		for (size_t i = 0; i < pollfds.size(); ++i) {
+			if (pollfds[i].revents & POLLIN) {
+				if (pollfds[i].fd == server_socket) {
+					handle_new_connection();
+				}
+				else {
+					handle_client_message(pollfds[i].fd);
+				}
+			}
+		}
+		checkQueue();
+	}
 }
 
 std::string     Server::getServerName() const 
@@ -421,7 +399,7 @@ void Server::addUserToChannel(User& user, const std::string& channelName)
     if (!channelExists(channelName)) {
         _channelsServer[channelName] = Channel(channelName);
     }
-    _channelsServer[channelName].addUser(user);
+    _channelsServer[channelName].addUser(&user);
     //user._channelIn.push_back(channelName); //struct response?
 }
 
@@ -459,13 +437,13 @@ void Server::ShowChannelsAndUsers() const
     {
         const std::string& channelName = it->first;
         const Channel& channel = it->second;
-        std::vector<User> users = channel.getUsers();
+        std::vector<User*> users = channel.getUsers();
         std::cout << "Channel: " << channelName << std::endl;
-        for (std::vector<User>::const_iterator userIt = users.begin(); userIt != users.end(); ++userIt)
+        for (std::vector<User*>::const_iterator userIt = users.begin(); userIt != users.end(); ++userIt)
         {
-            const User& user = *userIt;
-            std::cout << " - User: " << user.getNickname() << " (FD: " << user.getFd() << ")"; 
-            if(channel.isUserOperator(user.getFd()))
+            User* user = *userIt;
+            std::cout << " - User: " << user->getNickname() << " (FD: " << user->getFd() << ")"; 
+            if(channel.isUserOperator(user->getFd()))
                 std::cout <<" IS OPERATOR";
             std::cout << std::endl;
         }
@@ -529,16 +507,15 @@ User* Server::getUserByNick(const std::string& nick)
 
 std::vector<Channel*> Server::getAllChannelsUserIn(int fd)
 {
-    std::vector<Channel*> channelsUserIn;
-    for (std::map<std::string, Channel>::iterator it = this->_channelsServer.begin(); it != this->_channelsServer.end(); ++it)
-    {
-        if (it->second.isUserInChannel(fd))
-            channelsUserIn.push_back(&(it->second));
-    }
-    for(std::vector<Channel*>::iterator it = channelsUserIn.begin(); it != channelsUserIn.end(); ++it) //borrar debug
-    {
-        std::cout << PURPLE << (*it)->getName() << END << std::endl;
-    }
-    return channelsUserIn;
+	std::vector<Channel*> channelsUserIn;
+	for (std::map<std::string, Channel>::iterator it = this->_channelsServer.begin(); it != this->_channelsServer.end(); ++it)
+	{
+		if (it->second.isUserInChannel(fd))
+			channelsUserIn.push_back(&(it->second));
+	}
+	for(std::vector<Channel*>::iterator it = channelsUserIn.begin(); it != channelsUserIn.end(); ++it) //borrar debug
+	{
+		std::cout << PURPLE << (*it)->getName() << END << std::endl;
+	}
+	return channelsUserIn;
 }
-

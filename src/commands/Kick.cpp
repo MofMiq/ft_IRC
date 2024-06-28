@@ -81,14 +81,14 @@ void Command::executeKick(Command& cmd, Server& server, User& user) {
         std::cout << kickMessage;
 
         // Esto es para notificar a los usuarios del canal sobre la expulsion
-        std::vector<User> users = channel->getUsers();
+        //std::vector<User*> users = channel->getUsers();
 /*         for (std::vector<User>::const_iterator it = users.begin(); it != users.end(); ++it)
             server.sendMessageClient(it->getFd(), kickMessage);
         //Y tb hay q notificar al pobre q ha sido expulsado
         server.sendMessageClient(targetUser->getFd(), kickMessage); */
         std::vector<Channel*> aux;
         aux.push_back(server.getChannel(channel->getName()));
-        sendMessageToChannels(server, user, aux, kickMessage);
+        sendMessageToChannels(user, aux, kickMessage);
     }
     server.ShowChannelsAndUsers();
 }

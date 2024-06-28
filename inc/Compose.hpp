@@ -1,4 +1,4 @@
-//Compose
+//Compose //borrar
     // std::string _text;
     // bool    _onlyOneUser;
     // int     _fdUser;

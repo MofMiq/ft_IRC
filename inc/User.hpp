@@ -16,14 +16,11 @@ private:
     std::string _hostName;
     std::string _serverName;
     std::string _realName;
-
     std::queue<std::string> _responses;
-    //std::queue<Compose> _responses; //Compose
 
     bool _standBy;
 
 public:
-    //std::vector<std::string> _channelIn; //Compose
     User();
     User(int fd);
     User(int fd, std::string userName, std::string hostName, std::string serverName, std::string realName);

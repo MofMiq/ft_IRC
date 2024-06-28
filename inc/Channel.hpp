@@ -27,7 +27,7 @@ private:
 
 
 public:
-    std::map<int, User> _users; // Contenedor de usuarios usando un mapa para acceso rápido por file descriptor
+    std::map<int, User*> _users; // Contenedor de usuarios usando un mapa para acceso rápido por file descriptor
     // Constructor por defecto
     Channel();
 
@@ -37,12 +37,12 @@ public:
     ~Channel();
 
     // Añade un usuario al canal
-    void addUser(const User& user);
+    void addUser(User* user);
 
     // Elimina un usuario del canal
     void removeUser(int userFd);
 
-    std::vector<User> getUsers() const;
+    std::vector<User*> getUsers() const;
 
     // Verifica si un usuario es operador del canal
     bool isUserOperator(int userFd) const;
