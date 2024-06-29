@@ -94,6 +94,11 @@ std::string errUsernotinchannel(Server& server, User& user, Command &cmd, const 
     return (createMessage(server, ERR_USERNOTINCHANNEL, user, cmd) + targetNickname + " " + channelName + ": They aren't on that channel");
 }
 
+std::string errUseronchannel(Server& server, User& user, Command& cmd, const std::string& targetNickname, const std::string& channelName)
+{
+    return (createMessage(server, ERR_USERONCHANNEL, user, cmd) + targetNickname + " " + channelName + ":is already on channel");
+}
+
 std::string errNeedmoreparams(Server& server, User& user, Command &cmd, int i)
 {
     std::string msg = createMessage(server, ERR_NEEDMOREPARAMS, user, cmd) + ": Not enough parameters";
@@ -101,6 +106,12 @@ std::string errNeedmoreparams(Server& server, User& user, Command &cmd, int i)
         msg += "\nUsage: TOPIC <channel> :[new topic]";
     else if (i == 3)
         msg += "\nUsage: PRIVMSG <user>/<channel> :<the message you want to send]>";
+    else if (i == 6)
+        msg += "\nUsage: INVITE <user> <channel>";
+    else if (i == 7)
+        msg += "\nUsage: KICK <channel> <user>{,<user>} [:<reason>]";
+    else if (i == 8)
+        msg += "\nUsage: JOIN <channel>{,<channel>} [<key>{,<key>}]";
     return msg;
 }
 
@@ -112,6 +123,12 @@ std::string errChannelIsFull(Server& server, User& user, Command& cmd, const std
 {
     return (createMessage(server, ERR_CHANNELISFULL, user, cmd) + user.getNickname() + " " + channelName + " :Cannot join channel (+l)");
 }
+
+std::string errInviteOnlyChan(Server& server, User& user, Command& cmd, const std::string& channelName)
+{
+    return (createMessage(server, ERR_INVITEONLYCHAN, user, cmd) + user.getNickname() + " " + channelName + " :Cannot join channel (+i)");
+}
+
 std::string errBadChannelKey(Server& server, User& user, Command& cmd, const std::string& channelName)
 {
     return (createMessage(server, ERR_BADCHANNELKEY, user, cmd) + user.getNickname() + " " + channelName + ":Cannot join channel (+k)");
@@ -163,4 +180,9 @@ std::string rplTopic(Server &server, User &user, const std::string& channelName,
 std::string rplTopicwhotime(Server &server, User &user, const std::string& channelName, const std::string& nick, const std::string& timestamp)
 {
     return (createReply(server, RPL_TOPICWHOTIME) + user.getNickname() + " " + channelName + " " + nick + " " + timestamp);
+}
+
+std::string rplInviting(Server& server, User& user, const std::string& targetNickname, const std::string& channelName)
+{
+    return (createReply(server, RPL_INVITING) + user.getNickname() + " " + targetNickname + " " + channelName);
 }

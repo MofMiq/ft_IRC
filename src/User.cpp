@@ -123,3 +123,18 @@ int     User::getQueueSize()
 {
     return (this->_responses.size());
 }
+
+void User::addInvitedChannel(const std::string& channelName)
+{
+    _invitedChannels.push_back(channelName);
+}
+
+bool User::isInvitedToChannel(const std::string& channelName) const
+{
+    for (std::vector<std::string>::const_iterator it = _invitedChannels.begin(); it != _invitedChannels.end(); ++it)
+    {
+        if (*it == channelName)
+            return true;
+    }
+    return false;
+}

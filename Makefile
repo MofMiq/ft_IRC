@@ -13,7 +13,7 @@ OBJ_DIR	= objs/
 #direccion de carpetas dentro de src/
 #COMMAND es la variable para los archivos sin extension de la carpeta de parseo
 
-COMMAND	= Nick Mode Topic Privmsg Join Kick
+COMMAND	= Nick Mode Topic Privmsg Join Kick Invite
 
 SERVER	= server
 
