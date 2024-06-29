@@ -41,7 +41,7 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
     // Verifica si se proporcionan suficientes argumentos
     if (cmd._argCount < 2)
     {
-        user.enqueueResponse(errNeedmoreparams(server, user, cmd, 0));
+        user.enqueueResponse(errNeedmoreparams(server, user, cmd, 8));
         //server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;
     }
@@ -67,7 +67,17 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
         }
 
         // Verificar si el canal ya existe en el servidor
-        if (server.channelExists(channelName)) {
+        if (server.channelExists(channelName))
+        {
+                      
+            Channel* channel = server.getChannel(channelName);
+
+            // Verificar si el canal está en modo "solo invitación" y si el usuario no ha sido invitado
+            if (channel->getPrivate() && !user.isInvitedToChannel(channelName))
+            {
+                user.enqueueResponse(errInviteOnlyChan(server, user, cmd, channelName));
+                continue;
+            }
             //// El canal ya existe, verificar la clave del canal
             if (!server.checkChannelKey(channelName, key))
             {
@@ -76,7 +86,6 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
                 continue;
             }
             // Verifica si el canal esta lleno
-            Channel* channel = server.getChannel(channelName);
             if (channel->isFull()) {
                 user.enqueueResponse(errChannelIsFull(server, user, cmd, channelName));
                 //server.sendMessageClient(user.getFd(), user.dequeueResponse());

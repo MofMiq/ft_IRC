@@ -23,7 +23,7 @@ KICK #general John,Jane
 void Command::executeKick(Command& cmd, Server& server, User& user) {
     // Verifica si se proporcionaron suficientes argumentos
     if (cmd._argCount < 3) {
-        user.enqueueResponse(errNeedmoreparams(server, user, cmd, 0));
+        user.enqueueResponse(errNeedmoreparams(server, user, cmd, 7));
         //std::cout << user.dequeueResponse();
         //server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;
@@ -78,7 +78,7 @@ void Command::executeKick(Command& cmd, Server& server, User& user) {
         // Elimina al usuario del canal 
         channel->removeUser(targetUser->getFd());
         std::string kickMessage = user.getNickname() + " has kicked " + targetNickname + " from channel " + channelName + " : " + reason + "\n";
-        std::cout << kickMessage;
+        //std::cout << kickMessage;
 
         // Esto es para notificar a los usuarios del canal sobre la expulsion
         //std::vector<User*> users = channel->getUsers();

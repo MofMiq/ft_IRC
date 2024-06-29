@@ -17,6 +17,7 @@ private:
     std::string _serverName;
     std::string _realName;
     std::queue<std::string> _responses;
+    std::vector<std::string> _invitedChannels; //Canales a los que el usuario ha sido invitado
 
     bool _standBy;
 
@@ -45,6 +46,10 @@ public:
 
     std::string getRealname() const;
     void setRealname(const std::string& realname);
+
+    //Para join, si esta invitado al canal
+    void addInvitedChannel(const std::string& channelName);
+    bool isInvitedToChannel(const std::string& channelName) const;
 
     int getFd() const;
     bool getStandBy();

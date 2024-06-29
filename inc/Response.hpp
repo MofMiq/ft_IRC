@@ -20,6 +20,7 @@ enum Code
     RPL_NOTOPIC = 331,
     RPL_TOPIC = 332,
     RPL_TOPICWHOTIME = 333,
+    RPL_INVITING = 341,
     ERR_NOSUCHNICK = 401,
     ERR_NOSUCHCHANNEL = 403,
     ERR_TOOMANYTARGETS = 407,
@@ -31,8 +32,10 @@ enum Code
     ERR_NICKNAMEINUSE = 433,
     ERR_USERNOTINCHANNEL = 441,
     ERR_NOTONCHANNEL = 442,
+    ERR_USERONCHANNEL = 443,
     ERR_NEEDMOREPARAMS = 461,
     ERR_CHANNELISFULL = 471,
+    ERR_INVITEONLYCHAN = 473,
     ERR_BADCHANNELKEY = 475,
     ERR_BADCHANMASK = 476,
     ERR_CHANOPRIVSNEEDED = 482
@@ -61,8 +64,10 @@ std::string errErroneousnickname(Server& server, User& user, Command &cmd);
 std::string errNicknameinuse(Server& server, User& user, Command &cmd);
 std::string errUsernotinchannel(Server& server, User& user, Command &cmd, const std::string& targetNickname, const std::string& channelName);
 std::string errNotonchannel(Server &server, User &user, Command &cmd, const std::string& channelName);
+std::string errUseronchannel(Server& server, User& user, Command& cmd, const std::string& targetNickname, const std::string& channelName);
 std::string errNeedmoreparams(Server& server, User& user, Command &cmd, int i);
 std::string errChannelIsFull(Server& server, User& user, Command& cmd, const std::string& channelName);
+std::string errInviteOnlyChan(Server& server, User& user, Command& cmd, const std::string& channelName);
 std::string errBadChannelKey(Server& server, User& user, Command& cmd, const std::string& channelName);
 std::string errBadChannelMask(Server& server, User& user, Command& cmd, const std::string& channelName);
 std::string errChanoprivsneeded(Server &server, User &user, Command &cmd, const std::string& channelName);
@@ -76,6 +81,6 @@ std::string rplCreationtime(Server &server, User &user, Command& cmd, Channel& c
 std::string rplNotopic(Server &server, User &user, const std::string& channelName);
 std::string rplTopic(Server &server, User &user, const std::string& channelName, const std::string& channelTopic);
 std::string rplTopicwhotime(Server &server, User &user, const std::string& channelName, const std::string& nick, const std::string& timestamp);
-
+std::string rplInviting(Server& server, User& user, const std::string& targetNickname, const std::string& channelName);
 
 #endif
