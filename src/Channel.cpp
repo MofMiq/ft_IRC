@@ -133,6 +133,15 @@ void Channel::setTopicTimestamp(const std::string& timestamp)
     this->_timestamp = timestamp;
 }
 
+std::string Channel::getCreationTime()
+{
+    return this->_creationTime;
+}
+void Channel::setCreationTime(const std::string& creationTime)
+{
+    this->_creationTime = creationTime;
+}
+
 bool Channel::isUserInChannel(int fd)
 {
     std::map<int, User*>::const_iterator it = this->_users.find(fd);

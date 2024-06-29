@@ -80,6 +80,8 @@ public:
     void setMaxClient(int max);
     std::string getTopicTimestamp();
     void setTopicTimestamp(const std::string& timestamp);
+    std::string getCreationTime();
+    void setCreationTime(const std::string& creationTime);
 
     bool isUserInChannel(int fd);
     bool isUserAnOperators(int fd);

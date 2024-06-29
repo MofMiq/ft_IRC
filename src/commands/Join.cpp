@@ -114,7 +114,7 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
         {
             // El canal no existe, crea el canal y agrega al usuario
             //server.createChannel(channelName, key);
-            server.createChannel(channelName, key);
+            server.createChannel(channelName, key, getTimestamp());
             server.addUserToChannel(user, channelName);
             server.setOperator(user, channelName); // es operador
             std::cout << "User " << user.getNickname() << " created and joined channel " << channelName << std::endl;

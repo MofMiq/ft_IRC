@@ -52,7 +52,7 @@ public:
 
     bool        channelExists(const std::string& channelName);
     void        addUserToChannel(User& user, const std::string& channelName);
-    void        createChannel(const std::string& channelName, const std::string& key);
+    void        createChannel(const std::string& channelName, const std::string& key, const std::string& timestamp);
     Channel*    getChannel(const std::string& channelName);
     bool        isUserInChannelServer(User& user, const std::string& channelName);
     void        ShowChannelsAndUsers() const;

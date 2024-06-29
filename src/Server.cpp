@@ -403,11 +403,12 @@ void Server::addUserToChannel(User& user, const std::string& channelName)
     //user._channelIn.push_back(channelName); //struct response?
 }
 
-void Server::createChannel(const std::string& channelName, const std::string& key)
+void Server::createChannel(const std::string& channelName, const std::string& key, const std::string& timestamp)
 {
     //if (!channelExists(channelName))
     //    _channelsServer[channelName] = Channel(channelName);
     Channel newChannel(channelName);
+    newChannel.setCreationTime(timestamp);
     if (!key.empty()) {
         newChannel.setPassNeeded(true);
         newChannel.setPass(key);
