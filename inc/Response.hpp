@@ -34,6 +34,7 @@ enum Code
     ERR_NOTONCHANNEL = 442,
     ERR_USERONCHANNEL = 443,
     ERR_NEEDMOREPARAMS = 461,
+    ERR_ALREADYREGISTERED = 462,
     ERR_CHANNELISFULL = 471,
     ERR_INVITEONLYCHAN = 473,
     ERR_BADCHANNELKEY = 475,
@@ -66,6 +67,7 @@ std::string errUsernotinchannel(Server& server, User& user, Command &cmd, const 
 std::string errNotonchannel(Server &server, User &user, Command &cmd, const std::string& channelName);
 std::string errUseronchannel(Server& server, User& user, Command& cmd, const std::string& targetNickname, const std::string& channelName);
 std::string errNeedmoreparams(Server& server, User& user, Command &cmd, int i);
+std::string errAlreadyRegistered(Server& server, User& user, Command& cmd);
 std::string errChannelIsFull(Server& server, User& user, Command& cmd, const std::string& channelName);
 std::string errInviteOnlyChan(Server& server, User& user, Command& cmd, const std::string& channelName);
 std::string errBadChannelKey(Server& server, User& user, Command& cmd, const std::string& channelName);

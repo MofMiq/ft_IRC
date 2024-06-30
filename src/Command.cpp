@@ -59,10 +59,10 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
 		executeKick(*this, *server, user);
 /*     else if (cmd == "test") //borrar debug
 			server->getAllChannelsUserIn(user.getFd()); */
-  else if (cmd == "INVITE")
+	else if (cmd == "INVITE")
 			executeInvite(*this, *server, user);
-/*	else if (cmd == "USER")
-			executeMode(*this, *server, *user);*/
+	else if (cmd == "USER")
+			executeUser(*this, *server, user);
 	else
 	{
 		user.enqueueResponse(errUnknowncommand(*server, user, *this));
