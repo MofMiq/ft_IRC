@@ -27,7 +27,7 @@ MODE: is used to set or remove options (or modes) from a given target.
     MODE #channel +l <number> -> limits max number of clients i a channel
     MODE #channel -l -> removes limit
 
-    MODE #channel +itklo <password> <maxClient> <user> -> ok
+    MODE #channel +itkol <password> <maxClient> <user> -> ok
     MODE #channel +i +t +k +l +o <std:password> <int:maxClient> <str:user> -> ok
     MODE #channel -ikl +o user -> ok, just one +- or -+ good
     MODE #channel +o -ikl user -> bad
@@ -58,9 +58,21 @@ typedef struct Vec
   std::vector<std::string> p;
 } vec;
 
-bool isModestring(char c)
+void sendTwoReplies(Server& server, User& user, Command& cmd, Channel& channel, const std::string& extra);
+
+bool isSign(char c)
 {
 	return (c == '+' || c == '-');
+}
+
+bool isValidMode(char c)
+{
+	return (c == 'i' || c == 't' || c == 'k' || c == 'o' || c == 'l');
+}
+
+bool isModeWithParam(std::string& str)
+{
+	return (str == "+l" || str == "+k" || str == "+o" || str == "-o");
 }
 
 Vec lexArgs(Command& cmd)
@@ -69,7 +81,7 @@ Vec lexArgs(Command& cmd)
 	for (int i = 2; i < cmd._argCount; i++)
 	{
 		std::string arg = cmd.getArg(i);
-		if (!arg.empty() && isModestring(arg[0]))
+		if (!arg.empty() && isSign(arg[0]))
 		{
 			if (arg.length() < 3)
 				vec.m.push_back(arg);
@@ -78,7 +90,7 @@ Vec lexArgs(Command& cmd)
 				char c = arg[0];
 				for (size_t j = 1; j < arg.length(); j++)
 				{
-					if (isModestring(arg[j]))
+					if (isSign(arg[j]))
 					{
 						vec.m.push_back("error");
 						break;
@@ -90,16 +102,69 @@ Vec lexArgs(Command& cmd)
 		else if (!arg.empty())
 			vec.p.push_back(arg);
 	}
-	std::cout << RED << "In lexArgs: ";
+	std::cout << PURPLE << "In lexArgs: "; //borrar debug
 	for (std::vector<std::string>::iterator it = vec.m.begin(); it != vec.m.end(); ++it)
 		std::cout << *it << " ";
-	std::cout << END << std::endl;
+	std::cout << END << std::endl; //borrar debug
 	for (std::vector<std::string>::iterator it = vec.p.begin(); it != vec.p.end(); ++it)
 		std::cout << YELLOW << *it << " ";
 	std::cout << END << std::endl;
 	return vec;
 }
 
+bool parseArgs(Vec& vec, Command& cmd)
+{
+	if (vec.p.size() > vec.m.size())
+	{
+		std::cout << RED << "MORE PARAMS THAN MODESTRINGS" << END << std::endl; //borrar debug
+		return false;
+	}
+	size_t c = 0;
+	for (size_t i = 0; i < vec.m.size(); i++)
+	{
+		std::string& mstr = vec.m[i];
+		if (mstr.length() != 2)
+		{
+			std::cout << RED << "MODESTRING NOT LENGHT OF 2 OR ERROR" << END << std::endl; //borrar debug
+			return false;
+		}
+		if (isSign(mstr[0]) && isSign(mstr[1]))
+		{
+			std::cout << RED << "MODESTRING WHITH MORE THAN 1 SIGN" << END << std::endl; //borrar debug
+			return false;
+		}
+		if (!isValidMode(mstr[1]))
+		{
+			std::cout << RED << "MODESTRING NOT VALID" << END << std::endl; //borrar debug
+			return false;
+		}
+		if (isModeWithParam(mstr))
+			c++;
+	}
+	if (c != vec.p.size())
+	{
+		std::cout << RED << "SOME PARAM IS MISSING" << END << std::endl; //borrar debug
+		return false;
+	}
+	for (size_t i = 0; i < vec.p.size(); i++)
+	{
+		std::string& pstr = vec.p[i];
+		if (pstr.length() > 10)
+		{
+			std::cout << RED << "PARAM LENGHT INVALID" << END << std::endl; //borrar debug
+			return false;
+		}
+		for (size_t j = 0; j < pstr.length(); j++)
+		{
+			if (!std::isalnum(pstr[j]) && !cmd.isAllowedSymbol(pstr[j]))
+			{
+				std::cout << RED << "CHARACTER NOT VALID IN PARAM" << END << std::endl; //borrar debug
+				return false;
+			}
+		}
+	}
+	return true;
+}
 
 void Command::executeM(Command& cmd, Server& server, User& user)
 {
@@ -112,8 +177,7 @@ void Command::executeM(Command& cmd, Server& server, User& user)
 		Channel* tmp = server.getChannel(cmd.getArg(1));
 		if (tmp)
 		{
-			user.enqueueResponse(rplChannelmodeis(server, user, cmd , *tmp, " :Available channel modes: itklo"));
-			user.enqueueResponse(rplCreationtime(server, user, cmd, *tmp));
+			sendTwoReplies(server, user, cmd , *tmp, " :Available channel modes: itkol");
 		}
 		else
 			user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
@@ -129,10 +193,23 @@ void Command::executeM(Command& cmd, Server& server, User& user)
 		if (!channel->isUserOperator(user.getFd()))
 		{
 			user.enqueueResponse(errChanoprivsneeded(server, user, cmd, channel->getName()));
+			return ;
 		}
 		Vec vec = lexArgs(cmd);
+		if (!parseArgs(vec, cmd))
+		{
+			sendTwoReplies(server, user, cmd , *channel, " :Available channel modes: itkol");
+			return ;
+		}
+
 	}
   return ;
+}
+
+void sendTwoReplies(Server& server, User& user, Command& cmd, Channel& channel, const std::string& extra)
+{
+	user.enqueueResponse(rplChannelmodeis(server, user, cmd , channel, extra));
+	user.enqueueResponse(rplCreationtime(server, user, cmd, channel));
 }
 
 void Command::executeMode(Command& cmd, Server& server, User& user)
@@ -146,7 +223,7 @@ void Command::executeMode(Command& cmd, Server& server, User& user)
 		Channel* tmp = server.getChannel(cmd.getArg(1));
 		if (tmp)
 		{
-			user.enqueueResponse(rplChannelmodeis(server, user, cmd , *tmp, " :Available channel modes: itklo"));
+			user.enqueueResponse(rplChannelmodeis(server, user, cmd , *tmp, " :Available channel modes: itkol"));
 			user.enqueueResponse(rplCreationtime(server, user, cmd, *tmp));
 		}
 		else
