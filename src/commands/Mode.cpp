@@ -57,25 +57,31 @@ void Command::executeMode(Command& cmd, Server& server, User& user)
 	if (cmd._argCount < 2)
 	{
 		user.enqueueResponse(errNeedmoreparams(server, user, cmd, 4));
-		//server.sendMessageClient(user.getFd(), user.dequeueResponse());
 	}
 	else if (cmd._argCount == 2) //hacer mejor esta mierda
 	{
 		Channel* tmp = server.getChannel(cmd.getArg(1));
 		if (tmp)
-			user.enqueueResponse(rplChannelmodeis(server, user, cmd , *tmp));
-		//server.sendMessageClient(user.getFd(), user.dequeueResponse());
+		{
+			user.enqueueResponse(rplChannelmodeis(server, user, cmd , *tmp, " :Available channel modes: itklo"));
+			user.enqueueResponse(rplCreationtime(server, user, cmd, *tmp));
+		}
+		else
+			user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
 	}
 	else
 	{
 		if (!server.channelExists(cmd.getArg(1)))
 		{
 			user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
-			//server.sendMessageClient(user.getFd(), user.dequeueResponse());
 			return ;
 		}
 		Channel* channel = server.getChannel(cmd.getArg(1));
-		if (cmd.getArg(2) == "+i")
+		if (!channel->isUserOperator(user.getFd()))
+		{
+			user.enqueueResponse(errChanoprivsneeded(server, user, cmd, channel->getName()));
+		}
+		else if (cmd.getArg(2) == "+i")
 		{
 			channel->setPrivate(true);
 			std::cout << RED << "NOW " << channel->getName() << " IS PRIVATE" << END << std::endl;//borrar debug

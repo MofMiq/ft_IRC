@@ -514,9 +514,5 @@ std::vector<Channel*> Server::getAllChannelsUserIn(int fd)
 		if (it->second.isUserInChannel(fd))
 			channelsUserIn.push_back(&(it->second));
 	}
-	for(std::vector<Channel*>::iterator it = channelsUserIn.begin(); it != channelsUserIn.end(); ++it) //borrar debug
-	{
-		std::cout << PURPLE << (*it)->getName() << END << std::endl;
-	}
 	return channelsUserIn;
 }
