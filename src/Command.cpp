@@ -42,7 +42,6 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
 	if (this->_argCount == 0)
 	{
 		user.enqueueResponse(errUnknowncommand(*server, user, *this));
-		//server->sendMessageClient(user.getFd(), user.dequeueResponse());
 		return ;
 	}
 	else if (cmd == "NICK")
@@ -53,21 +52,18 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
 		executePrivmsg(*this, *server, user);
 	else if (cmd == "MODE")
 		executeMode(*this, *server, user);
+/*     else if (cmd == "m") //borrar debug
+			server->getAllChannelsUserIn(user.getFd()); */
 	else if (cmd == "JOIN")
 		executeJoin(*this, *server, user);
 	else if (cmd == "KICK")
 		executeKick(*this, *server, user);
-/*     else if (cmd == "test") //borrar debug
-			server->getAllChannelsUserIn(user.getFd()); */
 	else if (cmd == "INVITE")
 			executeInvite(*this, *server, user);
 	else if (cmd == "USER")
 			executeUser(*this, *server, user);
 	else
-	{
 		user.enqueueResponse(errUnknowncommand(*server, user, *this));
-		//server->sendMessageClient(user.getFd(), user.dequeueResponse());
-	}
 	return ;
 }
 
@@ -98,7 +94,6 @@ void Command::sendMessageToChannels(User& user, const std::vector<Channel*>& cha
     }
   }
 }
-
 
 bool Command::isAllowedSymbol(char c)
 {

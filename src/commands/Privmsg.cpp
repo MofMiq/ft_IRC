@@ -24,6 +24,11 @@ PRIVMSG #general :yes I'm receiving it ! -> Command to send a message to channel
 
 */
 
+bool isChannel(char c)
+{
+  return (c == '#' || c == '&');
+}
+
 void Command::executePrivmsg(Command& cmd, Server& server, User& user)
 {
   if (cmd._argCount < 2)
@@ -35,11 +40,11 @@ void Command::executePrivmsg(Command& cmd, Server& server, User& user)
   {
     user.enqueueResponse(errNorecipient(server, user, cmd));
   }
-  else if (cmd.getArg(1)[0] != '#' && !server.isNickInServer(cmd.getArg(1)))
+  else if (!isChannel(cmd.getArg(1)[0]) && !server.isNickInServer(cmd.getArg(1)))
   {
     user.enqueueResponse(errNosuchnick(server, user, cmd, cmd.getArg(1)));
   }
-  else if (cmd.getArg(1)[0] == '#' && !server.channelExists(cmd.getArg(1)))
+  else if (isChannel(cmd.getArg(1)[0]) && !server.channelExists(cmd.getArg(1)))
   {
     user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
   }
@@ -57,12 +62,12 @@ void Command::executePrivmsg(Command& cmd, Server& server, User& user)
     {
       user.enqueueResponse(errNotexttosend(server, user, cmd));
     }
-    else if (cmd.getArg(1)[0] != '#')
+    else if (!isChannel(cmd.getArg(1)[0]))
     {
       User* rec = server.getUserByNick(cmd.getArg(1));
-      rec->enqueueResponse(":" + server.getServerName() + " " + user.getNickname() + " " + getArg(0) + " " + rec->getNickname() + " " + cmd.getArgsAsString(2));  //borrar salto de linea?
+      rec->enqueueResponse(":" + server.getServerName() + " " + user.getNickname() + " " + getArg(0) + " " + rec->getNickname() + " " + cmd.getArgsAsString(2));
     }
-    else if (cmd.getArg(1)[0] == '#' && server.getChannel(cmd.getArg(1)))
+    else if (isChannel(cmd.getArg(1)[0]) && server.getChannel(cmd.getArg(1)))
     {
       std::vector<Channel*> aux;
       aux.push_back(server.getChannel(cmd.getArg(1)));

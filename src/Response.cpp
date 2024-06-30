@@ -106,6 +106,8 @@ std::string errNeedmoreparams(Server& server, User& user, Command &cmd, int i)
         msg += "\nUsage: TOPIC <channel> :[new topic]";
     else if (i == 3)
         msg += "\nUsage: PRIVMSG <user>/<channel> :<the message you want to send]>";
+    else if (i == 4)
+        msg += "\nUsage: MODE <channel> <modestring> <mode arguments>...\nAvailable channel modes: itklo";
     else if (i == 5)
         msg += "\nUsage: USER <username> 0 * <realname>";
     else if (i == 6)
@@ -165,13 +167,13 @@ std::string rplNickok(Server &server, User &user)
 {
     return (createReply(server, RPL_NICKOK) + user.getOldNick() + " Nick succesfully changed to " + user.getNickname());
 }
-std::string rplChannelmodeis(Server &server, User &user, Command& cmd, Channel& channel)
+std::string rplChannelmodeis(Server &server, User &user, Command& cmd, Channel& channel, const std::string& extra)
 {
-    return (createReply(server, RPL_CHANNELMODEIS) + " " + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + " Available channel modes: itklo <key> <client count> <user>"); //escribir mensaje
+    return (createReply(server, RPL_CHANNELMODEIS) + " " + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + extra);
 }
 std::string rplCreationtime(Server &server, User &user, Command& cmd, Channel& channel)
 {
-    return (createReply(server, RPL_CREATIONTIME) + " " + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + " "); //escribir mensaje
+    return (createReply(server, RPL_CREATIONTIME) + " " + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + " " + channel.getCreationTime());
 }
 
 std::string rplNotopic(Server &server, User &user, const std::string& channelName)

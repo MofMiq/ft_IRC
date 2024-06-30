@@ -78,7 +78,7 @@ std::string rplYourHost(Server &server, User &user);
 std::string rplCreated(Server &server, User &user);
 std::string rplMyInfo(Server &server, User &user);
 std::string rplNickok(Server &server, User &user);
-std::string rplChannelmodeis(Server &server, User &user, Command& cmd, Channel& channel);
+std::string rplChannelmodeis(Server &server, User &user, Command& cmd, Channel& channel, const std::string& extra);
 std::string rplCreationtime(Server &server, User &user, Command& cmd, Channel& channel);
 std::string rplNotopic(Server &server, User &user, const std::string& channelName);
 std::string rplTopic(Server &server, User &user, const std::string& channelName, const std::string& channelTopic);
