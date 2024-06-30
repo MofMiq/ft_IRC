@@ -52,6 +52,89 @@ MODE: is used to set or remove options (or modes) from a given target.
     ERR_INVALIDMODEPARAM (696)
 */
 
+typedef struct Vec
+{
+	std::vector<std::string> m;
+  std::vector<std::string> p;
+} vec;
+
+bool isModestring(char c)
+{
+	return (c == '+' || c == '-');
+}
+
+Vec lexArgs(Command& cmd)
+{
+	Vec vec;
+	for (int i = 2; i < cmd._argCount; i++)
+	{
+		std::string arg = cmd.getArg(i);
+		if (!arg.empty() && isModestring(arg[0]))
+		{
+			if (arg.length() < 3)
+				vec.m.push_back(arg);
+			else
+			{
+				char c = arg[0];
+				for (size_t j = 1; j < arg.length(); j++)
+				{
+					if (isModestring(arg[j]))
+					{
+						vec.m.push_back("error");
+						break;
+					}
+					vec.m.push_back(std::string(1, c) + arg[j]);
+				}
+			}
+		}
+		else if (!arg.empty())
+			vec.p.push_back(arg);
+	}
+	std::cout << RED << "In lexArgs: ";
+	for (std::vector<std::string>::iterator it = vec.m.begin(); it != vec.m.end(); ++it)
+		std::cout << *it << " ";
+	std::cout << END << std::endl;
+	for (std::vector<std::string>::iterator it = vec.p.begin(); it != vec.p.end(); ++it)
+		std::cout << YELLOW << *it << " ";
+	std::cout << END << std::endl;
+	return vec;
+}
+
+
+void Command::executeM(Command& cmd, Server& server, User& user)
+{
+	if (cmd._argCount < 2)
+	{
+		user.enqueueResponse(errNeedmoreparams(server, user, cmd, 4));
+	}
+	else if (cmd._argCount == 2) //hacer mejor esta mierda
+	{
+		Channel* tmp = server.getChannel(cmd.getArg(1));
+		if (tmp)
+		{
+			user.enqueueResponse(rplChannelmodeis(server, user, cmd , *tmp, " :Available channel modes: itklo"));
+			user.enqueueResponse(rplCreationtime(server, user, cmd, *tmp));
+		}
+		else
+			user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
+	}
+	else
+	{
+		if (!server.channelExists(cmd.getArg(1)))
+		{
+			user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
+			return ;
+		}
+		Channel* channel = server.getChannel(cmd.getArg(1));
+		if (!channel->isUserOperator(user.getFd()))
+		{
+			user.enqueueResponse(errChanoprivsneeded(server, user, cmd, channel->getName()));
+		}
+		Vec vec = lexArgs(cmd);
+	}
+  return ;
+}
+
 void Command::executeMode(Command& cmd, Server& server, User& user)
 {
 	if (cmd._argCount < 2)
