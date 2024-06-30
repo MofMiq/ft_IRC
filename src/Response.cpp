@@ -106,6 +106,8 @@ std::string errNeedmoreparams(Server& server, User& user, Command &cmd, int i)
         msg += "\nUsage: TOPIC <channel> :[new topic]";
     else if (i == 3)
         msg += "\nUsage: PRIVMSG <user>/<channel> :<the message you want to send]>";
+    else if (i == 5)
+        msg += "\nUsage: USER <username> 0 * <realname>";
     else if (i == 6)
         msg += "\nUsage: INVITE <user> <channel>";
     else if (i == 7)
@@ -113,6 +115,11 @@ std::string errNeedmoreparams(Server& server, User& user, Command &cmd, int i)
     else if (i == 8)
         msg += "\nUsage: JOIN <channel>{,<channel>} [<key>{,<key>}]";
     return msg;
+}
+
+std::string errAlreadyRegistered(Server& server, User& user, Command& cmd)
+{
+    return createMessage(server, ERR_ALREADYREGISTERED, user, cmd) + ":You may not reregister";
 }
 
 std::string errChanoprivsneeded(Server &server, User &user, Command &cmd, const std::string& channelName)
