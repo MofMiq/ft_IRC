@@ -1,5 +1,7 @@
 #include "../inc/Server.hpp"
 
+Server* Server::instance = NULL;
+
 Server::Server(int port, const std::string& password) : port(port), password(password), server_socket(-1), serverName("MyServer") {}
 
 void Server::sendMessageClient(int clientSocket, const std::string& errorMsg) 
@@ -10,6 +12,9 @@ void Server::sendMessageClient(int clientSocket, const std::string& errorMsg)
 
 bool    Server::start()
 {
+    Server::instance = this;
+    std::signal(SIGINT, Server::signalHandler);
+
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (server_socket == -1) {
         perror("socket");
@@ -515,4 +520,37 @@ std::vector<Channel*> Server::getAllChannelsUserIn(int fd)
 			channelsUserIn.push_back(&(it->second));
 	}
 	return channelsUserIn;
+}
+
+void        Server::signalHandler(int signal)
+{
+    if (signal == SIGINT)
+    {
+        Server::instance->cleanAll();
+        exit(EXIT_SUCCESS);
+    }
+}
+
+void        Server::cleanAll()
+{
+    for (std::map < int, User* >::iterator it = this->_usersServerByFd.begin(); it != this->_usersServerByFd.end(); it++)
+    {
+        close (it->first);
+        delete it->second;
+    }
+
+    _usersServerByFd.clear();
+
+    if (server_socket != -1)
+    {
+        close(server_socket);
+        server_socket = -1;
+    }
+
+    pollfds.clear();
+
+    _usersServerByNick.clear();
+    _channelsServer.clear();
+
+    std::cout << "* ALL CLEAN *" << std::endl;
 }

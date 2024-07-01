@@ -14,6 +14,7 @@
 # include <cstring>
 # include <fcntl.h>
 # include <algorithm>
+# include <csignal>
 # include "Command.hpp"
 # include "User.hpp"
 # include "Channel.hpp"
@@ -24,6 +25,7 @@ const int BUFFER_SIZE = 1024;
 
 class Server {
 private:
+    static Server* instance;
     bool _authenticated;
     int port;
     std::string password;
@@ -69,6 +71,12 @@ public:
     //FUNCIONES PARA DEPURACION
     void        printUSBN(std::map < std::string, int >& map);
     void        printUSBF(std::map < int, User* >& map);
+
+    //FUNCION DE LIMPIEZA AL CERRAR
+    void        cleanAll();
+
+    //FUNCION CONTROL SEÑAL SALIDA
+    static void        signalHandler(int signal);
 };
 
 #endif
