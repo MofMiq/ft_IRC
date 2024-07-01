@@ -75,6 +75,40 @@ bool isModeWithParam(std::string& str)
 	return (str == "+l" || str == "+k" || str == "+o" || str == "-o");
 }
 
+bool onlyNumbers(const std::string& str)
+{
+	for (size_t i = 0; i < str.length(); i++)
+	{
+		if (!std::isdigit(str[i]))
+			return false;
+	}
+	return true;
+}
+
+std::string modesChangedReply(Vec& vec)
+{
+	std::string str = " :Channel changed modes: ";
+	char c = vec.m[0][0];
+	str = c;
+	for (size_t i = 0; i < vec.m.size(); i++)
+	{
+		if (vec.m[i][0] == c)
+		{
+			str += vec.m[i][1];
+		}
+		else
+		{
+			c = vec.m[i][0];
+			str += " " + std::string(1, c) + vec.m[i][1];
+		}
+	}
+	for (size_t i = 0; i < vec.p.size(); i++)
+	{
+		str += vec.p[i] + " ";
+	}
+	return str;
+}
+
 Vec lexArgs(Command& cmd)
 {
 	Vec vec;
@@ -166,6 +200,100 @@ bool parseArgs(Vec& vec, Command& cmd)
 	return true;
 }
 
+bool applyModes(Vec& vec, Server& server, Channel& channel)
+{
+	size_t j = 0;
+	for (size_t i = 0; i < vec.m.size(); i++)
+	{
+		std::string mode = vec.m[i];
+		if (mode == "+i")
+		{
+			channel.setPrivate(true);
+			std::cout << RED << "NOW " << channel.getName() << " IS PRIVATE" << END << std::endl;//borrar debug
+		}
+		else if (mode == "-i")
+		{
+			channel.setPrivate(false);
+			std::cout << RED << "NOW " << channel.getName() << " IS PRIVATE" << END << std::endl;//borrar debug
+		}
+		else if (mode == "+t")
+		{
+			channel.setTopicPrivate(true);
+			std::cout << RED << "NOW " << channel.getName() << " 'S TOPIC IS PRIVATE" << END << std::endl;//borrar debug
+		}
+		else if (mode == "-t")
+		{
+			channel.setTopicPrivate(false);
+			std::cout << RED << "NOW " << channel.getName() << " 'S TOPIC IS PUBLIC" << END << std::endl;//borrar debug
+		}
+		else if (mode == "+k")
+		{
+			if (j < vec.p.size() && !vec.p[j].empty())
+			{
+				channel.setPassNeeded(true);
+				channel.setPass(vec.p[j]);
+				j++;
+				std::cout << RED << "NOW " << channel.getName() << " HAS A PASSWORD: " << channel.getPass() << END << std::endl;//borrar debug
+			}
+			else
+			{
+				std::cout << RED << "KEY CANNOT SET BECAUSE REAASONS" << END << std::endl; //borrar debug
+				return false;
+			}
+		}
+		else if (mode == "-k")
+		{
+			channel.setPassNeeded(false);
+			channel.setPass("");
+			std::cout << RED << "NOW " << channel.getName() << " DOESN'T HAS A PASSWORD" << END << std::endl;//borrar debug
+		}
+		else if (mode == "+o" && j < vec.p.size() && !vec.p[j].empty())
+		{
+			if (channel.isUserInChannel(server.getUserByNick(vec.p[j])->getFd()))
+			{
+				User* user = server.getUserByNick(vec.p[j]);
+				channel.addOperatorToChannel(user->getFd());
+				j++;
+				std::cout << RED << "NOW " << user->getNickname() << " IS AN OPERATOR OF " << channel.getName() << END << std::endl;//borrar debug
+			}
+		}
+		else if (mode == "-o" && j < vec.p.size() && !vec.p[j].empty())
+		{
+			if (channel.isUserInChannel(server.getUserByNick(vec.p[j])->getFd()))
+			{
+				User* user = server.getUserByNick(vec.p[j]);
+				channel.removeOperatorToChannel(user->getFd());
+				std::cout << RED << "NOW " << user->getNickname() << " ISN'T AN OPERATOR OF " << channel.getName() << END << std::endl;//borrar debug
+			}
+		}
+		else if (mode == "+l" && j < vec.p.size() && !vec.p[j].empty())
+		{
+			if (!onlyNumbers(vec.p[j]))
+			{
+				std::cout << RED << "L CAN ONLY HAVE NUMBERS IN ITS PARAMS" << END << std::endl; //borrar debug
+				return false;
+			}
+			int aux = std::atoi(vec.p[j].c_str());
+			if (aux > 0 && aux < MAX_CLIENTS)
+			{
+				channel.setMaxClient(aux);
+				std::cout << RED << "NOW " << channel.getName() << " HAS NEW USER'S LIMIT: " << channel.getMaxClient() << END << std::endl;//borrar debug
+			}
+		}
+		else if (mode == "-l")
+		{
+			channel.setMaxClient(MAX_CLIENTS);
+			std::cout << RED << "NOW " << channel.getName() << " DOESN'T HAS NEW USER'S LIMIT: " << channel.getMaxClient() << END << std::endl;//borrar debug
+		}
+	}
+/* 	if (j != vec.p.size())
+	{
+		std::cout << RED << "SOME PARAM UNUSED BECAUSE REASONS" << END << std::endl; //borrar debug
+		return ;
+	} */
+	return true;
+}
+
 void Command::executeM(Command& cmd, Server& server, User& user)
 {
 	if (cmd._argCount < 2)
@@ -201,7 +329,13 @@ void Command::executeM(Command& cmd, Server& server, User& user)
 			sendTwoReplies(server, user, cmd , *channel, " :Available channel modes: itkol");
 			return ;
 		}
-
+		if (!applyModes(vec, server, *channel))
+		{
+			sendTwoReplies(server, user, cmd , *channel, " :Available channel modes: itkol");
+			return ;
+		}
+		std::string extra = modesChangedReply(vec);
+		sendTwoReplies(server, user, cmd, *channel, extra);
 	}
   return ;
 }
