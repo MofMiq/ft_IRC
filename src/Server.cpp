@@ -551,6 +551,7 @@ void        Server::cleanAll()
 
     _usersServerByNick.clear();
     _channelsServer.clear();
+    clients.clear();
 
     std::cout << "* ALL CLEAN *" << std::endl;
 }

@@ -59,6 +59,61 @@ typedef struct Vec
 } vec;
 
 void sendTwoReplies(Server& server, User& user, Command& cmd, Channel& channel, const std::string& extra);
+bool isSign(char c);
+bool isValidMode(char c);
+bool isModeWithParam(std::string& str);
+bool onlyNumbers(const std::string& str);
+std::string modesChangedReply(Vec& vec, const std::string& key);
+Vec lexArgs(Command& cmd);
+bool parseArgs(Vec& vec, Command& cmd);
+bool applyModes(Vec& vec, Server& server, Channel& channel);
+
+
+void Command::executeMode(Command& cmd, Server& server, User& user)
+{
+	if (cmd._argCount < 2)
+	{
+		user.enqueueResponse(errNeedmoreparams(server, user, cmd, 4));
+	}
+	else if (cmd._argCount == 2) //hacer mejor esta mierda
+	{
+		Channel* tmp = server.getChannel(cmd.getArg(1));
+		if (tmp)
+		{
+			sendTwoReplies(server, user, cmd , *tmp, " :Available channel modes: itkol");
+		}
+		else
+			user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
+	}
+	else
+	{
+		if (!server.channelExists(cmd.getArg(1)))
+		{
+			user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
+			return ;
+		}
+		Channel* channel = server.getChannel(cmd.getArg(1));
+		if (!channel->isUserOperator(user.getFd()))
+		{
+			user.enqueueResponse(errChanoprivsneeded(server, user, cmd, channel->getName()));
+			return ;
+		}
+		Vec vec = lexArgs(cmd);
+		if (!parseArgs(vec, cmd))
+		{
+			sendTwoReplies(server, user, cmd , *channel, " :Available channel modes: itkol");
+			return ;
+		}
+		if (!applyModes(vec, server, *channel))
+		{
+			sendTwoReplies(server, user, cmd , *channel, " :Available channel modes: itkol");
+			return ;
+		}
+		std::string extra = modesChangedReply(vec, channel->getPass());
+		sendTwoReplies(server, user, cmd, *channel, extra);
+	}
+  return ;
+}
 
 bool isSign(char c)
 {
@@ -295,159 +350,11 @@ bool applyModes(Vec& vec, Server& server, Channel& channel)
 			std::cout << RED << "NOW " << channel.getName() << " DOESN'T HAS NEW USER'S LIMIT: " << channel.getMaxClient() << END << std::endl;//borrar debug
 		}
 	}
-/* 	if (j != vec.p.size())
-	{
-		std::cout << RED << "SOME PARAM UNUSED BECAUSE REASONS" << END << std::endl; //borrar debug
-		return ;
-	} */
 	return true;
-}
-
-void Command::executeM(Command& cmd, Server& server, User& user)
-{
-	if (cmd._argCount < 2)
-	{
-		user.enqueueResponse(errNeedmoreparams(server, user, cmd, 4));
-	}
-	else if (cmd._argCount == 2) //hacer mejor esta mierda
-	{
-		Channel* tmp = server.getChannel(cmd.getArg(1));
-		if (tmp)
-		{
-			sendTwoReplies(server, user, cmd , *tmp, " :Available channel modes: itkol");
-		}
-		else
-			user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
-	}
-	else
-	{
-		if (!server.channelExists(cmd.getArg(1)))
-		{
-			user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
-			return ;
-		}
-		Channel* channel = server.getChannel(cmd.getArg(1));
-		if (!channel->isUserOperator(user.getFd()))
-		{
-			user.enqueueResponse(errChanoprivsneeded(server, user, cmd, channel->getName()));
-			return ;
-		}
-		Vec vec = lexArgs(cmd);
-		if (!parseArgs(vec, cmd))
-		{
-			sendTwoReplies(server, user, cmd , *channel, " :Available channel modes: itkol");
-			return ;
-		}
-		if (!applyModes(vec, server, *channel))
-		{
-			sendTwoReplies(server, user, cmd , *channel, " :Available channel modes: itkol");
-			return ;
-		}
-		std::string extra = modesChangedReply(vec, channel->getPass());
-		sendTwoReplies(server, user, cmd, *channel, extra);
-	}
-  return ;
 }
 
 void sendTwoReplies(Server& server, User& user, Command& cmd, Channel& channel, const std::string& extra)
 {
 	user.enqueueResponse(rplChannelmodeis(server, user, cmd , channel, extra));
 	user.enqueueResponse(rplCreationtime(server, user, cmd, channel));
-}
-
-void Command::executeMode(Command& cmd, Server& server, User& user)
-{
-	if (cmd._argCount < 2)
-	{
-		user.enqueueResponse(errNeedmoreparams(server, user, cmd, 4));
-	}
-	else if (cmd._argCount == 2) //hacer mejor esta mierda
-	{
-		Channel* tmp = server.getChannel(cmd.getArg(1));
-		if (tmp)
-		{
-			user.enqueueResponse(rplChannelmodeis(server, user, cmd , *tmp, " :Available channel modes: itkol"));
-			user.enqueueResponse(rplCreationtime(server, user, cmd, *tmp));
-		}
-		else
-			user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
-	}
-	else
-	{
-		if (!server.channelExists(cmd.getArg(1)))
-		{
-			user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
-			return ;
-		}
-		Channel* channel = server.getChannel(cmd.getArg(1));
-		if (!channel->isUserOperator(user.getFd()))
-		{
-			user.enqueueResponse(errChanoprivsneeded(server, user, cmd, channel->getName()));
-		}
-		else if (cmd.getArg(2) == "+i")
-		{
-			channel->setPrivate(true);
-			std::cout << RED << "NOW " << channel->getName() << " IS PRIVATE" << END << std::endl;//borrar debug
-		}
-		else if (cmd.getArg(2) == "-i")
-		{
-			channel->setPrivate(false);
-			std::cout << RED << "NOW " << channel->getName() << " IS PUBLIC" << END << std::endl;//borrar debug
-		}
-		else if (cmd.getArg(2) == "+t")
-		{
-			channel->setTopicPrivate(true);
-			std::cout << RED << "NOW " << channel->getName() << " 'S TOPIC IS PRIVATE" << END << std::endl;//borrar debug
-		}
-		else if (cmd.getArg(2) == "-t")
-		{
-			channel->setTopicPrivate(false);
-			std::cout << RED << "NOW " << channel->getName() << " 'S TOPIC IS PUBLIC" << END << std::endl;//borrar debug
-		}
-		else if (cmd.getArg(2) == "+k" && cmd._argCount == 4/*&& !cmd.getArg(3).empty()*/)
-		{
-			channel->setPassNeeded(true);
-			channel->setPass(cmd.getArg(3));
-			std::cout << RED << "NOW " << channel->getName() << " HAS A PASSWORD: " << channel->getPass() << END << std::endl;//borrar debug
-		}
-		else if (cmd.getArg(2) == "-k")
-		{
-			channel->setPassNeeded(false);
-			channel->setPass("");
-			std::cout << RED << "NOW " << channel->getName() << " DOESN'T HAS A PASSWORD" << END << std::endl;//borrar debug
-		}
-		else if (cmd.getArg(2) == "+o" && cmd._argCount == 4/*&& !cmd.getArg(3).empty()*/)
-		{
-			if (channel->isUserInChannel(server.getUserByNick(cmd.getArg(3))->getFd()))
-			{
-				User* tmp = server.getUserByNick(cmd.getArg(3));
-				channel->addOperatorToChannel(tmp->getFd());
-				std::cout << RED << "NOW " << tmp->getNickname() << " IS AN OPERATOR OF " << channel->getName() << END << std::endl;//borrar debug
-			}
-		}
-		else if (cmd.getArg(2) == "-o" && cmd._argCount == 4/*&& !cmd.getArg(3).empty()*/)
-		{
-			if (channel->isUserInChannel(server.getUserByNick(cmd.getArg(3))->getFd()))
-			{
-				User* tmp = server.getUserByNick(cmd.getArg(3));
-				channel->removeOperatorToChannel(tmp->getFd());
-				std::cout << RED << "NOW " << tmp->getNickname() << " ISN'T AN OPERATOR OF " << channel->getName() << END << std::endl;//borrar debug
-			}
-		}
-		else if (cmd.getArg(2) == "+l" && cmd._argCount == 4/*&& !cmd.getArg(3).empty()*/)
-		{
-			int aux = std::atoi(cmd.getArg(3).c_str());
-			if (aux > 0 && aux < MAX_CLIENTS)
-			{
-				channel->setMaxClient(std::atoi(cmd.getArg(3).c_str()));
-				std::cout << RED << "NOW " << channel->getName() << " HAS NEW USER'S LIMIT: " << channel->getMaxClient() << END << std::endl;//borrar debug
-			}
-		}
-		else if (cmd.getArg(2) == "-l")
-		{
-			channel->setMaxClient(MAX_CLIENTS);
-			std::cout << RED << "NOW " << channel->getName() << " DOESN'T HAS NEW USER'S LIMIT: " << channel->getMaxClient() << END << std::endl;//borrar debug
-		}
-	}
-  return ;
 }

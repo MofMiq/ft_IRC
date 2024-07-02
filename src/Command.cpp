@@ -52,8 +52,6 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
 		executePrivmsg(*this, *server, user);
 	else if (cmd == "MODE")
 		executeMode(*this, *server, user);
-  else if (cmd == "m") //borrar debug
-		executeM(*this, *server, user);
 	else if (cmd == "JOIN")
 		executeJoin(*this, *server, user);
 	else if (cmd == "KICK")
