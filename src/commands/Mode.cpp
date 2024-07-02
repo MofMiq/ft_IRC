@@ -85,17 +85,15 @@ bool onlyNumbers(const std::string& str)
 	return true;
 }
 
-std::string modesChangedReply(Vec& vec)
+std::string modesChangedReply(Vec& vec, const std::string& key)
 {
 	std::string str = " :Channel changed modes: ";
 	char c = vec.m[0][0];
-	str = c;
+	str += std::string(1, c);
 	for (size_t i = 0; i < vec.m.size(); i++)
 	{
 		if (vec.m[i][0] == c)
-		{
 			str += vec.m[i][1];
-		}
 		else
 		{
 			c = vec.m[i][0];
@@ -104,7 +102,8 @@ std::string modesChangedReply(Vec& vec)
 	}
 	for (size_t i = 0; i < vec.p.size(); i++)
 	{
-		str += vec.p[i] + " ";
+		if (vec.p[i] != key)
+			str += " " + vec.p[i];
 	}
 	return str;
 }
@@ -214,7 +213,7 @@ bool applyModes(Vec& vec, Server& server, Channel& channel)
 		else if (mode == "-i")
 		{
 			channel.setPrivate(false);
-			std::cout << RED << "NOW " << channel.getName() << " IS PRIVATE" << END << std::endl;//borrar debug
+			std::cout << RED << "NOW " << channel.getName() << " IS PUBLIC" << END << std::endl;//borrar debug
 		}
 		else if (mode == "+t")
 		{
@@ -249,21 +248,31 @@ bool applyModes(Vec& vec, Server& server, Channel& channel)
 		}
 		else if (mode == "+o" && j < vec.p.size() && !vec.p[j].empty())
 		{
-			if (channel.isUserInChannel(server.getUserByNick(vec.p[j])->getFd()))
+			if (server.isNickInServer(vec.p[j]) && channel.isUserInChannel(server.getUserByNick(vec.p[j])->getFd()))
 			{
 				User* user = server.getUserByNick(vec.p[j]);
 				channel.addOperatorToChannel(user->getFd());
 				j++;
 				std::cout << RED << "NOW " << user->getNickname() << " IS AN OPERATOR OF " << channel.getName() << END << std::endl;//borrar debug
 			}
+			else
+			{
+				std::cout << RED << "USER DOESN'T EXIST OR IS NOT IN CHANNEL" << END << std::endl; //borrar debug
+				return false;
+			}
 		}
 		else if (mode == "-o" && j < vec.p.size() && !vec.p[j].empty())
 		{
-			if (channel.isUserInChannel(server.getUserByNick(vec.p[j])->getFd()))
+			if (server.isNickInServer(vec.p[j]) && channel.isUserInChannel(server.getUserByNick(vec.p[j])->getFd()))
 			{
 				User* user = server.getUserByNick(vec.p[j]);
 				channel.removeOperatorToChannel(user->getFd());
 				std::cout << RED << "NOW " << user->getNickname() << " ISN'T AN OPERATOR OF " << channel.getName() << END << std::endl;//borrar debug
+			}
+			else
+			{
+				std::cout << RED << "USER DOESN'T EXIST OR IS NOT IN CHANNEL" << END << std::endl; //borrar debug
+				return false;
 			}
 		}
 		else if (mode == "+l" && j < vec.p.size() && !vec.p[j].empty())
@@ -334,7 +343,7 @@ void Command::executeM(Command& cmd, Server& server, User& user)
 			sendTwoReplies(server, user, cmd , *channel, " :Available channel modes: itkol");
 			return ;
 		}
-		std::string extra = modesChangedReply(vec);
+		std::string extra = modesChangedReply(vec, channel->getPass());
 		sendTwoReplies(server, user, cmd, *channel, extra);
 	}
   return ;
