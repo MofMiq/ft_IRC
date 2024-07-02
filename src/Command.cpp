@@ -20,12 +20,12 @@ Command::Command(const std::string &msg)
 	this->_argCount = this->_args.size();
 	if (msg.empty())
 		this->_args[0] = "";
-/*     std::cout << PURPLE << "Command constructor: argCount: " << this->_argCount << " _args: "; //para probar
+  std::cout << PURPLE << "Command constructor: argCount: " << this->_argCount << " _args: "; //para probar
 	for (int i = 0; i < this->_argCount; i++)
 	{
 			std::cout << "arg[" << i << "]: " << this->_args[i] << ' ';
 	}
-	std::cout << END << '\n'; // borrar */
+	std::cout << END << '\n'; // borrar
 }
 
 Command::~Command()
@@ -52,8 +52,6 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
 		executePrivmsg(*this, *server, user);
 	else if (cmd == "MODE")
 		executeMode(*this, *server, user);
-/*     else if (cmd == "m") //borrar debug
-			server->getAllChannelsUserIn(user.getFd()); */
 	else if (cmd == "JOIN")
 		executeJoin(*this, *server, user);
 	else if (cmd == "KICK")

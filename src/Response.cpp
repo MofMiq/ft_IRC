@@ -66,7 +66,7 @@ std::string errNotexttosend(Server &server, User &user, Command &cmd)
 }
 std::string errUnknowncommand(Server &server, User &user, Command &cmd)
 {
-    return (createMessage(server, ERR_UNKNOWNCOMMAND, user, cmd) + ": Unknown command" + "\nThis are the COMMANDS we have available:\nUSER NICK JOIN TOPIC INVITE PRIVMSG KICK MODE (itklo)"); //debug
+    return (createMessage(server, ERR_UNKNOWNCOMMAND, user, cmd) + ": Unknown command" + "\nThis are the COMMANDS we have available:\nUSER NICK JOIN TOPIC INVITE PRIVMSG KICK MODE (itkol)"); //debug
 }
 
 std::string errNonicknamegiven(Server &server, User &user, Command &cmd)
@@ -107,7 +107,7 @@ std::string errNeedmoreparams(Server& server, User& user, Command &cmd, int i)
     else if (i == 3)
         msg += "\nUsage: PRIVMSG <user>/<channel> :<the message you want to send]>";
     else if (i == 4)
-        msg += "\nUsage: MODE <channel> <modestring> <mode arguments>...\nAvailable channel modes: itklo";
+        msg += "\nUsage: MODE <channel> <modestring> <mode arguments>...\nAvailable channel modes: itkol";
     else if (i == 5)
         msg += "\nUsage: USER <username> 0 * <realname>";
     else if (i == 6)
@@ -161,7 +161,7 @@ std::string rplCreated(Server &server, User &user)
 }
 std::string rplMyInfo(Server &server, User &user)
 {
-    return (":" + server.getServerName() + " 004 " + user.getNickname() + " " + user.getServername() + " v1.0 Available user modes: , Available channel modes: itklo");
+    return (":" + server.getServerName() + " 004 " + user.getNickname() + " " + user.getServername() + " v1.0 Available user modes: , Available channel modes: itkol");
 }
 std::string rplNickok(Server &server, User &user)
 {
@@ -169,11 +169,11 @@ std::string rplNickok(Server &server, User &user)
 }
 std::string rplChannelmodeis(Server &server, User &user, Command& cmd, Channel& channel, const std::string& extra)
 {
-    return (createReply(server, RPL_CHANNELMODEIS) + " " + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + extra);
+    return (createReply(server, RPL_CHANNELMODEIS) + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + extra);
 }
 std::string rplCreationtime(Server &server, User &user, Command& cmd, Channel& channel)
 {
-    return (createReply(server, RPL_CREATIONTIME) + " " + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + " " + channel.getCreationTime());
+    return (createReply(server, RPL_CREATIONTIME) + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + " " + channel.getCreationTime());
 }
 
 std::string rplNotopic(Server &server, User &user, const std::string& channelName)
