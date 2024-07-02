@@ -169,11 +169,11 @@ std::string rplNickok(Server &server, User &user)
 }
 std::string rplChannelmodeis(Server &server, User &user, Command& cmd, Channel& channel, const std::string& extra)
 {
-    return (createReply(server, RPL_CHANNELMODEIS) + " " + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + extra);
+    return (createReply(server, RPL_CHANNELMODEIS) + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + extra);
 }
 std::string rplCreationtime(Server &server, User &user, Command& cmd, Channel& channel)
 {
-    return (createReply(server, RPL_CREATIONTIME) + " " + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + " " + channel.getCreationTime());
+    return (createReply(server, RPL_CREATIONTIME) + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + " " + channel.getCreationTime());
 }
 
 std::string rplNotopic(Server &server, User &user, const std::string& channelName)
