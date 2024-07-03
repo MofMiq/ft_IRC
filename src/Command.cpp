@@ -5,6 +5,11 @@
 Command::Command(const std::string &msg)
 {
 	//guardp en un tempral el msg para despues poder quitarle los saltos de linea en caso de que los haya
+	if (msg.empty())
+	{
+		this->_args.push_back("");
+		this->_argCount = 0;
+	}
 	std::string tmp = msg;
 	tmp.erase(std::remove(tmp.begin(), tmp.end(), '\n'), tmp.end());
 	tmp.erase(std::remove(tmp.begin(), tmp.end(), '\"'), tmp.end());
@@ -14,18 +19,15 @@ Command::Command(const std::string &msg)
 	std::string token;
 
 	while (std::getline(iss, token, ' '))
-	{
 		this->_args.push_back(token);
-	}
 	this->_argCount = this->_args.size();
-	if (msg.empty())
-		this->_args[0] = "";
-  std::cout << PURPLE << "Command constructor: argCount: " << this->_argCount << " _args: "; //para probar
+	
+/*   std::cout << PURPLE << "Command constructor: argCount: " << this->_argCount << " _args: "; //para probar
 	for (int i = 0; i < this->_argCount; i++)
 	{
 			std::cout << "arg[" << i << "]: " << this->_args[i] << ' ';
 	}
-	std::cout << END << '\n'; // borrar
+	std::cout << END << '\n'; // borrar */
 }
 
 Command::~Command()
