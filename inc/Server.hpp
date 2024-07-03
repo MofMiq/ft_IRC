@@ -37,7 +37,7 @@ private:
     std::map<int, User* > _usersServerByFd; // Map de FD y puntero a USER correspondiente
     std::map<std::string, Channel> _channelsServer;
  //   std::map<std::string, User> _nickToUser; // Mapa para acceder a los usuarios por nickname TODO
-    std::map<int, std::string> _client_buffers;
+    std::map<int, std::string> _clientBuffers;
 
 public:
     Server(int port, const std::string& password);

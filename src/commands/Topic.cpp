@@ -72,23 +72,22 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
     else if (cmd._argCount >= 3 && cmd.getArg(2)[0] == ':')
     {
         tmp->setTopicTimestamp(getTimestamp());
+        std::string actionMessage;
+        std::vector<Channel*> aux;
+        aux.push_back(server.getChannel(tmp->getName()));
         if (cmd.getArgsAsString(2) == ":")
         {
             tmp->setTopic("");
-            enqueueSomeMsgs(server, user, *tmp, " :Topic has been cleared");
-            sendMessageToChannels(user, server.getAllChannelsUserIn(user.getFd()), rplTopic(server, user, tmp->getName(), tmp->getTopic()) + " :Topic has been cleared");
-            sendMessageToChannels(user, server.getAllChannelsUserIn(user.getFd()), rplTopicwhotime(server, user, tmp->getName(), user.getNickname(), tmp->getTopicTimestamp()));
+            actionMessage = " :Topic has been cleared";
         }
         else
         {
             tmp->setTopic(cmd.getArgsAsString(2).erase(0, 1));
-            enqueueSomeMsgs(server, user, *tmp, " :Topic has been succesfully changed");
-
-            std::vector<Channel*> aux;
-            aux.push_back(server.getChannel(tmp->getName()));
-            sendMessageToChannels(user, server.getAllChannelsUserIn(user.getFd()), rplTopic(server, user, tmp->getName(), tmp->getTopic()) + " :Topic has been succesfully changed");
-            sendMessageToChannels(user, server.getAllChannelsUserIn(user.getFd()), rplTopicwhotime(server, user, tmp->getName(), user.getNickname(), tmp->getTopicTimestamp()));
+            actionMessage = " :Topic has been succesfully changed";
         }
+        enqueueSomeMsgs(server, user, *tmp, actionMessage);
+        sendMessageToChannels(user, aux, rplTopic(server, user, tmp->getName(), tmp->getTopic()) + actionMessage);
+        sendMessageToChannels(user, aux, rplTopicwhotime(server, user, tmp->getName(), user.getNickname(), tmp->getTopicTimestamp()));
     }
     else
         user.enqueueResponse(errNeedmoreparams(server, user, cmd, 2));

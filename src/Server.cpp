@@ -548,21 +548,22 @@ void        Server::cleanAll()
     _usersServerByNick.clear();
     _channelsServer.clear();
     clients.clear();
+    _clientBuffers.clear();
 
     std::cout << "* ALL CLEAN *" << std::endl;
 }
 
 void Server::processClientBuffer(int client_socket, const std::string& message_fragment)
-{
-    this->_client_buffers[client_socket] += message_fragment;
+{ 
+    this->_clientBuffers[client_socket] += message_fragment;
 
-    std::size_t pos;
-    while ((pos = this->_client_buffers[client_socket].find('\n')) != std::string::npos)
+    size_t pos;
+    while ((pos = this->_clientBuffers[client_socket].find('\n')) != std::string::npos)
     {
-        std::string command = this->_client_buffers[client_socket].substr(0, pos);
+        std::string command = this->_clientBuffers[client_socket].substr(0, pos);
         Command cmd(command);
         User* user = this->_usersServerByFd[client_socket];
         cmd.parseCommand(cmd.getArg(0), this, *user);
-        this->_client_buffers[client_socket].erase(0, pos + 1);
+        this->_clientBuffers[client_socket].erase(0, pos + 1);
     }
 }

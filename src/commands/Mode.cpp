@@ -66,7 +66,7 @@ bool onlyNumbers(const std::string& str);
 std::string modesChangedReply(Vec& vec, const std::string& key);
 Vec lexArgs(Command& cmd);
 bool parseArgs(Vec& vec, Command& cmd);
-bool applyModes(Vec& vec, Server& server, Channel& channel);
+bool applyModes(Vec& vec, Server& server, User& user, Channel& channel);
 
 
 void Command::executeMode(Command& cmd, Server& server, User& user)
@@ -75,36 +75,20 @@ void Command::executeMode(Command& cmd, Server& server, User& user)
 	{
 		user.enqueueResponse(errNeedmoreparams(server, user, cmd, 4));
 	}
-	else if (cmd._argCount == 2) //hacer mejor esta mierda
-	{
-		Channel* tmp = server.getChannel(cmd.getArg(1));
-		if (tmp)
-		{
-			sendTwoReplies(server, user, cmd , *tmp, " :Available channel modes: itkol");
-		}
-		else
-			user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
-	}
+	Channel* channel = server.getChannel(cmd.getArg(1));
+	if (!server.channelExists(cmd.getArg(1)))
+		user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
+	else if (cmd._argCount == 2)
+		sendTwoReplies(server, user, cmd , *channel, " :Available channel modes: itkol");
 	else
 	{
-		if (!server.channelExists(cmd.getArg(1)))
-		{
-			user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
-			return ;
-		}
-		Channel* channel = server.getChannel(cmd.getArg(1));
 		if (!channel->isUserOperator(user.getFd()))
 		{
 			user.enqueueResponse(errChanoprivsneeded(server, user, cmd, channel->getName()));
 			return ;
 		}
 		Vec vec = lexArgs(cmd);
-		if (!parseArgs(vec, cmd))
-		{
-			sendTwoReplies(server, user, cmd , *channel, " :Available channel modes: itkol");
-			return ;
-		}
-		if (!applyModes(vec, server, *channel))
+		if (!parseArgs(vec, cmd) || !applyModes(vec, server, user, *channel))
 		{
 			sendTwoReplies(server, user, cmd , *channel, " :Available channel modes: itkol");
 			return ;
@@ -190,96 +174,56 @@ Vec lexArgs(Command& cmd)
 		else if (!arg.empty())
 			vec.p.push_back(arg);
 	}
-	std::cout << PURPLE << "In lexArgs: "; //borrar debug
-	for (std::vector<std::string>::iterator it = vec.m.begin(); it != vec.m.end(); ++it)
-		std::cout << *it << " ";
-	std::cout << END << std::endl; //borrar debug
-	for (std::vector<std::string>::iterator it = vec.p.begin(); it != vec.p.end(); ++it)
-		std::cout << YELLOW << *it << " ";
-	std::cout << END << std::endl;
 	return vec;
 }
 
 bool parseArgs(Vec& vec, Command& cmd)
 {
 	if (vec.p.size() > vec.m.size())
-	{
-		std::cout << RED << "MORE PARAMS THAN MODESTRINGS" << END << std::endl; //borrar debug
 		return false;
-	}
 	size_t c = 0;
 	for (size_t i = 0; i < vec.m.size(); i++)
 	{
 		std::string& mstr = vec.m[i];
 		if (mstr.length() != 2)
-		{
-			std::cout << RED << "MODESTRING NOT LENGHT OF 2 OR ERROR" << END << std::endl; //borrar debug
 			return false;
-		}
 		if (isSign(mstr[0]) && isSign(mstr[1]))
-		{
-			std::cout << RED << "MODESTRING WHITH MORE THAN 1 SIGN" << END << std::endl; //borrar debug
 			return false;
-		}
 		if (!isValidMode(mstr[1]))
-		{
-			std::cout << RED << "MODESTRING NOT VALID" << END << std::endl; //borrar debug
 			return false;
-		}
 		if (isModeWithParam(mstr))
 			c++;
 	}
 	if (c != vec.p.size())
-	{
-		std::cout << RED << "SOME PARAM IS MISSING" << END << std::endl; //borrar debug
 		return false;
-	}
 	for (size_t i = 0; i < vec.p.size(); i++)
 	{
 		std::string& pstr = vec.p[i];
 		if (pstr.length() > 10)
-		{
-			std::cout << RED << "PARAM LENGHT INVALID" << END << std::endl; //borrar debug
 			return false;
-		}
 		for (size_t j = 0; j < pstr.length(); j++)
 		{
 			if (!std::isalnum(pstr[j]) && !cmd.isAllowedSymbol(pstr[j]))
-			{
-				std::cout << RED << "CHARACTER NOT VALID IN PARAM" << END << std::endl; //borrar debug
 				return false;
-			}
 		}
 	}
 	return true;
 }
 
-bool applyModes(Vec& vec, Server& server, Channel& channel)
+bool applyModes(Vec& vec, Server& server, User& user, Channel& channel)
 {
 	size_t j = 0;
 	for (size_t i = 0; i < vec.m.size(); i++)
 	{
 		std::string mode = vec.m[i];
 		if (mode == "+i")
-		{
 			channel.setPrivate(true);
-			std::cout << RED << "NOW " << channel.getName() << " IS PRIVATE" << END << std::endl;//borrar debug
-		}
 		else if (mode == "-i")
-		{
 			channel.setPrivate(false);
-			std::cout << RED << "NOW " << channel.getName() << " IS PUBLIC" << END << std::endl;//borrar debug
-		}
 		else if (mode == "+t")
-		{
 			channel.setTopicPrivate(true);
-			std::cout << RED << "NOW " << channel.getName() << " 'S TOPIC IS PRIVATE" << END << std::endl;//borrar debug
-		}
 		else if (mode == "-t")
-		{
 			channel.setTopicPrivate(false);
-			std::cout << RED << "NOW " << channel.getName() << " 'S TOPIC IS PUBLIC" << END << std::endl;//borrar debug
-		}
 		else if (mode == "+k")
 		{
 			if (j < vec.p.size() && !vec.p[j].empty())
@@ -287,68 +231,53 @@ bool applyModes(Vec& vec, Server& server, Channel& channel)
 				channel.setPassNeeded(true);
 				channel.setPass(vec.p[j]);
 				j++;
-				std::cout << RED << "NOW " << channel.getName() << " HAS A PASSWORD: " << channel.getPass() << END << std::endl;//borrar debug
 			}
 			else
-			{
-				std::cout << RED << "KEY CANNOT SET BECAUSE REAASONS" << END << std::endl; //borrar debug
 				return false;
-			}
 		}
 		else if (mode == "-k")
 		{
 			channel.setPassNeeded(false);
 			channel.setPass("");
-			std::cout << RED << "NOW " << channel.getName() << " DOESN'T HAS A PASSWORD" << END << std::endl;//borrar debug
 		}
 		else if (mode == "+o" && j < vec.p.size() && !vec.p[j].empty())
 		{
-			if (server.isNickInServer(vec.p[j]) && channel.isUserInChannel(server.getUserByNick(vec.p[j])->getFd()))
+			if (user.getNickname() == vec.p[j])
+				return false;
+			else if (server.isNickInServer(vec.p[j]) && channel.isUserInChannel(server.getUserByNick(vec.p[j])->getFd()))
 			{
 				User* user = server.getUserByNick(vec.p[j]);
 				channel.addOperatorToChannel(user->getFd());
 				j++;
-				std::cout << RED << "NOW " << user->getNickname() << " IS AN OPERATOR OF " << channel.getName() << END << std::endl;//borrar debug
 			}
 			else
-			{
-				std::cout << RED << "USER DOESN'T EXIST OR IS NOT IN CHANNEL" << END << std::endl; //borrar debug
 				return false;
-			}
 		}
 		else if (mode == "-o" && j < vec.p.size() && !vec.p[j].empty())
 		{
-			if (server.isNickInServer(vec.p[j]) && channel.isUserInChannel(server.getUserByNick(vec.p[j])->getFd()))
+			if (user.getNickname() == vec.p[j])
+				return false;
+			else if (server.isNickInServer(vec.p[j]) && channel.isUserInChannel(server.getUserByNick(vec.p[j])->getFd()))
 			{
 				User* user = server.getUserByNick(vec.p[j]);
 				channel.removeOperatorToChannel(user->getFd());
-				std::cout << RED << "NOW " << user->getNickname() << " ISN'T AN OPERATOR OF " << channel.getName() << END << std::endl;//borrar debug
+				j++;
 			}
 			else
-			{
-				std::cout << RED << "USER DOESN'T EXIST OR IS NOT IN CHANNEL" << END << std::endl; //borrar debug
 				return false;
-			}
 		}
 		else if (mode == "+l" && j < vec.p.size() && !vec.p[j].empty())
 		{
 			if (!onlyNumbers(vec.p[j]))
-			{
-				std::cout << RED << "L CAN ONLY HAVE NUMBERS IN ITS PARAMS" << END << std::endl; //borrar debug
 				return false;
-			}
 			int aux = std::atoi(vec.p[j].c_str());
-			if (aux > 0 && aux < MAX_CLIENTS)
-			{
-				channel.setMaxClient(aux);
-				std::cout << RED << "NOW " << channel.getName() << " HAS NEW USER'S LIMIT: " << channel.getMaxClient() << END << std::endl;//borrar debug
-			}
+			if (aux < 0 && aux > MAX_CLIENTS)
+				return false;
+			channel.setMaxClient(aux);
+			j++;
 		}
 		else if (mode == "-l")
-		{
 			channel.setMaxClient(MAX_CLIENTS);
-			std::cout << RED << "NOW " << channel.getName() << " DOESN'T HAS NEW USER'S LIMIT: " << channel.getMaxClient() << END << std::endl;//borrar debug
-		}
 	}
 	return true;
 }
