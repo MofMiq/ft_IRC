@@ -210,7 +210,6 @@ std::string     Server::extractNick(std::string strRaw)
     return ("");
 }
 
-
 void    Server::handle_client_message(int client_socket) 
 {
     bool done = false;
@@ -232,6 +231,7 @@ void    Server::handle_client_message(int client_socket)
 
     buffer[bytes_read] = '\0';
     std::string message(buffer);
+
 
     std::cout << "MENSAJE RECIBIDO DEL CLIENTE" << std::endl;
     std::cout << message << std::endl;
@@ -338,11 +338,7 @@ void    Server::handle_client_message(int client_socket)
         std::cerr << "ERROR EN NICK" << std::endl;
     }
     if (done == false)
-    {
-        Command cmd(message);
-        User* user = this->_usersServerByFd[client_socket];
-        cmd.parseCommand(cmd.getArg(0), this, *user);
-    }
+        processClientBuffer(client_socket, message);
 }
 
 void    Server::printUSBN(std::map < std::string, int >& map)
@@ -554,4 +550,19 @@ void        Server::cleanAll()
     clients.clear();
 
     std::cout << "* ALL CLEAN *" << std::endl;
+}
+
+void Server::processClientBuffer(int client_socket, const std::string& message_fragment)
+{
+    this->_client_buffers[client_socket] += message_fragment;
+
+    std::size_t pos;
+    while ((pos = this->_client_buffers[client_socket].find('\n')) != std::string::npos)
+    {
+        std::string command = this->_client_buffers[client_socket].substr(0, pos);
+        Command cmd(command);
+        User* user = this->_usersServerByFd[client_socket];
+        cmd.parseCommand(cmd.getArg(0), this, *user);
+        this->_client_buffers[client_socket].erase(0, pos + 1);
+    }
 }
