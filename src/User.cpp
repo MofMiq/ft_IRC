@@ -138,3 +138,13 @@ bool User::isInvitedToChannel(const std::string& channelName) const
     }
     return false;
 }
+
+bool User::getAuthenticated() const
+{
+    return (this->_authenticated);
+}
+
+void User::setAuthenticated(bool value)
+{
+    this->_authenticated = value;
+}
