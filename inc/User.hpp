@@ -10,6 +10,7 @@ class User
 private:
     //USER <usuario> <host> <servidor> <nombre_real>
     int _fd; // File descriptor para el poll
+    bool        _authenticated;
     std::string _userName;
     std::string _nickName;
     std::string _oldNick;
@@ -29,6 +30,9 @@ public:
     ~User();
 
     // Getters y setters
+    bool getAuthenticated() const;
+    void setAuthenticated(bool value);
+
     std::string getUsername() const;
     void setUsername(const std::string& username); //Pa el comando USER
 

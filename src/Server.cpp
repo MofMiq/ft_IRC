@@ -137,7 +137,8 @@ void    Server::handle_new_connection()
     _usersServerByFd[client_socket]->setHostname("");
     _usersServerByFd[client_socket]->setServername("");
     _usersServerByFd[client_socket]->setRealname("");
-    this->_authenticated = false;
+    //this->_authenticated = false; SE GUARDABA EN EL SERVER Y NO EN EL USER
+    _usersServerByFd[client_socket]->setAuthenticated(false);
     //falta implementar la eliminación del usuario del mapa _usersServerByFd cuando se elimina el usuario del servidor
 
     std::cout << "New connection accepted" << std::endl;
@@ -236,7 +237,7 @@ void    Server::handle_client_message(int client_socket)
     std::cout << "MENSAJE RECIBIDO DEL CLIENTE" << std::endl;
     std::cout << message << std::endl;
 
-    if (message.find("PASS") == std::string::npos && this->_authenticated == false)
+    if (message.find("PASS") == std::string::npos && this->_usersServerByFd[client_socket]->getAuthenticated() == false)
     {
         std::cout << "EL CLIENTE CON FD -> " << client_socket << " INTENTA EJECUTAR COMANDOS SIN AUTENTICARSE. EXPULSADO" << std::endl;
         sendMessageClient(client_socket, "EXPULSADO. DEBE AUTENTICARSE ANTES DE REALIZAR NINGUNA ACCIÓN");
@@ -248,7 +249,7 @@ void    Server::handle_client_message(int client_socket)
     //anidar las condiciones?
     try
     {
-        if (message.find("PASS") != std::string::npos && this->_authenticated == false)
+        if (message.find("PASS") != std::string::npos && this->_usersServerByFd[client_socket]->getAuthenticated() == false)
         {
             done = true;
             std::string userPass = extractPassword(message);
@@ -258,7 +259,7 @@ void    Server::handle_client_message(int client_socket)
                 if (userPass == this->password)
                 {
                     std::cout << "CONTRASEÑA OK" << std::endl;
-                    this->_authenticated = true;
+                    this->_usersServerByFd[client_socket]->setAuthenticated(true);
                 }
                 else
                 {
