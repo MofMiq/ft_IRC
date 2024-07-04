@@ -148,3 +148,13 @@ void User::setAuthenticated(bool value)
 {
     this->_authenticated = value;
 }
+
+bool User::getCapLS() const
+{
+    return (this->_capLS);
+}
+
+void User::setCapLS(bool value)
+{
+    this->_capLS = value;
+}

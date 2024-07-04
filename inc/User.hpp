@@ -11,6 +11,7 @@ private:
     //USER <usuario> <host> <servidor> <nombre_real>
     int _fd; // File descriptor para el poll
     bool        _authenticated;
+    bool        _capLS;
     std::string _userName;
     std::string _nickName;
     std::string _oldNick;
@@ -30,6 +31,9 @@ public:
     ~User();
 
     // Getters y setters
+    bool getCapLS() const;
+    void setCapLS(bool value);
+
     bool getAuthenticated() const;
     void setAuthenticated(bool value);
 
