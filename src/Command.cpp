@@ -11,6 +11,7 @@ Command::Command(const std::string &msg)
 		this->_argCount = 0;
 	}
 	std::string tmp = msg;
+	tmp.erase(std::remove(tmp.begin(), tmp.end(), '\r'), tmp.end());
 	tmp.erase(std::remove(tmp.begin(), tmp.end(), '\n'), tmp.end());
 	tmp.erase(std::remove(tmp.begin(), tmp.end(), '\"'), tmp.end());
 	tmp.erase(std::remove(tmp.begin(), tmp.end(), '\''), tmp.end());
@@ -22,12 +23,12 @@ Command::Command(const std::string &msg)
 		this->_args.push_back(token);
 	this->_argCount = this->_args.size();
 	
-/*   std::cout << PURPLE << "Command constructor: argCount: " << this->_argCount << " _args: "; //para probar
+  std::cout << PURPLE << "Command constructor: argCount: " << this->_argCount << " _args: "; //para probar
 	for (int i = 0; i < this->_argCount; i++)
 	{
 			std::cout << "arg[" << i << "]: " << this->_args[i] << ' ';
 	}
-	std::cout << END << '\n'; // borrar */
+	std::cout << END << '\n'; // borrar
 }
 
 Command::~Command()

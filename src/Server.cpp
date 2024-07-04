@@ -236,7 +236,12 @@ void    Server::handle_client_message(int client_socket)
 
 
     std::cout << "MENSAJE RECIBIDO DEL CLIENTE" << std::endl;
-    std::cout << message << std::endl;
+    std::cout << message << " size: " << message.length() << std::endl;
+    for(size_t i = 0; i < message.length(); i++) //borrar debug
+    {
+        std::cout << RED << static_cast<int>(message[i]) << " ";
+    }
+    std::cout << END << std::endl;
     // std::cout << "VALOR CAPLS = " << _usersServerByFd[client_socket]->getCapLS() << std::endl;
 
 
@@ -337,6 +342,7 @@ void    Server::handle_client_message(int client_socket)
                 this->_usersServerByFd[this->_usersServerByNick[nickName]]->setNickname(nickName);
                 std::cout << "NICKNAME DEL CLIENTE = " << this->_usersServerByFd[_usersServerByNick[nickName]]->getNickname() << std::endl;
                 clients[client_socket] = nickName;
+                //condicion para que sea cuando realmente te unes
                 sendMessageClient(client_socket, rplWelcome(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]));
                 sendMessageClient(client_socket, rplYourHost(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]));
                 sendMessageClient(client_socket, rplCreated(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]));

@@ -100,7 +100,7 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
             channel->addUser(&user);
             std::cout << "User " << user.getNickname() << " joined channel " << channelName;
             // Notificar a todos los usuarios del canal
-            std::string joinMessage = ":" + server.getServerName() + " " + user.getNickname() + "succesfully joined to " + channelName;
+            std::string joinMessage = ":" + server.getServerName() + " " + user.getNickname() + " succesfully joined to " + channelName;
             //channel->broadcastMessage(joinMessage, user.getFd());
              // Esto es para notificar a los usuarios del canal sobre la Union
 /*             std::vector<User> users = channel->getUsers();
@@ -121,7 +121,7 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
             server.setOperator(user, channelName); // es operador
             std::cout << "User " << user.getNickname() << " created and joined channel " << channelName << std::endl;
             // Notificar al nuevo usuario que se ha unido al canal
-            std::string joinMessage = ":" + server.getServerName() + " " + user.getNickname() + "succesfully joined to " + channelName;
+            std::string joinMessage = ":" + server.getServerName() + " " + cmd.getArg(0) + " " + user.getNickname() + " succesfully created " + channelName;
             user.enqueueResponse(joinMessage);
             //server.checkQueue(); //borrar?
             //server.sendMessageClient(user.getFd(), joinMessage);
