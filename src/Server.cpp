@@ -139,6 +139,7 @@ void    Server::handle_new_connection()
     _usersServerByFd[client_socket]->setRealname("");
     //this->_authenticated = false; SE GUARDABA EN EL SERVER Y NO EN EL USER
     _usersServerByFd[client_socket]->setAuthenticated(false);
+    _usersServerByFd[client_socket]->setCapLS(false);
     //falta implementar la eliminación del usuario del mapa _usersServerByFd cuando se elimina el usuario del servidor
 
     std::cout << "New connection accepted" << std::endl;
@@ -236,8 +237,13 @@ void    Server::handle_client_message(int client_socket)
 
     std::cout << "MENSAJE RECIBIDO DEL CLIENTE" << std::endl;
     std::cout << message << std::endl;
+    // std::cout << "VALOR CAPLS = " << _usersServerByFd[client_socket]->getCapLS() << std::endl;
 
-    if (message.find("PASS") == std::string::npos && this->_usersServerByFd[client_socket]->getAuthenticated() == false)
+
+    if (message.find("CAP LS") != std::string::npos)
+        _usersServerByFd[client_socket]->setCapLS(true);
+
+    if (message.find("PASS") == std::string::npos && this->_usersServerByFd[client_socket]->getAuthenticated() == false && _usersServerByFd[client_socket]->getCapLS() == false)
     {
         std::cout << "EL CLIENTE CON FD -> " << client_socket << " INTENTA EJECUTAR COMANDOS SIN AUTENTICARSE. EXPULSADO" << std::endl;
         sendMessageClient(client_socket, "EXPULSADO. DEBE AUTENTICARSE ANTES DE REALIZAR NINGUNA ACCIÓN");
@@ -255,7 +261,11 @@ void    Server::handle_client_message(int client_socket)
             std::string userPass = extractPassword(message);
             if (userPass != "")
             {
-                std::cout << "CONTRASEÑA GUARDADA = " << userPass << std::endl;
+                // std::cout << "CONTRASEÑA GUARDADA = " << userPass << std::endl;
+                // std::cout << "VALOR CAPLS = " << _usersServerByFd[client_socket]->getCapLS() << std::endl;
+                if (_usersServerByFd[client_socket]->getCapLS() == true)
+                    userPass = userPass.substr(0, userPass.size() - 1);
+                // std::cout << "LONGITUD CONTRASEÑA INTRODUCIDA = " << userPass.size() << std::endl;
                 if (userPass == this->password)
                 {
                     std::cout << "CONTRASEÑA OK" << std::endl;
