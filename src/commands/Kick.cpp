@@ -77,7 +77,7 @@ void Command::executeKick(Command& cmd, Server& server, User& user) {
         }
         // Elimina al usuario del canal 
         channel->removeUser(targetUser->getFd());
-        std::string kickMessage = user.getNickname() + " has kicked " + targetNickname + " from channel " + channelName + " : " + reason + "\n";
+        std::string kickMessage = ":" + server.getServerName() + " " + cmd.getArg(0) + " " + user.getNickname() + " has kicked " + targetNickname + " from channel " + channelName + reason;
         //std::cout << kickMessage;
 
         // Esto es para notificar a los usuarios del canal sobre la expulsion
@@ -86,6 +86,7 @@ void Command::executeKick(Command& cmd, Server& server, User& user) {
             server.sendMessageClient(it->getFd(), kickMessage);
         //Y tb hay q notificar al pobre q ha sido expulsado
         server.sendMessageClient(targetUser->getFd(), kickMessage); */
+        targetUser->enqueueResponse(kickMessage);
         std::vector<Channel*> aux;
         aux.push_back(server.getChannel(channel->getName()));
         sendMessageToChannels(user, aux, kickMessage);

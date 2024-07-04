@@ -72,7 +72,7 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
                       
             Channel* channel = server.getChannel(channelName);
 
-            // Verificar si el canal está en modo "solo invitación" y si el usuario no ha sido invitado
+            // Verificar si el canal estï¿½ en modo "solo invitaciï¿½n" y si el usuario no ha sido invitado
             if (channel->getPrivate() && !user.isInvitedToChannel(channelName))
             {
                 user.enqueueResponse(errInviteOnlyChan(server, user, cmd, channelName));
@@ -100,12 +100,14 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
             channel->addUser(&user);
             std::cout << "User " << user.getNickname() << " joined channel " << channelName;
             // Notificar a todos los usuarios del canal
-            std::string joinMessage = ":" + user.getNickname() + " JOIN " + channelName;
+            std::string joinMessage = ":" + server.getServerName() + " " + user.getNickname() + " succesfully joined to " + channelName;
             //channel->broadcastMessage(joinMessage, user.getFd());
              // Esto es para notificar a los usuarios del canal sobre la Union
 /*             std::vector<User> users = channel->getUsers();
             for (std::vector<User>::const_iterator it = users.begin(); it != users.end(); ++it)
                 server.sendMessageClient(it->getFd(), joinMessage); */
+            user.enqueueResponse(rplNamreply(server, user, cmd, *channel));
+            user.enqueueResponse(rplEndofnames(server, user, cmd, channel->getName()));
             std::vector<Channel*> aux;
             aux.push_back(server.getChannel(channel->getName()));
             sendMessageToChannels(user, aux, joinMessage);
@@ -119,11 +121,11 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
             server.setOperator(user, channelName); // es operador
             std::cout << "User " << user.getNickname() << " created and joined channel " << channelName << std::endl;
             // Notificar al nuevo usuario que se ha unido al canal
-            std::string joinMessage = ":" + user.getNickname() + " JOIN " + channelName;
+            std::string joinMessage = ":" + server.getServerName() + " " + cmd.getArg(0) + " " + user.getNickname() + " succesfully created " + channelName;
             user.enqueueResponse(joinMessage);
-            server.checkQueue();
+            //server.checkQueue(); //borrar?
             //server.sendMessageClient(user.getFd(), joinMessage);
         }
     }
-    server.ShowChannelsAndUsers();
+    server.ShowChannelsAndUsers(); //borrar debug
 }

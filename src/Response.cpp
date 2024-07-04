@@ -195,3 +195,11 @@ std::string rplInviting(Server& server, User& user, const std::string& targetNic
 {
     return (createReply(server, RPL_INVITING) + user.getNickname() + " " + targetNickname + " " + channelName);
 }
+std::string rplNamreply(Server& server, User& user, Command& cmd, Channel& channel)
+{
+    return (createReply(server, RPL_NAMREPLY) + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + " :" + channel.showUsers());
+}
+std::string rplEndofnames(Server& server, User& user, Command& cmd, const std::string& channelName)
+{
+    return (createReply(server, RPL_ENDOFNAMES) + cmd.getArg(0) + " " + user.getNickname() + " " + channelName + " :End of /NAMES list");
+}

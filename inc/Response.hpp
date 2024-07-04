@@ -21,6 +21,8 @@ enum Code
     RPL_TOPIC = 332,
     RPL_TOPICWHOTIME = 333,
     RPL_INVITING = 341,
+    RPL_NAMREPLY = 353,
+    RPL_ENDOFNAMES = 366,
     ERR_NOSUCHNICK = 401,
     ERR_NOSUCHCHANNEL = 403,
     ERR_TOOMANYTARGETS = 407,
@@ -84,5 +86,7 @@ std::string rplNotopic(Server &server, User &user, const std::string& channelNam
 std::string rplTopic(Server &server, User &user, const std::string& channelName, const std::string& channelTopic);
 std::string rplTopicwhotime(Server &server, User &user, const std::string& channelName, const std::string& nick, const std::string& timestamp);
 std::string rplInviting(Server& server, User& user, const std::string& targetNickname, const std::string& channelName);
+std::string rplNamreply(Server& server, User& user, Command& cmd, Channel& channel);
+std::string rplEndofnames(Server& server, User& user, Command& cmd, const std::string& channelName);
 
 #endif
