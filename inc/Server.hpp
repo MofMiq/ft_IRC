@@ -26,7 +26,7 @@ const int BUFFER_SIZE = 1024;
 class Server {
 private:
     static Server* instance;
-    bool _authenticated;
+    //bool _authenticated;
     int port;
     std::string password;
     int server_socket;
