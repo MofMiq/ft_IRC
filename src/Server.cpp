@@ -323,7 +323,7 @@ void    Server::handle_client_message(int client_socket)
 
     try
     {
-        //esta implementación de NICK sirve sólo para la primera vez
+        //esta implementación de NICK sirve sólo para la primera vez.
         if (message.find("NICK") != std::string::npos && this->_usersServerByFd[client_socket]->getNickname() == "") 
         {
             done = true;
