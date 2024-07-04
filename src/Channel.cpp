@@ -167,3 +167,13 @@ void Channel::removeOperatorToChannel(int fd)
 {
    this->_operators.erase(fd);
 }
+
+std::string Channel::showUsers()
+{
+    std::string rpl;
+    for (std::map<int, User*>::iterator it = this-> _users.begin(); it != this->_users.end(); ++it)
+    {
+        rpl += it->second->getNickname() + " ";
+    }
+    return rpl;
+}

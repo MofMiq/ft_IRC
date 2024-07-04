@@ -87,6 +87,7 @@ public:
     bool isUserAnOperators(int fd);
     void addOperatorToChannel(int fd);
     void removeOperatorToChannel(int fd);
+    std::string showUsers();
 };
 
 #endif
