@@ -140,7 +140,7 @@ void    Server::handle_new_connection()
     //this->_authenticated = false; SE GUARDABA EN EL SERVER Y NO EN EL USER
     _usersServerByFd[client_socket]->setAuthenticated(false);
     _usersServerByFd[client_socket]->setCapLS(false);
-    //falta implementar la eliminación del usuario del mapa _usersServerByFd cuando se elimina el usuario del servidor
+    //falta implementar la eliminación del usuario del mapa _usersServerByFd cuando se elimina el usuario del servidor.
 
     std::cout << "New connection accepted" << std::endl;
 }
