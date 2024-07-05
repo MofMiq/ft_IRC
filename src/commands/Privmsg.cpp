@@ -1,6 +1,6 @@
 #include "../../inc/Command.hpp"
 #include "../../inc/Server.hpp"
-
+std::string     ftRandomMessage();
 /*
 PRIVMSG <target> [:]<text>
 
@@ -64,6 +64,11 @@ void Command::executePrivmsg(Command& cmd, Server& server, User& user)
     }
     else if (!isChannel(cmd.getArg(1)[0]))
     {
+      if (cmd.getArg(1) == "bot")
+      {
+        user.enqueueResponse(":" + server.getServerName() + " bot " + getArg(0) + " :" + ftRandomMessage());
+        return;
+      }
       User* rec = server.getUserByNick(cmd.getArg(1));
       rec->enqueueResponse(":" + server.getServerName() + " " + user.getNickname() + " " + getArg(0) + " " + rec->getNickname() + " " + cmd.getArgsAsString(2));
     }
