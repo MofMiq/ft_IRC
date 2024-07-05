@@ -491,6 +491,8 @@ bool Server::checkChannelKey(const std::string& channelName, const std::string& 
 
 bool Server::isNickInServer(const std::string& nick)
 {
+    if (nick == "bot") //borrar debug? esto es para que no cuente a bot en caso de que alguien quiera mandarle un mensaje
+        return true;
     std::map<std::string, int>::const_iterator it = this->_usersServerByNick.find(nick);
     if (it != this->_usersServerByNick.end())
         return true;
