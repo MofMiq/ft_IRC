@@ -48,7 +48,7 @@ void Command::executeNick(Command &cmd, Server &server, User &user)
     {
         user.enqueueResponse(errNonicknamegiven(server, user, cmd));
     }
-    else if (!validNickname(cmd, cmd.getArg(1)) || cmd.getArg(1).length() >= MAX_LENGHT)
+    else if (!validNickname(cmd, cmd.getArg(1)) || cmd.getArg(1).length() >= MAX_LENGHT || cmd.getArg(1) == "bot")
     {
         user.enqueueResponse(errErroneousnickname(server, user, cmd));
     }
