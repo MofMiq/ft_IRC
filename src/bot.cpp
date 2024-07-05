@@ -1,18 +1,25 @@
-#include <iostream>
+#include <cstdlib>
+#include <ctime>
 #include <string>
-#include <random>
+
+//Para inicializar el generador de números aleatorios.
+void initRandomSeed() {
+    srand(static_cast<unsigned int>(time(0)));
+}
 
 std::string     ftRandomMessage()
 {
-    int         lowerLimit = 0;
     int         upperLimit = 19;
     int         randomNumber = -1;
     std::string messageReturn;
-    std::random_device randomDevice;
-    std::mt19937 generator(randomDevice());
-    std::uniform_int_distribution<> rangeValues(lowerLimit, upperLimit);
+    static bool isSeedInitialized = false;
 
-    randomNumber = rangeValues(generator);
+    if (!isSeedInitialized) {
+        initRandomSeed();
+        isSeedInitialized = true;
+    }
+
+    randomNumber = rand() % (upperLimit + 1);
 
     switch(randomNumber)
     {
@@ -81,9 +88,9 @@ std::string     ftRandomMessage()
     return (messageReturn);
 }
 
-int main()
+/* int main()
 {
-    std::cout << ftRandomMessage() << std::endl;
+    std::cout << "-----" << ftRandomMessage() << std::endl;
 
     return (0);
-}
+} */

@@ -17,7 +17,7 @@ COMMAND	= Nick Mode Topic Privmsg Join Kick Invite User
 
 SERVER	= server
 
-SRC 	= 	main.cpp User.cpp Command.cpp Response.cpp Server.cpp Channel.cpp\
+SRC 	= 	main.cpp User.cpp Command.cpp Response.cpp Server.cpp Channel.cpp bot.cpp\
 			$(addsuffix .cpp, $(addprefix commands/, $(COMMAND))) \
 
 OBJ 	=	$(addprefix $(OBJ_DIR), $(SRC:.cpp=.o))

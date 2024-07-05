@@ -284,6 +284,10 @@ bool applyModes(Vec& vec, Server& server, User& user, Channel& channel)
 
 void sendTwoReplies(Server& server, User& user, Command& cmd, Channel& channel, const std::string& extra)
 {
-	user.enqueueResponse(rplChannelmodeis(server, user, cmd , channel, extra));
+	user.enqueueResponse(rplChannelmodeis(server, user, cmd, channel, extra));
 	user.enqueueResponse(rplCreationtime(server, user, cmd, channel));
+	std::vector<Channel*> aux;
+  aux.push_back(&channel);
+	cmd.sendMessageToChannels(user, aux, rplChannelmodeis(server, user, cmd, channel, extra));
+	cmd.sendMessageToChannels(user, aux, rplCreationtime(server, user, cmd, channel));
 }
