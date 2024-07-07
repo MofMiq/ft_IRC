@@ -98,14 +98,14 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
             }
             // Agrega al usuario al canal
             channel->addUser(&user);
-            std::cout << "User " << user.getNickname() << " joined channel " << channelName;
+            user.enqueueResponse("Unido a " + channelName);
+            // Enviar el tema del canal si existe
+            if (!channel->getTopic().empty()) {
+                user.enqueueResponse(rplTopic(server, user, channel->getName(), channel->getTopic()));
+            }
             // Notificar a todos los usuarios del canal
             std::string joinMessage = ":" + server.getServerName() + " " + user.getNickname() + " succesfully joined to " + channelName;
-            //channel->broadcastMessage(joinMessage, user.getFd());
              // Esto es para notificar a los usuarios del canal sobre la Union
-/*             std::vector<User> users = channel->getUsers();
-            for (std::vector<User>::const_iterator it = users.begin(); it != users.end(); ++it)
-                server.sendMessageClient(it->getFd(), joinMessage); */
             user.enqueueResponse(rplNamreply(server, user, cmd, *channel));
             user.enqueueResponse(rplEndofnames(server, user, cmd, channel->getName()));
             std::vector<Channel*> aux;
@@ -115,16 +115,13 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
         else
         {
             // El canal no existe, crea el canal y agrega al usuario
-            //server.createChannel(channelName, key);
             server.createChannel(channelName, key, getTimestamp());
             server.addUserToChannel(user, channelName);
             server.setOperator(user, channelName); // es operador
-            std::cout << "User " << user.getNickname() << " created and joined channel " << channelName << std::endl;
+            user.enqueueResponse("Unido a " + channelName);
             // Notificar al nuevo usuario que se ha unido al canal
             std::string joinMessage = ":" + server.getServerName() + " " + cmd.getArg(0) + " " + user.getNickname() + " succesfully created " + channelName;
             user.enqueueResponse(joinMessage);
-            //server.checkQueue(); //borrar?
-            //server.sendMessageClient(user.getFd(), joinMessage);
         }
     }
     server.ShowChannelsAndUsers(); //borrar debug

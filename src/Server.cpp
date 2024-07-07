@@ -499,17 +499,40 @@ bool Server::isNickInServer(const std::string& nick)
     return false;
 }
 
+//void Server::updateUsersServerByNick(int fd, const std::string& newNick)
+//{
+//    for (std::map<std::string, int>::iterator it = this->_usersServerByNick.begin(); it != this->_usersServerByNick.end(); ++it)
+//    {
+//        if (it->second == fd)
+//        {
+//            this->_usersServerByNick.erase(it);
+//            this->_usersServerByNick[newNick] = fd;
+//        }
+//    }
+//}
+
 void Server::updateUsersServerByNick(int fd, const std::string& newNick)
 {
-    for (std::map<std::string, int>::iterator it = this->_usersServerByNick.begin(); it != this->_usersServerByNick.end(); ++it)
+    std::map<std::string, int>::iterator it;
+
+    // Buscamos el iterador del elemento con el fd dado
+    for (it = this->_usersServerByNick.begin(); it != this->_usersServerByNick.end(); ++it)
     {
         if (it->second == fd)
         {
-            this->_usersServerByNick.erase(it);
-            this->_usersServerByNick[newNick] = fd;
+            break;
         }
     }
+
+    // Si encontramos el elemento, actualizamos el mapa
+    if (it != this->_usersServerByNick.end())
+    {
+        this->_usersServerByNick.erase(it);  // Borramos el elemento antiguo
+        this->_usersServerByNick[newNick] = fd;  // Insertamos el nuevo elemento
+    }
 }
+
+
 
 //Cambiado pq da segfault si no existia el user, hay q recorrer antes y ver si existe
 User* Server::getUserByNick(const std::string& nick)
