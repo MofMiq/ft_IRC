@@ -315,6 +315,12 @@ void    Server::handle_client_message(int client_socket)
             std::cout << "SERVERNAME -> " << this->_usersServerByFd[client_socket]->getServername() << std::endl;
             std::cout << "REALNAME -> " << this->_usersServerByFd[client_socket]->getRealname() << std::endl;
 
+            //condicion para que sea cuando realmente te unes
+            sendMessageClient(client_socket, rplWelcome(*this, *this->_usersServerByFd[client_socket]));
+            sendMessageClient(client_socket, rplYourHost(*this, *this->_usersServerByFd[client_socket]));
+            sendMessageClient(client_socket, rplCreated(*this, *this->_usersServerByFd[client_socket]));
+            sendMessageClient(client_socket, rplMyInfo(*this, *this->_usersServerByFd[client_socket]));
+
             //Añadir usuario al contenedor de usuarios del server
             //_usersServer[fdCliente] = new User(todos los datos);
             //hacer una funcion con un mapa que transforme el NICK del usuario en su FD
@@ -342,11 +348,6 @@ void    Server::handle_client_message(int client_socket)
                 this->_usersServerByFd[this->_usersServerByNick[nickName]]->setNickname(nickName);
                 std::cout << "NICKNAME DEL CLIENTE = " << this->_usersServerByFd[_usersServerByNick[nickName]]->getNickname() << std::endl;
                 clients[client_socket] = nickName;
-                //condicion para que sea cuando realmente te unes
-                sendMessageClient(client_socket, rplWelcome(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]));
-                sendMessageClient(client_socket, rplYourHost(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]));
-                sendMessageClient(client_socket, rplCreated(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]));
-                sendMessageClient(client_socket, rplMyInfo(*this, *this->_usersServerByFd[this->_usersServerByNick[nickName]]));
             }
         }
     }
@@ -585,4 +586,9 @@ void Server::processClientBuffer(int client_socket, const std::string& message_f
         cmd.parseCommand(cmd.getArg(0), this, *user);
         this->_clientBuffers[client_socket].erase(0, pos + 1);
     }
+}
+
+std::string&    Server::getPass()
+{
+    return this->password;
 }

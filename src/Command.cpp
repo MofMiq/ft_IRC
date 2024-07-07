@@ -47,6 +47,8 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
 		user.enqueueResponse(errUnknowncommand(*server, user, *this));
 		return ;
 	}
+/* 	else if (cmd == "PASS")
+		executePass(*this, *server, user); */
 	else if (cmd == "NICK")
 		executeNick(*this, *server, user);
 	else if (cmd == "TOPIC")

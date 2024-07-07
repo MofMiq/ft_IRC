@@ -53,6 +53,7 @@ class Command
         void executeTopic(Command& cmd, Server& server, User& user);
         void executePrivmsg(Command& cmd, Server& server, User& user);
         void executeMode(Command& cmd, Server& server, User& user);
+        void executePass(Command& cmd, Server& server, User& user);
 
         //ana
         void executeJoin(Command& cmd, Server& server, User& user);

@@ -61,6 +61,7 @@ public:
     void        ShowChannelsAndUsers() const;
     void        setOperator(const User& user, const std::string& channelName);
     bool        checkChannelKey(const std::string& channelName, const std::string& key);
+    std::string&    getPass();
     
     void processClientBuffer(int client_socket, const std::string& message_fragment);
 
