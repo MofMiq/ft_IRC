@@ -44,7 +44,7 @@ bool validNickname(Command& cmd, std::string& nick)
 
 void Command::executeNick(Command &cmd, Server &server, User &user)
 {
-    if (cmd._argCount < 2/* || cmd.getArg(1).length() == 0*/)
+    if (cmd._argCount < 2)
     {
         user.enqueueResponse(errNonicknamegiven(server, user, cmd));
     }
@@ -62,8 +62,9 @@ void Command::executeNick(Command &cmd, Server &server, User &user)
         user.setNickname(cmd.getArg(1));
         server.updateUsersServerByNick(user.getFd(), cmd.getArg(1));
 
-        user.enqueueResponse(rplNickok(server, user));
-        sendMessageToChannels(user, server.getAllChannelsUserIn(user.getFd()), rplNickok(server, user));
+        std::string rpl = ":" + server.getServerName() + " " + user.getOldNick() + " Nick succesfully changed to " + user.getNickname();
+        user.enqueueResponse(rpl);
+        sendMessageToChannels(user, server.getAllChannelsUserIn(user.getFd()), rpl);
     }
     return ;
 }

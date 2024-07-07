@@ -149,6 +149,9 @@ std::string errBadChannelMask(Server& server, User& user, Command& cmd, const st
 
 std::string rplWelcome(Server &server, User &user)
 {
+/*     (void)server;
+    (void)user;
+    return ("Welcome"); */
     return (":" + server.getServerName() + " 001 " + user.getNickname() + ": Welcome to our IRC network :" + user.getNickname() + "!" + user.getUsername() + "@" + user.getHostname());
 }
 std::string rplYourHost(Server &server, User &user)
@@ -163,10 +166,7 @@ std::string rplMyInfo(Server &server, User &user)
 {
     return (":" + server.getServerName() + " 004 " + user.getNickname() + " " + user.getServername() + " v1.0 Available user modes: , Available channel modes: itkol");
 }
-std::string rplNickok(Server &server, User &user)
-{
-    return (createReply(server, RPL_NICKOK) + user.getOldNick() + " Nick succesfully changed to " + user.getNickname());
-}
+
 std::string rplChannelmodeis(Server &server, User &user, Command& cmd, Channel& channel, const std::string& extra)
 {
     return (createReply(server, RPL_CHANNELMODEIS) + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + extra);
