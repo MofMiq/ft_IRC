@@ -73,6 +73,12 @@ void User::setStandBy(bool cond)
 {
     this->_standBy = cond;
 }
+
+void User::setPass(int pass)
+{
+    this->_pass = pass;
+}
+
 bool User::checkResponsesQueue()
 {
     return this->_responses.empty();

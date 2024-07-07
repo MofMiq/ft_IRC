@@ -20,6 +20,7 @@ private:
     std::string _realName;
     std::queue<std::string> _responses;
     std::vector<std::string> _invitedChannels; //Canales a los que el usuario ha sido invitado
+    int         _pass;
 
     bool _standBy;
 
@@ -62,12 +63,11 @@ public:
     int getFd() const;
     bool getStandBy();
     void setStandBy(bool cond);
+    void setPass(int pass);
 
     bool checkResponsesQueue();
-    //void enqueueResponse(Compose& cmp);   //meter un msg
     int     getQueueSize();
     void enqueueResponse(const std::string& res);   //meter un msg
-    //Compose& dequeueResponse();                  //sacar un msg
     std::string dequeueResponse();                  //sacar un msg
 };
 
