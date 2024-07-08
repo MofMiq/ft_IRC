@@ -302,10 +302,10 @@ void    Server::handle_client_message(int client_socket)
                 else
                 {
                     std::cout << "CONTRASEÑA ERRONEA" << std::endl;
-                    //Se devuelve al cliente el mensaje ERR_PASSWDMISMATCH (464)
-                    sendMessageClient(client_socket, "<client> :Password incorrect");
-                    //Se envia el mensaje de ERROR al cliente antes de cerrar la conexion
-                    sendMessageClient(client_socket, "ERROR :Wrong password");
+                    // //Se devuelve al cliente el mensaje ERR_PASSWDMISMATCH (464)
+                    // sendMessageClient(client_socket, "<client> :Password incorrect");
+                    // //Se envia el mensaje de ERROR al cliente antes de cerrar la conexion
+                    // sendMessageClient(client_socket, "ERROR :Wrong password");
                     close(client_socket);
                     remove_client(client_socket);
                     return;
