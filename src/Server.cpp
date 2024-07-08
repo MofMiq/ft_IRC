@@ -1,5 +1,10 @@
 #include "../inc/Server.hpp"
 
+//LOS CODIGOS DE ERROR SON REPLY DEL POLLOUT CON LA FUNCION SEND
+//LOS MENSAJES SON MESSAGE DEL POLLOUT CON LA FUNCION SEND
+//CUANDO LAS COMUNICACIONES SON DEL SERVER AL CLIENTE NO SE PONE EL FROM PORQUE ES DEL PROPIO SERVER Y EL TO ES EL FD DEL DESTINATARIO
+//SI LA PASS ES OK RPL_WELCOME
+
 Server* Server::instance = NULL;
 
 Server::Server(int port, const std::string& password) : port(port), password(password), server_socket(-1), serverName("MyServer") {}
@@ -134,7 +139,7 @@ void    Server::handle_new_connection()
 
     struct pollfd pfd;
     pfd.fd = client_socket;
-    pfd.events = POLLIN;
+    pfd.events = POLLIN | POLLOUT;
     pfd.revents = 0;
     pollfds.push_back(pfd);
     clients[client_socket] = "";
@@ -297,6 +302,10 @@ void    Server::handle_client_message(int client_socket)
                 else
                 {
                     std::cout << "CONTRASEÑA ERRONEA" << std::endl;
+                    //Se devuelve al cliente el mensaje ERR_PASSWDMISMATCH (464)
+                    sendMessageClient(client_socket, "<client> :Password incorrect");
+                    //Se envia el mensaje de ERROR al cliente antes de cerrar la conexion
+                    sendMessageClient(client_socket, "ERROR :Wrong password");
                     close(client_socket);
                     remove_client(client_socket);
                     return;
