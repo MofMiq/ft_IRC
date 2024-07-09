@@ -275,6 +275,8 @@ void    Server::handle_client_message(int client_socket)
     {
         std::cout << "EL CLIENTE CON FD -> " << client_socket << " INTENTA EJECUTAR COMANDOS SIN AUTENTICARSE. EXPULSADO" << std::endl;
         sendMessageClient(client_socket, "EXPULSADO. DEBE AUTENTICARSE ANTES DE REALIZAR NINGUNA ACCIÓN");
+        //Se envia el mensaje de ERROR al cliente antes de cerrar la conexion
+        sendMessageClient(client_socket, ": ERROR :Not authenticated"); //HAY QUE DARLE EL FORMATO CORRECTO A ESTE MENSAJE
         close(client_socket);
         remove_client(client_socket);
         return;
@@ -302,10 +304,10 @@ void    Server::handle_client_message(int client_socket)
                 else
                 {
                     std::cout << "CONTRASEÑA ERRONEA" << std::endl;
-                    // //Se devuelve al cliente el mensaje ERR_PASSWDMISMATCH (464)
-                    // sendMessageClient(client_socket, "<client> :Password incorrect");
-                    // //Se envia el mensaje de ERROR al cliente antes de cerrar la conexion
-                    // sendMessageClient(client_socket, "ERROR :Wrong password");
+                    //Se devuelve al cliente el mensaje ERR_PASSWDMISMATCH (464)
+                    sendMessageClient(client_socket, ": 464 <client> :Password incorrect"); //HAY QUE DARLE EL FORMATO CORRECTO A ESTE MENSAJE
+                    //Se envia el mensaje de ERROR al cliente antes de cerrar la conexion
+                    sendMessageClient(client_socket, ": ERROR :Wrong password"); //HAY QUE DARLE EL FORMATO CORRECTO A ESTE MENSAJE
                     close(client_socket);
                     remove_client(client_socket);
                     return;
@@ -313,6 +315,10 @@ void    Server::handle_client_message(int client_socket)
             }
             else
             {
+                //Se devuelve al cliente el mensaje ERR_PASSWDMISMATCH (464)
+                sendMessageClient(client_socket, ": <client> <command> :Not enough parameters"); //HAY QUE DARLE EL FORMATO CORRECTO A ESTE MENSAJE
+                //Se envia el mensaje de ERROR al cliente antes de cerrar la conexion
+                sendMessageClient(client_socket, ": ERROR :Not enough parameters"); //HAY QUE DARLE EL FORMATO CORRECTO A ESTE MENSAJE
                 close(client_socket);
                 remove_client(client_socket);
                 return;
