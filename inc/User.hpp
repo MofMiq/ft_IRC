@@ -11,6 +11,9 @@ private:
     //USER <usuario> <host> <servidor> <nombre_real>
     int _fd; // File descriptor para el poll
     bool        _authenticated;
+    bool        _commandUSER;
+    bool        _commandNICK;
+    bool        _configOK;
     bool        _capLS;
     std::string _userName;
     std::string _nickName;
@@ -37,6 +40,15 @@ public:
 
     bool getAuthenticated() const;
     void setAuthenticated(bool value);
+
+    bool getCommandUSER() const;
+    void setCommandUSER(bool value);
+
+    bool getCommandNICK() const;
+    void setCommandNICK(bool value);
+
+    bool getConfigOK() const;
+    void setConfigOK(bool value);
 
     std::string getUsername() const;
     void setUsername(const std::string& username); //Pa el comando USER

@@ -33,13 +33,13 @@ private:
     std::string serverName;
     std::vector<struct pollfd> pollfds;
     std::map<int, std::string> clients; // Map from socket to client nickname SE UTILIZA PARA EL POLL
-    std::map<std::string, int > _usersServerByNick; // Map de NICK a FD
-    std::map<int, User* > _usersServerByFd; // Map de FD y puntero a USER correspondiente
     std::map<std::string, Channel> _channelsServer;
  //   std::map<std::string, User> _nickToUser; // Mapa para acceder a los usuarios por nickname TODO
     std::map<int, std::string> _clientBuffers;
 
 public:
+    std::map<std::string, int > _usersServerByNick; // Map de NICK a FD
+    std::map<int, User* > _usersServerByFd; // Map de FD y puntero a USER correspondiente
     Server(int port, const std::string& password);
     void        sendMessageClient(int clientSocket, const std::string& errorMsg);
     bool        start();
