@@ -2,15 +2,33 @@
 #include <stdexcept>
 #include <iostream>
 
-User::User() : _standBy(false)
+User::User() :
+_authenticated(false), 
+_commandUSER(false), 
+_commandNICK(false), 
+_configurationOK(false) //: _standBy(false)
 {
 }
 
-User::User(int fd) : _fd(fd), _standBy(false)
+User::User(int fd) : 
+_fd(fd),
+_authenticated(false), 
+_commandUSER(false), 
+_commandNICK(false), 
+_configurationOK(false) //, _standBy(false)
 {
 }
 
-User::User(int fd, std::string userName, std::string hostName, std::string serverName, std::string realName) : _fd(fd), _userName(userName), _hostName(hostName), _serverName(serverName), _realName(realName), _standBy(false)
+User::User(int fd, std::string userName, std::string hostName, std::string serverName, std::string realName) : 
+_fd(fd), 
+_authenticated(false), 
+_commandUSER(false), 
+_commandNICK(false), 
+_configurationOK(false),
+_userName(userName), 
+_hostName(hostName), 
+_serverName(serverName), 
+_realName(realName) //, _standBy(false)
 {
 
 }
@@ -65,14 +83,14 @@ int User::getFd() const
     return this->_fd;
 }
 
-bool User::getStandBy()
-{
-    return this->_standBy;
-}
-void User::setStandBy(bool cond)
-{
-    this->_standBy = cond;
-}
+// bool User::getStandBy()
+// {
+//     return this->_standBy;
+// }
+// void User::setStandBy(bool cond)
+// {
+//     this->_standBy = cond;
+// }
 
 void User::setPass(int pass)
 {
@@ -153,6 +171,36 @@ bool User::getAuthenticated() const
 void User::setAuthenticated(bool value)
 {
     this->_authenticated = value;
+}
+
+bool User::getCommandUSER() const
+{
+    return (this->_commandUSER);
+}
+
+void User::setCommandUSER(bool value)
+{
+    this->_commandUSER = value;
+}
+
+bool User::getCommandNICK() const
+{
+    return (this->_commandNICK);
+}
+
+void User::setCommandNICK(bool value)
+{
+    this->_commandNICK = value;
+}
+
+bool User::getConfigurationOK() const
+{
+    return (this->_configurationOK);
+}
+
+void User::setConfigurationOK(bool value)
+{
+    this->_configurationOK = value;
 }
 
 bool User::getCapLS() const

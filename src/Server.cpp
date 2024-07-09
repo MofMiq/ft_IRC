@@ -80,13 +80,13 @@ void    Server::checkQueue()
 {
 	for (std::map<int, User* >::iterator it = this->_usersServerByFd.begin(); it != this->_usersServerByFd.end(); ++it)
 	{
-		if (it->second->getStandBy() == false)
-		{
-			while (it->second->getQueueSize() > 0)
-			{
-				sendMessageClient(it->second->getFd(), it->second->dequeueResponse());
-			}
-		}
+		// if (it->second->getStandBy() == false)
+		// {
+        while (it->second->getQueueSize() > 0)
+        {
+            sendMessageClient(it->second->getFd(), it->second->dequeueResponse());
+        }
+		// }
 	}
 }
 
@@ -330,65 +330,65 @@ void    Server::handle_client_message(int client_socket)
         std::cerr << "ERROR EN PASS" << std::endl;
     }
 
-    try
-    { 
-        if (message.find("USER") != std::string::npos && this->_usersServerByFd[client_socket]->getUsername() == "")
-        {
-            done = true;
-            std::string userName, hostName, serverName, realName;
-            extractDataUser(message, userName, hostName, serverName, realName);
-            this->_usersServerByFd[client_socket]->setUsername(userName);
-            this->_usersServerByFd[client_socket]->setHostname(hostName);
-            this->_usersServerByFd[client_socket]->setServername(serverName);
-            this->_usersServerByFd[client_socket]->setRealname(realName);
+    // try
+    // { 
+    //     if (message.find("USER") != std::string::npos && this->_usersServerByFd[client_socket]->getUsername() == "")
+    //     {
+    //         done = true;
+    //         std::string userName, hostName, serverName, realName;
+    //         extractDataUser(message, userName, hostName, serverName, realName);
+    //         this->_usersServerByFd[client_socket]->setUsername(userName);
+    //         this->_usersServerByFd[client_socket]->setHostname(hostName);
+    //         this->_usersServerByFd[client_socket]->setServername(serverName);
+    //         this->_usersServerByFd[client_socket]->setRealname(realName);
 
-            std::cout << "DATOS COMPLETOS DEL USUARIO CON FD -> " << this->_usersServerByFd[client_socket]->getFd() << std::endl;
-            std::cout << "USERNAME -> " << this->_usersServerByFd[client_socket]->getUsername() << std::endl;
-            std::cout << "HOSTNAME -> " << this->_usersServerByFd[client_socket]->getHostname() << std::endl;
-            std::cout << "SERVERNAME -> " << this->_usersServerByFd[client_socket]->getServername() << std::endl;
-            std::cout << "REALNAME -> " << this->_usersServerByFd[client_socket]->getRealname() << std::endl;
-                        //condicion para que sea cuando realmente te unes
-            sendMessageClient(client_socket, rplWelcome(*this, *this->_usersServerByFd[client_socket]));
-            sendMessageClient(client_socket, rplYourHost(*this, *this->_usersServerByFd[client_socket]));
-            sendMessageClient(client_socket, rplCreated(*this, *this->_usersServerByFd[client_socket]));
-            sendMessageClient(client_socket, rplMyInfo(*this, *this->_usersServerByFd[client_socket]));
+    //         std::cout << "DATOS COMPLETOS DEL USUARIO CON FD -> " << this->_usersServerByFd[client_socket]->getFd() << std::endl;
+    //         std::cout << "USERNAME -> " << this->_usersServerByFd[client_socket]->getUsername() << std::endl;
+    //         std::cout << "HOSTNAME -> " << this->_usersServerByFd[client_socket]->getHostname() << std::endl;
+    //         std::cout << "SERVERNAME -> " << this->_usersServerByFd[client_socket]->getServername() << std::endl;
+    //         std::cout << "REALNAME -> " << this->_usersServerByFd[client_socket]->getRealname() << std::endl;
+    //                     //condicion para que sea cuando realmente te unes
+    //         sendMessageClient(client_socket, rplWelcome(*this, *this->_usersServerByFd[client_socket]));
+    //         sendMessageClient(client_socket, rplYourHost(*this, *this->_usersServerByFd[client_socket]));
+    //         sendMessageClient(client_socket, rplCreated(*this, *this->_usersServerByFd[client_socket]));
+    //         sendMessageClient(client_socket, rplMyInfo(*this, *this->_usersServerByFd[client_socket]));
 
 
-            //Añadir usuario al contenedor de usuarios del server
-            //_usersServer[fdCliente] = new User(todos los datos);
-            //hacer una funcion con un mapa que transforme el NICK del usuario en su FD
-            //  este NICK se agrega con el comando NICK que es cuando se crea la equivalencia NICK -> FD en el mapa que se guarda en Server
-        }
-    }
-    catch(...)
-    {
-        std::cerr << "ERROR EN USER" << std::endl;
-    }
+    //         //Añadir usuario al contenedor de usuarios del server
+    //         //_usersServer[fdCliente] = new User(todos los datos);
+    //         //hacer una funcion con un mapa que transforme el NICK del usuario en su FD
+    //         //  este NICK se agrega con el comando NICK que es cuando se crea la equivalencia NICK -> FD en el mapa que se guarda en Server
+    //     }
+    // }
+    // catch(...)
+    // {
+    //     std::cerr << "ERROR EN USER" << std::endl;
+    // }
 
-    try
-    {
-        //esta implementación de NICK sirve sólo para la primera vez.
-        if (message.find("NICK") != std::string::npos && this->_usersServerByFd[client_socket]->getNickname() == "") 
-        {
-            done = true;
-            std::string nickName;
+    // try
+    // {
+    //     //esta implementación de NICK sirve sólo para la primera vez.
+    //     if (message.find("NICK") != std::string::npos && this->_usersServerByFd[client_socket]->getNickname() == "") 
+    //     {
+    //         done = true;
+    //         std::string nickName;
 
-            nickName = extractNick(message);
-            if (nickName != "")
-            {
-                std::cout << "NICKNAME EXTRAIDO = " << nickName << std::endl;
-                this->_usersServerByNick[nickName] = client_socket;
-                this->_usersServerByFd[this->_usersServerByNick[nickName]]->setNickname(nickName);
-                std::cout << "NICKNAME DEL CLIENTE = " << this->_usersServerByFd[_usersServerByNick[nickName]]->getNickname() << std::endl;
-                clients[client_socket] = nickName;
+    //         nickName = extractNick(message);
+    //         if (nickName != "")
+    //         {
+    //             std::cout << "NICKNAME EXTRAIDO = " << nickName << std::endl;
+    //             this->_usersServerByNick[nickName] = client_socket;
+    //             this->_usersServerByFd[this->_usersServerByNick[nickName]]->setNickname(nickName);
+    //             std::cout << "NICKNAME DEL CLIENTE = " << this->_usersServerByFd[_usersServerByNick[nickName]]->getNickname() << std::endl;
+    //             clients[client_socket] = nickName;
 
-            }
-        }
-    }
-    catch(...)
-    {
-        std::cerr << "ERROR EN NICK" << std::endl;
-    }
+    //         }
+    //     }
+    // }
+    // catch(...)
+    // {
+    //     std::cerr << "ERROR EN NICK" << std::endl;
+    // }
     if (done == false)
         processClientBuffer(client_socket, message);
 }
