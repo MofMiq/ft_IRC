@@ -38,7 +38,8 @@ std::string createMessage(Server &server, Code code, User &user, Command &cmd)
 
 std::string createReply(Server &server, Code code)
 {
-    std::string msg = ":" + server.getServerName() + " " + to_string(code) + " ";
+    (void)code;
+    std::string msg = ":" + server.getServerName() + " ";
     return msg;
 }
 

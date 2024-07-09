@@ -48,7 +48,7 @@ public:
     std::string getServerName() const;
     void        handle_new_connection();
     std::string extractPassword(std::string strRaw);
-    std::string extractNick(std::string strRaw);
+    std::string extractNick(std::string& strRaw);
     void        extractDataUser(std::string strRaw, std::string& userName, std::string& hostName, std::string& serverName, std::string& realName);
     void        handle_client_message(int client_socket);
     void        remove_client(int client_socket);
@@ -64,6 +64,7 @@ public:
     std::string&    getPass();
     
     void processClientBuffer(int client_socket, const std::string& message_fragment);
+    std::string     extractInfo(std::string& strRaw, const std::string& cmd);
 
     User*       getUserByNick(const std::string& nick);   // Metodo para obtener un usuario por su nickname
 

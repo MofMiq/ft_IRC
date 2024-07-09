@@ -216,23 +216,17 @@ void        Server::extractDataUser(std::string strRaw, std::string& userName, s
     realName = strRaw.substr(start_word, end_word - start_word);
 }
 
-std::string     Server::extractNick(std::string strRaw)
+std::string     Server:: extractInfo(std::string& strRaw, const std::string& cmd)
 {
-    std::string nick = "NICK";
-    size_t position = strRaw.find(nick);
-
-    if (position == std::string::npos)
-        return ("");
-
-    position += nick.size();
-
-    size_t start_word = strRaw.find_first_not_of(" \r\n", position);
-    size_t end_word = strRaw.find_first_of(" \r\n", start_word);
-
-    if (start_word != std::string::npos && end_word != std::string::npos)
-        return (strRaw.substr(start_word, end_word - start_word));
-
-    return ("");
+    std::string message = strRaw;
+    size_t startPos = message.find(cmd);
+    if (startPos != std::string::npos) {
+        size_t endPos = message.find_first_of("\n", startPos);
+        if (endPos != std::string::npos) {
+            return message.substr(startPos, (endPos + 1) - startPos);
+        }
+    }
+    return ""; 
 }
 
 void    Server::handle_client_message(int client_socket) 
@@ -323,13 +317,44 @@ void    Server::handle_client_message(int client_socket)
     {
         std::cerr << "ERROR EN PASS" << std::endl;
     }
+    try
+    {
+        //esta implementación de NICK sirve sólo para la primera vez.
+        if (message.find("NICK") != std::string::npos && this->_usersServerByFd[client_socket]->getNickname() == "") 
+        {
+            done = true;
+            std::string nickName;
 
+            nickName = extractInfo(message, "NICK");
+            if (nickName != "")
+            {
+                std::cout << "NICKNAME EXTRAIDO = " << nickName << std::endl;
+/*                 this->_usersServerByNick[nickName] = client_socket;
+                this->_usersServerByFd[this->_usersServerByNick[nickName]]->setNickname(nickName);
+                std::cout << "NICKNAME DEL CLIENTE = " << this->_usersServerByFd[_usersServerByNick[nickName]]->getNickname() << std::endl;
+                clients[client_socket] = nickName; */
+                processClientBuffer(client_socket, nickName);
+
+            }
+        }
+    }
+    catch(...)
+    {
+        std::cerr << "ERROR EN NICK" << std::endl;
+    }
     try
     { 
         if (message.find("USER") != std::string::npos && this->_usersServerByFd[client_socket]->getUsername() == "")
         {
             done = true;
-            std::string userName, hostName, serverName, realName;
+            std::string userCmd = extractInfo(message, "USER");
+            if (userCmd != "")
+            {
+                std::cout << "USERNAME EXTRAIDO = " << userCmd << std::endl;
+                processClientBuffer(client_socket, userCmd);
+
+            }
+/*             std::string userName, hostName, serverName, realName;
             extractDataUser(message, userName, hostName, serverName, realName);
             this->_usersServerByFd[client_socket]->setUsername(userName);
             this->_usersServerByFd[client_socket]->setHostname(hostName);
@@ -345,7 +370,7 @@ void    Server::handle_client_message(int client_socket)
             sendMessageClient(client_socket, rplWelcome(*this, *this->_usersServerByFd[client_socket]));
             sendMessageClient(client_socket, rplYourHost(*this, *this->_usersServerByFd[client_socket]));
             sendMessageClient(client_socket, rplCreated(*this, *this->_usersServerByFd[client_socket]));
-            sendMessageClient(client_socket, rplMyInfo(*this, *this->_usersServerByFd[client_socket]));
+            sendMessageClient(client_socket, rplMyInfo(*this, *this->_usersServerByFd[client_socket])); */
 
 
             //Añadir usuario al contenedor de usuarios del server
@@ -357,31 +382,6 @@ void    Server::handle_client_message(int client_socket)
     catch(...)
     {
         std::cerr << "ERROR EN USER" << std::endl;
-    }
-
-    try
-    {
-        //esta implementación de NICK sirve sólo para la primera vez.
-        if (message.find("NICK") != std::string::npos && this->_usersServerByFd[client_socket]->getNickname() == "") 
-        {
-            done = true;
-            std::string nickName;
-
-            nickName = extractNick(message);
-            if (nickName != "")
-            {
-                std::cout << "NICKNAME EXTRAIDO = " << nickName << std::endl;
-                this->_usersServerByNick[nickName] = client_socket;
-                this->_usersServerByFd[this->_usersServerByNick[nickName]]->setNickname(nickName);
-                std::cout << "NICKNAME DEL CLIENTE = " << this->_usersServerByFd[_usersServerByNick[nickName]]->getNickname() << std::endl;
-                clients[client_socket] = nickName;
-
-            }
-        }
-    }
-    catch(...)
-    {
-        std::cerr << "ERROR EN NICK" << std::endl;
     }
     if (done == false)
         processClientBuffer(client_socket, message);

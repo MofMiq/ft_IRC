@@ -98,19 +98,21 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
             }
             // Agrega al usuario al canal
             channel->addUser(&user);
-            user.enqueueResponse("Unido a " + channelName);
+            //user.enqueueResponse("Unido a " + channelName);
             // Enviar el tema del canal si existe
             if (!channel->getTopic().empty()) {
                 user.enqueueResponse(rplTopic(server, user, channel->getName(), channel->getTopic()));
             }
             // Notificar a todos los usuarios del canal
-            std::string joinMessage = ":" + server.getServerName() + " " + user.getNickname() + " succesfully joined to " + channelName;
+            std::string joinLog = ":" + server.getServerName() + " " + user.getNickname() + " succesfully joined to " + channelName;
              // Esto es para notificar a los usuarios del canal sobre la Union
+            std::cout << joinLog << std::endl;
             user.enqueueResponse(rplNamreply(server, user, cmd, *channel));
             user.enqueueResponse(rplEndofnames(server, user, cmd, channel->getName()));
             std::vector<Channel*> aux;
             aux.push_back(server.getChannel(channel->getName()));
-            sendMessageToChannels(user, aux, joinMessage);
+            std::string joinMsg = ":" + user.getNickname() + " JOIN " + channel->getName();
+            sendMessageToChannels(user, aux, joinMsg);
         }
         else
         {
@@ -118,7 +120,11 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
             server.createChannel(channelName, key, getTimestamp());
             server.addUserToChannel(user, channelName);
             server.setOperator(user, channelName); // es operador
-            user.enqueueResponse("Unido a " + channelName);
+            // Notificar a todos los usuarios del canal
+            std::string joinLog = ":" + server.getServerName() + " " + user.getNickname() + " succesfully created and joined " + channelName;
+             // Esto es para notificar a los usuarios del canal sobre la Union
+            std::cout << joinLog << std::endl;
+            //user.enqueueResponse("Unido a " + channelName);
             // Notificar al nuevo usuario que se ha unido al canal
             std::string joinMessage = ":" + server.getServerName() + " " + cmd.getArg(0) + " " + user.getNickname() + " succesfully created " + channelName;
             user.enqueueResponse(joinMessage);

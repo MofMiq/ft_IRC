@@ -39,12 +39,19 @@ void Command::executeUser(Command& cmd, Server& server, User& user)
 
     // Actualizar la informacion del usuario
     user.setUsername(username);
+    user.setHostname(param2); //?
+    user.setServername(param3); //?
     user.setRealname(realname);
 
     //BORRAR ??
-    std::cout << "DATOS COMPLETOS DEL USUARIO CON FD -> " << user.getFd() << std::endl;
+/*     std::cout << "DATOS COMPLETOS DEL USUARIO CON FD -> " << user.getFd() << std::endl;
     std::cout << "USERNAME -> " << user.getUsername() << std::endl;
-    //std::cout << "HOSTNAME -> " << user.getHostname() << std::endl;
-    //std::cout << "SERVERNAME -> " << user.getServername() << std::endl;
-    std::cout << "REALNAME -> " << user.getRealname() << std::endl;
+    std::cout << "HOSTNAME -> " << user.getHostname() << std::endl;
+    std::cout << "SERVERNAME -> " << user.getServername() << std::endl;
+    std::cout << "REALNAME -> " << user.getRealname() << std::endl; */
+
+    user.enqueueResponse(rplWelcome(server, user));
+    user.enqueueResponse(rplYourHost(server, user));
+    user.enqueueResponse(rplCreated(server, user));
+    user.enqueueResponse(rplMyInfo(server, user));
 }

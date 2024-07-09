@@ -62,7 +62,10 @@ void Command::executeNick(Command &cmd, Server &server, User &user)
         user.setNickname(cmd.getArg(1));
         server.updateUsersServerByNick(user.getFd(), cmd.getArg(1));
 
-        std::string rpl = ":" + server.getServerName() + " " + user.getOldNick() + " Nick succesfully changed to " + user.getNickname();
+        std::cout << "Client: " << user.getOldNick() << " Command: NICK Arguments: " << user.getNickname() << std::endl;
+        std::cout << "Client: " << user.getOldNick() << " changed succesfully their nickname to " << user.getNickname()<< std::endl;
+        //std::string rpl = ":" + server.getServerName() + " " + user.getOldNick() + " Nick succesfully changed to " + user.getNickname();
+        std::string rpl = ":" + user.getOldNick() + " NICK " + user.getNickname();
         user.enqueueResponse(rpl);
         sendMessageToChannels(user, server.getAllChannelsUserIn(user.getFd()), rpl);
     }
