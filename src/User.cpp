@@ -24,7 +24,6 @@ _fd(fd),
 _authenticated(false), 
 _commandUSER(false), 
 _commandNICK(false), 
-_configurationOK(false),
 _userName(userName), 
 _hostName(hostName), 
 _serverName(serverName), 
@@ -191,16 +190,6 @@ bool User::getCommandNICK() const
 void User::setCommandNICK(bool value)
 {
     this->_commandNICK = value;
-}
-
-bool User::getConfigurationOK() const
-{
-    return (this->_configurationOK);
-}
-
-void User::setConfigurationOK(bool value)
-{
-    this->_configurationOK = value;
 }
 
 bool User::getCapLS() const
