@@ -42,6 +42,9 @@ std::string& Command::getArg(int i)
 
 void Command::parseCommand(const std::string &cmd, Server* server, User& user)
 {
+	std::cout << "_commandUSER = " << user.getCommandUSER() << std::endl;
+	std::cout << "_commandNICK = " << user.getCommandNICK() << std::endl;
+
 	if (this->_argCount == 0)
 	{
 		user.enqueueResponse(errUnknowncommand(*server, user, *this));
@@ -51,19 +54,19 @@ void Command::parseCommand(const std::string &cmd, Server* server, User& user)
 		executePass(*this, *server, user); */
 	else if (cmd == "NICK")
 		executeNick(*this, *server, user);
-	else if (cmd == "TOPIC")
+	else if (cmd == "TOPIC" && server->_usersServerByFd[user.getFd()]->getConfigOK() == true)
 		executeTopic(*this, *server, user);
-	else if (cmd == "PRIVMSG")
+	else if (cmd == "PRIVMSG" && server->_usersServerByFd[user.getFd()]->getConfigOK() == true)
 		executePrivmsg(*this, *server, user);
-	else if (cmd == "MODE")
+	else if (cmd == "MODE" && server->_usersServerByFd[user.getFd()]->getConfigOK() == true)
 		executeMode(*this, *server, user);
-	else if (cmd == "JOIN")
+	else if (cmd == "JOIN" && server->_usersServerByFd[user.getFd()]->getConfigOK() == true)
 		executeJoin(*this, *server, user);
-	else if (cmd == "KICK")
+	else if (cmd == "KICK" && server->_usersServerByFd[user.getFd()]->getConfigOK() == true)
 		executeKick(*this, *server, user);
-	else if (cmd == "INVITE")
+	else if (cmd == "INVITE" && server->_usersServerByFd[user.getFd()]->getConfigOK() == true)
 			executeInvite(*this, *server, user);
-	else if (cmd == "USER")
+	else if (cmd == "USER" && server->_usersServerByFd[user.getFd()]->getCommandUSER() == false)
 			executeUser(*this, *server, user);
 	else
 		user.enqueueResponse(errUnknowncommand(*server, user, *this));

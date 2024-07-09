@@ -41,6 +41,15 @@ void Command::executeUser(Command& cmd, Server& server, User& user)
     user.setUsername(username);
     user.setRealname(realname);
 
+    //Para el control de haber realizado el comando USER
+    user.setCommandUSER(true);
+    std::cout << "_commandUSER = " << user.getCommandUSER() << std::endl;
+    if (user.getAuthenticated() == true && user.getCommandNICK() == true && user.getCommandUSER() == true)
+    {
+        user.setConfigOK(true);
+        std::cout << "_configOK = " << user.getConfigOK() << std::endl;        
+    }
+
     //BORRAR ??
     std::cout << "DATOS COMPLETOS DEL USUARIO CON FD -> " << user.getFd() << std::endl;
     std::cout << "USERNAME -> " << user.getUsername() << std::endl;

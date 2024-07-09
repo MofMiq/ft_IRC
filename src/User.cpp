@@ -5,8 +5,8 @@
 User::User() :
 _authenticated(false), 
 _commandUSER(false), 
-_commandNICK(false), 
-_configurationOK(false) //: _standBy(false)
+_commandNICK(false),
+_configOK(false) //: _standBy(false)
 {
 }
 
@@ -14,8 +14,8 @@ User::User(int fd) :
 _fd(fd),
 _authenticated(false), 
 _commandUSER(false), 
-_commandNICK(false), 
-_configurationOK(false) //, _standBy(false)
+_commandNICK(false),
+_configOK(false) //, _standBy(false)
 {
 }
 
@@ -23,7 +23,8 @@ User::User(int fd, std::string userName, std::string hostName, std::string serve
 _fd(fd), 
 _authenticated(false), 
 _commandUSER(false), 
-_commandNICK(false), 
+_commandNICK(false),
+_configOK(false), 
 _userName(userName), 
 _hostName(hostName), 
 _serverName(serverName), 
@@ -190,6 +191,16 @@ bool User::getCommandNICK() const
 void User::setCommandNICK(bool value)
 {
     this->_commandNICK = value;
+}
+
+bool User::getConfigOK() const
+{
+    return (this->_configOK);
+}
+
+void User::setConfigOK(bool value)
+{
+    this->_configOK = value;
 }
 
 bool User::getCapLS() const
