@@ -6,7 +6,8 @@ User::User() :
 _authenticated(false), 
 _commandUSER(false), 
 _commandNICK(false),
-_configOK(false) //: _standBy(false)
+_configOK(false), //: _standBy(false)
+_registered(false)
 {
 }
 
@@ -15,7 +16,8 @@ _fd(fd),
 _authenticated(false), 
 _commandUSER(false), 
 _commandNICK(false),
-_configOK(false) //, _standBy(false)
+_configOK(false), //, _standBy(false)
+_registered(false)
 {
 }
 
@@ -24,7 +26,8 @@ _fd(fd),
 _authenticated(false), 
 _commandUSER(false), 
 _commandNICK(false),
-_configOK(false), 
+_configOK(false),
+_registered(false),
 _userName(userName), 
 _hostName(hostName), 
 _serverName(serverName), 
@@ -201,6 +204,16 @@ bool User::getConfigOK() const
 void User::setConfigOK(bool value)
 {
     this->_configOK = value;
+}
+
+bool User::getRegistered() const
+{
+    return (this->_registered);
+}
+
+void User::setRegistered(bool value)
+{
+    this->_registered = value;
 }
 
 bool User::getCapLS() const

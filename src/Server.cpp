@@ -330,6 +330,14 @@ void    Server::handle_client_message(int client_socket)
         std::cerr << "ERROR EN PASS" << std::endl;
     }
 
+    if (this->_usersServerByFd[client_socket]->getConfigOK() && !this->_usersServerByFd[client_socket]->getRegistered())
+    {
+        this->_usersServerByFd[client_socket]->setRegistered(true);
+        this->_usersServerByFd[client_socket]->enqueueResponse(rplWelcome(*this, *(this->_usersServerByFd[client_socket])));
+        this->_usersServerByFd[client_socket]->enqueueResponse(rplYourHost(*this, *(this->_usersServerByFd[client_socket])));
+        this->_usersServerByFd[client_socket]->enqueueResponse(rplCreated(*this, *(this->_usersServerByFd[client_socket])));
+        this->_usersServerByFd[client_socket]->enqueueResponse(rplMyInfo(*this, *(this->_usersServerByFd[client_socket])));
+    }
     // try
     // { 
     //     if (message.find("USER") != std::string::npos && this->_usersServerByFd[client_socket]->getUsername() == "")

@@ -26,12 +26,12 @@ void Command::executeUser(Command& cmd, Server& server, User& user)
 
     // Extraer y validar los parametros del comando USER
     std::string username = cmd.getArg(1);
-    std::string param2 = cmd.getArg(2); // Este debe ser "0" (segun el manual)
-    std::string param3 = cmd.getArg(3); // Este debe ser "*" (segun el manual)
+    std::string hostname = cmd.getArg(2); // Este debe ser "0" (segun el manual)
+    std::string servername = cmd.getArg(3); // Este debe ser "*" (segun el manual)
     std::string realname = cmd.getArg(4);
 
     //Error q deberia salir segun manual¿¿??
-    if (param2 != "0" || param3 != "*")
+    if (hostname != "0" || servername != "*")
     {
         user.enqueueResponse(errNeedmoreparams(server, user, cmd, 5));
         return;
@@ -39,6 +39,8 @@ void Command::executeUser(Command& cmd, Server& server, User& user)
 
     // Actualizar la informacion del usuario
     user.setUsername(username);
+    user.setHostname(hostname);
+    user.setServername(servername);
     user.setRealname(realname);
 
     //Para el control de haber realizado el comando USER
