@@ -14,6 +14,7 @@ private:
     bool        _commandUSER;
     bool        _commandNICK;
     bool        _configOK;
+    bool        _registered;
     bool        _capLS;
     std::string _userName;
     std::string _nickName;
@@ -49,6 +50,9 @@ public:
 
     bool getConfigOK() const;
     void setConfigOK(bool value);
+
+    bool getRegistered() const;
+    void setRegistered(bool value);
 
     std::string getUsername() const;
     void setUsername(const std::string& username); //Pa el comando USER
