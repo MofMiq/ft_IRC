@@ -36,7 +36,7 @@ TOPIC #test : -> Clearing the topic on "#test"
 TOPIC #test -> Checking the topic for "#test"
 
 */
-void enqueueSomeMsgs(Server& server, User& user, Channel& channel, const std::string& extra);
+void enqueueSomeMsgs(Server& server, User& user, Channel& channel);
 
 void Command::executeTopic(Command &cmd, Server &server, User &user)
 {
@@ -67,7 +67,7 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
         if (tmp->getTopic().empty())
             user.enqueueResponse(rplNotopic(server, user, tmp->getName()));
         else
-            enqueueSomeMsgs(server, user, *tmp, "");
+            enqueueSomeMsgs(server, user, *tmp);
     }
     else if (cmd._argCount >= 3 && cmd.getArg(2)[0] == ':')
     {
@@ -83,10 +83,9 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
         else
         {
             tmp->setTopic(cmd.getArgsAsString(2).erase(0, 1));
-            actionMessage = " :Topic has been succesfully changed";
         }
-        enqueueSomeMsgs(server, user, *tmp, actionMessage);
-        sendMessageToChannels(user, aux, rplTopic(server, user, tmp->getName(), tmp->getTopic()) + actionMessage);
+        enqueueSomeMsgs(server, user, *tmp);
+        sendMessageToChannels(user, aux, rplTopic(server, user, tmp->getName(), tmp->getTopic()));
         sendMessageToChannels(user, aux, rplTopicwhotime(server, user, tmp->getName(), user.getNickname(), tmp->getTopicTimestamp()));
     }
     else
@@ -94,8 +93,8 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
     return ;
 }
 
-void enqueueSomeMsgs(Server& server, User& user, Channel& channel, const std::string& extra)
+void enqueueSomeMsgs(Server& server, User& user, Channel& channel)
 {
-    user.enqueueResponse(rplTopic(server, user, channel.getName(), channel.getTopic()) + extra);
+    user.enqueueResponse(rplTopic(server, user, channel.getName(), channel.getTopic()));
     user.enqueueResponse(rplTopicwhotime(server, user, channel.getName(), user.getNickname(), channel.getTopicTimestamp()));    
 }
