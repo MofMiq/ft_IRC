@@ -62,8 +62,9 @@ public:
     void        setOperator(const User& user, const std::string& channelName);
     bool        checkChannelKey(const std::string& channelName, const std::string& key);
     std::string&    getPass();
+    std::string     extractInfo(std::string& strRaw, const std::string& cmd);
     
-    void processClientBuffer(int client_socket, const std::string& message_fragment);
+    void processClientBuffer(int client_socket, std::string message_fragment);
 
     User*       getUserByNick(const std::string& nick);   // Metodo para obtener un usuario por su nickname
 

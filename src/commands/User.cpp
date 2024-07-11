@@ -31,12 +31,12 @@ void Command::executeUser(Command& cmd, Server& server, User& user)
     std::string realname = cmd.getArg(4);
 
     //Error q deberia salir segun manual¿¿??
-    if (hostname != "0" || servername != "*")
+/*     if (hostname != "0" || servername != "*") // debug cuando se haga el push final hay que descomentarlo
     {
         user.enqueueResponse(errNeedmoreparams(server, user, cmd, 5));
         return;
     }
-
+ */
     // Actualizar la informacion del usuario
     user.setUsername(username);
     user.setHostname(hostname);
@@ -46,16 +46,13 @@ void Command::executeUser(Command& cmd, Server& server, User& user)
     //Para el control de haber realizado el comando USER
     user.setCommandUSER(true);
     std::cout << "_commandUSER = " << user.getCommandUSER() << std::endl;
-    if (user.getAuthenticated() == true && user.getCommandNICK() == true && user.getCommandUSER() == true)
+    if (user.getAuthenticated() && user.getCommandNICK() && user.getCommandUSER() && !user.getConfigOK())
     {
         user.setConfigOK(true);
         std::cout << "_configOK = " << user.getConfigOK() << std::endl;        
     }
-
-    //BORRAR ??
-    std::cout << "DATOS COMPLETOS DEL USUARIO CON FD -> " << user.getFd() << std::endl;
-    std::cout << "USERNAME -> " << user.getUsername() << std::endl;
-    //std::cout << "HOSTNAME -> " << user.getHostname() << std::endl;
-    //std::cout << "SERVERNAME -> " << user.getServername() << std::endl;
-    std::cout << "REALNAME -> " << user.getRealname() << std::endl;
+    user.enqueueResponse(rplWelcome(server, user));
+    user.enqueueResponse(rplYourHost(server, user));
+    user.enqueueResponse(rplCreated(server, user));
+    user.enqueueResponse(rplMyInfo(server, user));
 }
