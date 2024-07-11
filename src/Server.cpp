@@ -380,7 +380,7 @@ void    Server::handle_client_message(int client_socket)
     {
         std::cerr << "ERROR EN USER" << std::endl;
     }
-    if (done == false)
+    if (done == false && message.find("CAP") == std::string::npos)
         processClientBuffer(client_socket, message);
 }
 
