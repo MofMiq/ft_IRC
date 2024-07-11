@@ -149,9 +149,6 @@ std::string errBadChannelMask(Server& server, User& user, Command& cmd, const st
 
 std::string rplWelcome(Server &server, User &user)
 {
-/*     (void)server;
-    (void)user;
-    return ("Welcome"); */
     return (":" + server.getServerName() + " 001 " + user.getNickname() + ": Welcome to our IRC network :" + user.getNickname() + "!" + user.getUsername() + "@" + user.getHostname());
 }
 std::string rplYourHost(Server &server, User &user)
@@ -183,7 +180,9 @@ std::string rplNotopic(Server &server, User &user, const std::string& channelNam
 
 std::string rplTopic(Server &server, User &user, const std::string& channelName, const std::string& channelTopic)
 {
-    return (createReply(server, RPL_TOPIC) + user.getNickname() + " " + channelName + " TOPIC " + channelTopic);
+
+    //return (createReply(server, RPL_TOPIC) + user.getNickname() + " " + " TOPIC " + channelName + ":" + channelTopic);
+    return (createReply(server, RPL_TOPIC) + user.getNickname() + " " + channelName + " " + channelTopic);
 }
 
 std::string rplTopicwhotime(Server &server, User &user, const std::string& channelName, const std::string& nick, const std::string& timestamp)

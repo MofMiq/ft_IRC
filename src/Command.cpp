@@ -42,16 +42,11 @@ std::string& Command::getArg(int i)
 
 void Command::parseCommand(const std::string &cmd, Server* server, User& user)
 {
-	std::cout << "_commandUSER = " << user.getCommandUSER() << std::endl;
-	std::cout << "_commandNICK = " << user.getCommandNICK() << std::endl;
-
 	if (this->_argCount == 0)
 	{
 		user.enqueueResponse(errUnknowncommand(*server, user, *this));
 		return ;
 	}
-/* 	else if (cmd == "PASS")
-		executePass(*this, *server, user); */
 	else if (cmd == "NICK")
 		executeNick(*this, *server, user);
 	else if (cmd == "TOPIC" && server->_usersServerByFd[user.getFd()]->getConfigOK() == true)

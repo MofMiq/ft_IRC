@@ -59,23 +59,18 @@ void Command::executeNick(Command &cmd, Server &server, User &user)
     else
     {
         user.setOldNick(user.getNickname());
+        if (user.getOldNick().empty())
+            user.setOldNick("*");
         user.setNickname(cmd.getArg(1));
         server.updateUsersServerByNick(user.getFd(), cmd.getArg(1));
 
-
-        //Para el control de haber realizado el comando NICK
         if (!user.getCommandNICK())
             user.setCommandNICK(true);
-        //std::cout << "_commandNICK = " << user.getCommandNICK() << std::endl;
         if (user.getAuthenticated() && user.getCommandNICK() && user.getCommandUSER() && !user.getConfigOK())
-        {
             user.setConfigOK(true);
-            std::cout << "_configOK = " << user.getConfigOK() << std::endl; 
-        }
         else
         {
             std::string rpl = ":" + user.getOldNick() + " NICK " + user.getNickname();
-            std::cout << RED << rpl << END << std::endl;
             user.enqueueResponse(rpl);
             sendMessageToChannels(user, server.getAllChannelsUserIn(user.getFd()), rpl);
         }

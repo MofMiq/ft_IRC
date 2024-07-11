@@ -11,14 +11,6 @@ Server::Server(int port, const std::string& password) : port(port), password(pas
 
 void Server::sendMessageClient(int clientSocket, const std::string& errorMsg) 
 {
-/*     std::cout << "MENSAJE RECIBIDO DEL SERVER" << std::endl;
-    std::cout << PURPLE << errorMsg << std::endl;
-    for(size_t i = 0; i < errorMsg.length(); i++) //borrar debug
-    {
-        std::cout << RED << static_cast<int>(errorMsg[i]) << " ";
-    }
-    std::cout << END << std::endl; */
-
     std::string message = errorMsg + "\r\n";
     send(clientSocket, message.c_str(), message.length(), 0);
 }
@@ -80,13 +72,10 @@ void    Server::checkQueue()
 {
 	for (std::map<int, User* >::iterator it = this->_usersServerByFd.begin(); it != this->_usersServerByFd.end(); ++it)
 	{
-		// if (it->second->getStandBy() == false)
-		// {
         while (it->second->getQueueSize() > 0)
         {
             sendMessageClient(it->second->getFd(), it->second->dequeueResponse());
         }
-		// }
 	}
 }
 
@@ -160,14 +149,6 @@ void    Server::handle_new_connection()
 
 std::string     Server::extractPassword(std::string strRaw)
 {
-/*     std::cout << "EXTRACT PASSWORD" << std::endl;
-    std::cout << PURPLE << strRaw << " length: " << strRaw.length() << std::endl;
-    for(size_t i = 0; i < strRaw.length(); i++) //borrar debug
-    {
-        std::cout << RED << "[" << i << "]" << static_cast<int>(strRaw[i]) << " ";
-    }
-    std::cout << END << std::endl; */
-
     std::string pass = "PASS";
     size_t position = strRaw.find(pass);
 
@@ -178,56 +159,6 @@ std::string     Server::extractPassword(std::string strRaw)
 
     size_t start_word = strRaw.find_first_not_of(" \t\n\r", position);
     size_t end_word = strRaw.find_first_of(" \t\n\r", start_word);
-
-    //std::cout << "position: " << position << " / start_word: " << start_word << " / end_word: " << end_word << std::endl; //borrar debug
-
-    if (start_word != std::string::npos && end_word != std::string::npos)
-        return (strRaw.substr(start_word, end_word - start_word));
-
-    return ("");
-}
-
-void        Server::extractDataUser(std::string strRaw, std::string& userName, std::string& hostName, std::string& serverName, std::string& realName)
-{
-    //USER <usuario> <host> <servidor> <nombre_real>
-
-    std::string user = "USER";
-    size_t position = strRaw.find(user);
-
-    if (position == std::string::npos)
-        return;
-
-    position += user.size();
-
-    size_t start_word = strRaw.find_first_not_of(" \r\n", position);
-    size_t end_word = strRaw.find_first_of(" \r\n", start_word);
-    userName = strRaw.substr(start_word, end_word - start_word);
-
-    start_word = strRaw.find_first_not_of(" \r\n", end_word);
-    end_word = strRaw.find_first_of(" \r\n", start_word);
-    hostName = strRaw.substr(start_word, end_word - start_word);
-
-    start_word = strRaw.find_first_not_of(" \r\n", end_word);
-    end_word = strRaw.find_first_of(" \r\n", start_word);
-    serverName = strRaw.substr(start_word, end_word - start_word);
-
-    start_word = strRaw.find_first_not_of(" \r\n", end_word);
-    end_word = strRaw.find_first_of(" \r\n", start_word);
-    realName = strRaw.substr(start_word, end_word - start_word);
-}
-
-std::string     Server::extractNick(std::string strRaw)
-{
-    std::string nick = "NICK";
-    size_t position = strRaw.find(nick);
-
-    if (position == std::string::npos)
-        return ("");
-
-    position += nick.size();
-
-    size_t start_word = strRaw.find_first_not_of(" \r\n", position);
-    size_t end_word = strRaw.find_first_of(" \r\n", start_word);
 
     if (start_word != std::string::npos && end_word != std::string::npos)
         return (strRaw.substr(start_word, end_word - start_word));
@@ -271,15 +202,7 @@ void    Server::handle_client_message(int client_socket)
     std::string message(buffer);
 
 
-    std::cout << "MENSAJE RECIBIDO DEL CLIENTE" << std::endl;
-    std::cout << message << " size: " << message.length() << std::endl;
-/*    for(size_t i = 0; i < message.length(); i++) //borrar debug
-    {
-        std::cout << RED << static_cast<int>(message[i]) << " ";
-    }
-    std::cout << END << std::endl; */
-    // std::cout << "VALOR CAPLS = " << _usersServerByFd[client_socket]->getCapLS() << std::endl;
-
+    std::cout << "Client: " << this->_usersServerByFd[client_socket]->getNickname() << " " << message << std::endl;
 
     if (message.find("CAP LS") != std::string::npos)
         _usersServerByFd[client_socket]->setCapLS(true);
@@ -304,14 +227,9 @@ void    Server::handle_client_message(int client_socket)
             std::string userPass = extractPassword(message);
             if (userPass != "")
             {
-                // std::cout << "CONTRASEÑA GUARDADA = " << userPass << std::endl;
-                // std::cout << "VALOR CAPLS = " << _usersServerByFd[client_socket]->getCapLS() << std::endl;
-/*                 if (_usersServerByFd[client_socket]->getCapLS() == true)
-                    userPass = userPass.substr(0, userPass.size() - 1); */
-                // std::cout << "LONGITUD CONTRASEÑA INTRODUCIDA = " << userPass.size() << std::endl;
                 if (userPass == this->password)
                 {
-                    std::cout << "CONTRASEÑA OK" << std::endl;
+                    std::cout << "CONTRASEÑA OK" << std::endl; //debug borrar
                     this->_usersServerByFd[client_socket]->setAuthenticated(true);
                 }
                 else
@@ -353,7 +271,7 @@ void    Server::handle_client_message(int client_socket)
             nickName = extractInfo(message, "NICK");
             if (nickName != "")
             {
-                std::cout << "NICKNAME EXTRAIDO = " << nickName << std::endl;
+                std::cout << "NICKNAME EXTRAIDO = " << nickName << std::endl; //debug borrar
                 processClientBuffer(client_socket, nickName);
 
             }
@@ -371,7 +289,7 @@ void    Server::handle_client_message(int client_socket)
             std::string userCmd = extractInfo(message, "USER");
             if (userCmd != "")
             {
-                std::cout << "USERNAME EXTRAIDO = " << userCmd << std::endl;
+                std::cout << "USERNAME EXTRAIDO = " << userCmd << std::endl; //debug borrar
                 processClientBuffer(client_socket, userCmd);
             }
         }
@@ -444,13 +362,10 @@ void Server::addUserToChannel(User& user, const std::string& channelName)
         _channelsServer[channelName] = Channel(channelName);
     }
     _channelsServer[channelName].addUser(&user);
-    //user._channelIn.push_back(channelName); //struct response?
 }
 
 void Server::createChannel(const std::string& channelName, const std::string& key, const std::string& timestamp)
 {
-    //if (!channelExists(channelName))
-    //    _channelsServer[channelName] = Channel(channelName);
     Channel newChannel(channelName);
     newChannel.setCreationTime(timestamp);
     if (!key.empty()) {
@@ -524,18 +439,6 @@ bool Server::isNickInServer(const std::string& nick)
         return true;
     return false;
 }
-
-//void Server::updateUsersServerByNick(int fd, const std::string& newNick)
-//{
-//    for (std::map<std::string, int>::iterator it = this->_usersServerByNick.begin(); it != this->_usersServerByNick.end(); ++it)
-//    {
-//        if (it->second == fd)
-//        {
-//            this->_usersServerByNick.erase(it);
-//            this->_usersServerByNick[newNick] = fd;
-//        }
-//    }
-//}
 
 void Server::updateUsersServerByNick(int fd, const std::string& newNick)
 {

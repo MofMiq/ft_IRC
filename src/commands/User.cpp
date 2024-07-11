@@ -45,19 +45,16 @@ void Command::executeUser(Command& cmd, Server& server, User& user)
 
     //Para el control de haber realizado el comando USER
     user.setCommandUSER(true);
-    //std::cout << "_commandUSER = " << user.getCommandUSER() << std::endl;
-    if (user.getAuthenticated() && user.getCommandNICK() && user.getCommandUSER() && !user.getConfigOK())
-    {
-        user.setConfigOK(true);
-        std::cout << "_configOK = " << user.getConfigOK() << std::endl;        
-    }
-    // user.enqueueResponse(rplWelcome(server, user));
-    // user.enqueueResponse(rplYourHost(server, user));
-    // user.enqueueResponse(rplCreated(server, user));
-    // user.enqueueResponse(rplMyInfo(server, user));
 
-    server.sendMessageClient(user.getFd(), ":MyServer 001 " + user.getNickname() + " :Welcome to the IRC Network, " + user.getNickname());
+    if (user.getAuthenticated() && user.getCommandNICK() && user.getCommandUSER() && !user.getConfigOK())
+        user.setConfigOK(true);    
+
+    server.sendMessageClient(user.getFd(), ":MyServer 001 " + user.getNickname() + " :Welcome to the IRC Network, :" + user.getNickname() + "!" + user.getRealname() + "@" + user.getServername());
+    std::cout << RED << rplWelcome(server, user) << std::endl;
     server.sendMessageClient(user.getFd(), ":MyServer 002 " + user.getNickname() + " :Your host is MyServer, running version 1.0");
+    std::cout << rplYourHost(server, user) << std::endl;
     server.sendMessageClient(user.getFd(), ":MyServer 003 " + user.getNickname() + " :This server was created at some date");
-    server.sendMessageClient(user.getFd(), ":MyServer 004 " + user.getNickname() + " MyServer 1.0 o o");
+    std::cout << rplCreated(server, user) << std::endl;
+    server.sendMessageClient(user.getFd(), ":MyServer 004 " + user.getNickname() + " " + server.getServerName() + " v1.0 Available user modes: , Available channel modes: itkol");
+    std::cout << rplMyInfo(server, user) << END << std::endl;
 }
