@@ -118,10 +118,13 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
             // El canal no existe, crea el canal y agrega al usuario
             server.createChannel(channelName, key, getTimestamp());
             server.addUserToChannel(user, channelName);
+            Channel* c = server.getChannel(channelName);
             server.setOperator(user, channelName); // es operador
             // Notificar al nuevo usuario que se ha unido al canal
-           std::string joinMessage = ":" + user.getNickname() + " JOIN " + channelName;
+            std::string joinMessage = ":" + user.getNickname() + " JOIN " + channelName;
             user.enqueueResponse(joinMessage);
+            user.enqueueResponse(rplNamreply(server, user, cmd, *c));
+            user.enqueueResponse(rplEndofnames(server, user, cmd, c->getName()));
         }
     }
     server.ShowChannelsAndUsers(); //borrar debug
