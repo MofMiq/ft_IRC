@@ -62,6 +62,7 @@ void Command::executeNick(Command &cmd, Server &server, User &user)
         if (user.getOldNick().empty())
             user.setOldNick("*");
         user.setNickname(cmd.getArg(1));
+        //server.addUserToNickMap(user.getNickname(), user.getFd());
         server.updateUsersServerByNick(user.getFd(), cmd.getArg(1));
 
         if (!user.getCommandNICK())
