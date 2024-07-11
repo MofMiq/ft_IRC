@@ -42,6 +42,7 @@ void Command::executeUser(Command& cmd, Server& server, User& user)
     user.setHostname(hostname);
     user.setServername(servername);
     user.setRealname(realname);
+    server.addUserToNickMap(user.getNickname(), user.getFd());
 
     //Para el control de haber realizado el comando USER
     user.setCommandUSER(true);
@@ -50,11 +51,7 @@ void Command::executeUser(Command& cmd, Server& server, User& user)
         user.setConfigOK(true);    
 
     server.sendMessageClient(user.getFd(), ":MyServer 001 " + user.getNickname() + " :Welcome to the IRC Network, :" + user.getNickname() + "!" + user.getRealname() + "@" + user.getServername());
-    std::cout << RED << rplWelcome(server, user) << std::endl;
     server.sendMessageClient(user.getFd(), ":MyServer 002 " + user.getNickname() + " :Your host is MyServer, running version 1.0");
-    std::cout << rplYourHost(server, user) << std::endl;
     server.sendMessageClient(user.getFd(), ":MyServer 003 " + user.getNickname() + " :This server was created at some date");
-    std::cout << rplCreated(server, user) << std::endl;
     server.sendMessageClient(user.getFd(), ":MyServer 004 " + user.getNickname() + " " + server.getServerName() + " v1.0 Available user modes: , Available channel modes: itkol");
-    std::cout << rplMyInfo(server, user) << END << std::endl;
 }

@@ -300,6 +300,8 @@ void    Server::handle_client_message(int client_socket)
     }
     if (done == false && message.find("CAP") == std::string::npos)
         processClientBuffer(client_socket, message);
+    printUSBN(this->_usersServerByNick);
+    printUSBF(this->_usersServerByFd);
 }
 
 void    Server::printUSBN(std::map < std::string, int >& map)
@@ -542,4 +544,11 @@ void Server::processClientBuffer(int client_socket, std::string message_fragment
 std::string&    Server::getPass()
 {
     return this->password;
+}
+
+void Server::addUserToNickMap(const std::string& nick, int fd)
+{
+    std::map<std::string, int >::iterator it = this->_usersServerByNick.find(nick);
+    if (it == this->_usersServerByNick.end())
+        this->_usersServerByNick[nick] = fd;
 }
