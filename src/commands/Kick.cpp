@@ -77,7 +77,7 @@ void Command::executeKick(Command& cmd, Server& server, User& user) {
         }
         // Elimina al usuario del canal 
         channel->removeUser(targetUser->getFd());
-        std::string kickMessage = ":" + server.getServerName() + " " + cmd.getArg(0) + " " + user.getNickname() + " has kicked " + targetNickname + " from channel " + channelName + reason;
+        std::string kickMessage = ":" + user.getNickname() + " KICK " + channelName + " " + targetNickname + " :" + reason;
         //std::cout << kickMessage;
 
         // Esto es para notificar a los usuarios del canal sobre la expulsion
