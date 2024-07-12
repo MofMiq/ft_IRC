@@ -180,8 +180,6 @@ std::string rplNotopic(Server &server, User &user, const std::string& channelNam
 
 std::string rplTopic(Server &server, User &user, const std::string& channelName, const std::string& channelTopic)
 {
-
-    //return (createReply(server, RPL_TOPIC) + user.getNickname() + " " + " TOPIC " + channelName + ":" + channelTopic);
     return (createReply(server, RPL_TOPIC) + user.getNickname() + " " + channelName + " " + channelTopic);
 }
 
@@ -196,9 +194,9 @@ std::string rplInviting(Server& server, User& user, const std::string& targetNic
 }
 std::string rplNamreply(Server& server, User& user, Command& cmd, Channel& channel)
 {
-    return (createReply(server, RPL_NAMREPLY) + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + " :" + channel.showUsers());
+    return (createReply(server, RPL_NAMREPLY) + cmd.getArg(0) + " " + user.getNickname() + " = " + channel.getName() + " :" + channel.showUsers());
 }
 std::string rplEndofnames(Server& server, User& user, Command& cmd, const std::string& channelName)
 {
-    return (createReply(server, RPL_ENDOFNAMES) + cmd.getArg(0) + " " + user.getNickname() + " " + channelName + " :End of /NAMES list");
+    return (createReply(server, RPL_ENDOFNAMES) + cmd.getArg(0) + " " + user.getNickname() + " " + channelName + " :End of name list");
 }

@@ -1,4 +1,6 @@
 #include "../inc/Channel.hpp"
+#include "../inc/Server.hpp"
+#include "../inc/Command.hpp"
 
 //Channel::Channel() : _clientCount(0), _name("") {}
 
@@ -160,6 +162,7 @@ bool Channel::isUserAnOperators(int fd)
 
 void Channel::addOperatorToChannel(int fd)
 {
+    std::cout << RED << "en addOeerator: " << fd << END << std::endl; //borrar debug
    this->_operators.insert(fd);
 }
 
@@ -173,7 +176,11 @@ std::string Channel::showUsers()
     std::string rpl;
     for (std::map<int, User*>::iterator it = this-> _users.begin(); it != this->_users.end(); ++it)
     {
-        rpl += it->second->getNickname() + " ";
+        if (this->_operators.find(it->second->getFd()) != this->_operators.end())
+            rpl += "@" + it->second->getNickname() + " ";
+        else
+            rpl += "+" + it->second->getNickname() + " ";
+
     }
     return rpl;
 }

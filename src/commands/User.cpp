@@ -42,7 +42,7 @@ void Command::executeUser(Command& cmd, Server& server, User& user)
     user.setHostname(hostname);
     user.setServername(servername);
     user.setRealname(realname);
-    server.addUserToNickMap(user.getNickname(), user.getFd());
+    //server.addUserToNickMap(user.getNickname(), user.getFd());
 
     //Para el control de haber realizado el comando USER
     user.setCommandUSER(true);

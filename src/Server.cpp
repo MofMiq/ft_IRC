@@ -300,17 +300,7 @@ void    Server::handle_client_message(int client_socket)
     }
     if (done == false && message.find("CAP") == std::string::npos)
         processClientBuffer(client_socket, message);
-    printUSBN(this->_usersServerByNick);
     printUSBF(this->_usersServerByFd);
-}
-
-void    Server::printUSBN(std::map < std::string, int >& map)
-{
-    std::cout << "IMPRIMIENDO CONTENIDO DE USERS_BY_NICK" << std::endl;
-    for (std::map < std::string, int >::iterator it = map.begin(); it != map.end(); it++)
-    {
-        std::cout << "[" << it->first << "] -> " << it->second << std::endl;
-    }
 }
 
 void    Server::printUSBF(std::map < int, User* >& map)
@@ -333,13 +323,10 @@ void Server::remove_client(int client_socket)
 
     // std::cout << "ESTADO DE LOS MAPAS ANTES DE ELIMINAR ELEMENTOS" << std::endl;
     // printUSBF(_usersServerByFd);
-    // printUSBN(_usersServerByNick);
 
     // std::cout << "client_socket = " << client_socket << std::endl;
     // std::cout << "clients[client_socket] = " << clients[client_socket] << std::endl;
 
-    if (_usersServerByNick.find(clients[client_socket]) != _usersServerByNick.end())
-        _usersServerByNick.erase(clients[client_socket]);
     if (_usersServerByFd.find(client_socket) != _usersServerByFd.end())
     {
         delete _usersServerByFd[client_socket];
@@ -349,7 +336,6 @@ void Server::remove_client(int client_socket)
 
     // std::cout << "ESTADO DE LOS MAPAS DESPUES DE ELIMINAR ELEMENTOS" << std::endl;
     // printUSBF(_usersServerByFd);
-    // printUSBN(_usersServerByNick);
 }
 
 
@@ -436,39 +422,22 @@ bool Server::isNickInServer(const std::string& nick)
 {
     if (nick == "bot") //borrar debug? esto es para que no cuente a bot en caso de que alguien quiera mandarle un mensaje
         return true;
-    std::map<std::string, int>::const_iterator it = this->_usersServerByNick.find(nick);
+/*     std::map<std::string, int>::const_iterator it = this->_usersServerByNick.find(nick); //borrar
     if (it != this->_usersServerByNick.end())
         return true;
+    return false; */
+    for (std::map<int, User* >::iterator it = this->_usersServerByFd.begin(); it != this->_usersServerByFd.end(); ++it)
+    {
+        if (it->second->getNickname() == nick)
+            return true;
+    }
     return false;
 }
-
-void Server::updateUsersServerByNick(int fd, const std::string& newNick)
-{
-    std::map<std::string, int>::iterator it;
-
-    // Buscamos el iterador del elemento con el fd dado
-    for (it = this->_usersServerByNick.begin(); it != this->_usersServerByNick.end(); ++it)
-    {
-        if (it->second == fd)
-        {
-            break;
-        }
-    }
-
-    // Si encontramos el elemento, actualizamos el mapa
-    if (it != this->_usersServerByNick.end())
-    {
-        this->_usersServerByNick.erase(it);  // Borramos el elemento antiguo
-        this->_usersServerByNick[newNick] = fd;  // Insertamos el nuevo elemento
-    }
-}
-
-
 
 //Cambiado pq da segfault si no existia el user, hay q recorrer antes y ver si existe
 User* Server::getUserByNick(const std::string& nick)
 {
-    std::map<std::string, int>::iterator it = _usersServerByNick.find(nick);
+/*     std::map<std::string, int>::iterator it = _usersServerByNick.find(nick);
     if (it == _usersServerByNick.end()) {
         return NULL;  // Nick no encontrado
     }
@@ -477,7 +446,15 @@ User* Server::getUserByNick(const std::string& nick)
     if (userIt == _usersServerByFd.end()) {
         return NULL;  // FD no encontrado
     }
-    return userIt->second;
+    return userIt->second; */
+
+    for (std::map<int, User* >::iterator it = this->_usersServerByFd.begin(); it != this->_usersServerByFd.end(); ++it)
+    {
+        if (it->second->getNickname() == nick)
+            return it->second;
+    }
+    return NULL;
+
 }
 
 std::vector<Channel*> Server::getAllChannelsUserIn(int fd)
@@ -518,7 +495,6 @@ void        Server::cleanAll()
 
     pollfds.clear();
 
-    _usersServerByNick.clear();
     _channelsServer.clear();
     clients.clear();
     _clientBuffers.clear();
@@ -544,11 +520,4 @@ void Server::processClientBuffer(int client_socket, std::string message_fragment
 std::string&    Server::getPass()
 {
     return this->password;
-}
-
-void Server::addUserToNickMap(const std::string& nick, int fd)
-{
-    std::map<std::string, int >::iterator it = this->_usersServerByNick.find(nick);
-    if (it == this->_usersServerByNick.end())
-        this->_usersServerByNick[nick] = fd;
 }

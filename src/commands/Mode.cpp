@@ -242,12 +242,14 @@ bool applyModes(Vec& vec, Server& server, User& user, Channel& channel)
 		}
 		else if (mode == "+o" && j < vec.p.size() && !vec.p[j].empty())
 		{
+			std::cout << YELLOW << "MODE +o" << END << std::endl;
 			if (user.getNickname() == vec.p[j])
 				return false;
 			else if (server.isNickInServer(vec.p[j]) && channel.isUserInChannel(server.getUserByNick(vec.p[j])->getFd()))
 			{
-				User* user = server.getUserByNick(vec.p[j]);
-				channel.addOperatorToChannel(user->getFd());
+				User* targetUser = server.getUserByNick(vec.p[j]);
+				std::cout << YELLOW << "targetUser: " << targetUser->getNickname() << END << std::endl; //borrar debug
+				channel.addOperatorToChannel(targetUser->getFd());
 				j++;
 			}
 			else
