@@ -17,10 +17,10 @@ std::string getTimestamp()
     return result.str();
 }
 
-std::string to_string(int value)
+std::string to_string(int value, int n)
 {
     std::ostringstream oss;
-    oss << std::setw(3) << std::setfill('0') << value;
+    oss << std::setw(n) << std::setfill('0') << value;
     return oss.str();
 }
 
@@ -30,15 +30,15 @@ std::string createMessage(Server &server, Code code, User &user, Command &cmd)
 {
     std::string msg;
     if (cmd._argCount > 0)
-        msg = ":" + server.getServerName() + " " + to_string(code) + " " + user.getNickname() + " failed to execute " + cmd.getArg(0) + " ";
+        msg = ":" + server.getServerName() + " " + to_string(code, 3) + " " + user.getNickname() + " failed to execute " + cmd.getArg(0) + " ";
     else
-        msg = ":" + server.getServerName() + " " + to_string(code) + " " + user.getNickname() + " failed to execute an empty command ";
+        msg = ":" + server.getServerName() + " " + to_string(code, 3) + " " + user.getNickname() + " failed to execute an empty command ";
     return msg;
 }
 
 std::string createReply(Server &server, Code code)
 {
-    std::string msg = ":" + server.getServerName() + " " + to_string(code) + " ";
+    std::string msg = ":" + server.getServerName() + " " + to_string(code, 3) + " ";
     return msg;
 }
 
@@ -133,6 +133,11 @@ std::string errChannelIsFull(Server& server, User& user, Command& cmd, const std
     return (createMessage(server, ERR_CHANNELISFULL, user, cmd) + user.getNickname() + " " + channelName + " :Cannot join channel (+l)");
 }
 
+std::string errUnknownmode(Server& server, User& user, Command& cmd, const std::string& modechar)
+{
+    return(createMessage(server, ERR_UNKNOWNMODE, user, cmd) + modechar + " :is unknown mode char to me");
+}
+
 std::string errInviteOnlyChan(Server& server, User& user, Command& cmd, const std::string& channelName)
 {
     return (createMessage(server, ERR_INVITEONLYCHAN, user, cmd) + user.getNickname() + " " + channelName + " :Cannot join channel (+i)");
@@ -164,9 +169,10 @@ std::string rplMyInfo(Server &server, User &user)
     return (":" + server.getServerName() + " 004 " + user.getNickname() + " " + user.getServername() + " v1.0 Available user modes: , Available channel modes: itkol");
 }
 
-std::string rplChannelmodeis(Server &server, User &user, Command& cmd, Channel& channel, const std::string& extra)
+std::string rplChannelmodeis(Server &server, User &user, Command& cmd, Channel& channel)
 {
-    return (createReply(server, RPL_CHANNELMODEIS) + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + extra);
+    return (":" + server.getServerName() + " 324 " + user.getNickname() + " " + cmd.getArg(0) + " " + channel.getName() + " " + channel.getChannelModes());
+    //return (":" + user.getNickname() + " MODE " + channel.getName() + " ");
 }
 std::string rplCreationtime(Server &server, User &user, Command& cmd, Channel& channel)
 {
@@ -180,8 +186,6 @@ std::string rplNotopic(Server &server, User &user, const std::string& channelNam
 
 std::string rplTopic(Server &server, User &user, const std::string& channelName, const std::string& channelTopic)
 {
-
-    //return (createReply(server, RPL_TOPIC) + user.getNickname() + " " + " TOPIC " + channelName + ":" + channelTopic);
     return (createReply(server, RPL_TOPIC) + user.getNickname() + " " + channelName + " " + channelTopic);
 }
 
@@ -200,5 +204,5 @@ std::string rplNamreply(Server& server, User& user, Command& cmd, Channel& chann
 }
 std::string rplEndofnames(Server& server, User& user, Command& cmd, const std::string& channelName)
 {
-    return (createReply(server, RPL_ENDOFNAMES) + cmd.getArg(0) + " " + user.getNickname() + " " + channelName + " :End of /NAMES list");
+    return (createReply(server, RPL_ENDOFNAMES) + cmd.getArg(0) + " " + user.getNickname() + " " + channelName + " :End of name list");
 }

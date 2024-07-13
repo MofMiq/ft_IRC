@@ -34,11 +34,9 @@ private:
     std::vector<struct pollfd> pollfds;
     std::map<int, std::string> clients; // Map from socket to client nickname SE UTILIZA PARA EL POLL
     std::map<std::string, Channel> _channelsServer;
- //   std::map<std::string, User> _nickToUser; // Mapa para acceder a los usuarios por nickname TODO
     std::map<int, std::string> _clientBuffers;
 
 public:
-    std::map<std::string, int > _usersServerByNick; // Map de NICK a FD
     std::map<int, User* > _usersServerByFd; // Map de FD y puntero a USER correspondiente
     Server(int port, const std::string& password);
     void        sendMessageClient(int clientSocket, const std::string& errorMsg);
@@ -63,7 +61,6 @@ public:
     std::string     extractInfo(std::string& strRaw, const std::string& cmd);
     
     void processClientBuffer(int client_socket, std::string message_fragment);
-    void addUserToNickMap(const std::string& nick, int fd);
 
     User*       getUserByNick(const std::string& nick);   // Metodo para obtener un usuario por su nickname
 
@@ -73,7 +70,6 @@ public:
     std::vector<Channel*> getAllChannelsUserIn(int fd);
 
     //FUNCIONES PARA DEPURACION
-    void        printUSBN(std::map < std::string, int >& map);
     void        printUSBF(std::map < int, User* >& map);
 
     //FUNCION DE LIMPIEZA AL CERRAR

@@ -88,6 +88,7 @@ public:
     void addOperatorToChannel(int fd);
     void removeOperatorToChannel(int fd);
     std::string showUsers();
+    std::string getChannelModes();
 };
 
 #endif

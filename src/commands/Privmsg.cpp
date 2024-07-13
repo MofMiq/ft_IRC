@@ -70,13 +70,20 @@ void Command::executePrivmsg(Command& cmd, Server& server, User& user)
         return;
       }
       User* rec = server.getUserByNick(cmd.getArg(1));
-      rec->enqueueResponse(":" + server.getServerName() + " " + user.getNickname() + " " + getArg(0) + " " + rec->getNickname() + " " + cmd.getArgsAsString(2));
+      if (user.getCapLS())
+        rec->enqueueResponse(":" + user.getNickname() + " " + getArg(0) + " " + rec->getNickname() + " " + cmd.getArgsAsString(2));
+      else
+        rec->enqueueResponse(":" + user.getNickname() + " " + getArg(0) + " " + rec->getNickname() + " :" + cmd.getArgsAsString(2));
     }
     else if (isChannel(cmd.getArg(1)[0]) && server.getChannel(cmd.getArg(1)))
     {
       std::vector<Channel*> aux;
       aux.push_back(server.getChannel(cmd.getArg(1)));
-      std::string reply = ":" + server.getServerName() + " " + user.getNickname() + " " + cmd.getArg(0) + " " + cmd.getArg(1) + " " + cmd.getArgsAsString(2);
+      std::string reply;
+      if (user.getCapLS())
+        reply = ":" + user.getNickname() + " " + cmd.getArg(0) + " " + cmd.getArg(1) + " " + cmd.getArgsAsString(2);
+      else
+        reply = ":" + user.getNickname() + " " + cmd.getArg(0) + " " + cmd.getArg(1) + " :" + cmd.getArgsAsString(2);
       sendMessageToChannels(user, aux, reply);
     }
   }

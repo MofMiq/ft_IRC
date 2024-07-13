@@ -31,7 +31,7 @@ bool validNickname(Command& cmd, std::string& nick)
 {
     char c = nick.at(0);
 
-    if (std::isdigit(c) || (cmd.isAllowedSymbol(c) && !isalpha(c)))
+    if (!std::isalpha(c))
         return false;
     for (size_t i = 1; i < nick.length(); i++)
     {
@@ -63,7 +63,7 @@ void Command::executeNick(Command &cmd, Server &server, User &user)
             user.setOldNick("*");
         user.setNickname(cmd.getArg(1));
         //server.addUserToNickMap(user.getNickname(), user.getFd());
-        server.updateUsersServerByNick(user.getFd(), cmd.getArg(1));
+        //server.updateUsersServerByNick(user.getFd(), cmd.getArg(1));
 
         if (!user.getCommandNICK())
             user.setCommandNICK(true);
