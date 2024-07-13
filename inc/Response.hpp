@@ -38,6 +38,7 @@ enum Code
     ERR_ALREADYREGISTERED = 462,
     ERR_PASSWDMISMATCH = 464,
     ERR_CHANNELISFULL = 471,
+    ERR_UNKNOWNMODE = 472,
     ERR_INVITEONLYCHAN = 473,
     ERR_BADCHANNELKEY = 475,
     ERR_BADCHANMASK = 476,
@@ -51,7 +52,7 @@ enum Code
 //clase de Response???
 
 std::string getTimestamp();
-std::string to_string(int value);
+std::string to_string(int value, int n);
 
 std::string createMessage(Server &server, Code code, User &user, Command &cmd);
 std::string createReply(Server &server, Code code);
@@ -72,6 +73,7 @@ std::string errNeedmoreparams(Server& server, User& user, Command &cmd, int i);
 std::string errAlreadyRegistered(Server& server, User& user, Command& cmd);
 std::string errPasswdmismatch(Server& server, User& user, Command& cmd);
 std::string errChannelIsFull(Server& server, User& user, Command& cmd, const std::string& channelName);
+std::string errUnknownmode(Server& server, User& user, Command& cmd, const std::string& modechar);
 std::string errInviteOnlyChan(Server& server, User& user, Command& cmd, const std::string& channelName);
 std::string errBadChannelKey(Server& server, User& user, Command& cmd, const std::string& channelName);
 std::string errBadChannelMask(Server& server, User& user, Command& cmd, const std::string& channelName);
@@ -80,7 +82,7 @@ std::string rplWelcome(Server &server, User &user);
 std::string rplYourHost(Server &server, User &user);
 std::string rplCreated(Server &server, User &user);
 std::string rplMyInfo(Server &server, User &user);
-std::string rplChannelmodeis(Server &server, User &user, Command& cmd, Channel& channel, const std::string& extra);
+std::string rplChannelmodeis(Server &server, User &user, Command& cmd, Channel& channel);
 std::string rplCreationtime(Server &server, User &user, Command& cmd, Channel& channel);
 std::string rplNotopic(Server &server, User &user, const std::string& channelName);
 std::string rplTopic(Server &server, User &user, const std::string& channelName, const std::string& channelTopic);

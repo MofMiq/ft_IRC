@@ -58,7 +58,9 @@ typedef struct Vec
   std::vector<std::string> p;
 } vec;
 
-void sendTwoReplies(Server& server, User& user, Command& cmd, Channel& channel, const std::string& extra);
+static std::string unkMode = "";
+
+void sendTwoReplies(Server& server, User& user, Command& cmd, Channel& channel);
 bool isSign(char c);
 bool isValidMode(char c);
 bool isModeWithParam(std::string& str);
@@ -66,7 +68,7 @@ bool onlyNumbers(const std::string& str);
 std::string modesChangedReply(Vec& vec, const std::string& key);
 Vec lexArgs(Command& cmd);
 bool parseArgs(Vec& vec, Command& cmd);
-bool applyModes(Vec& vec, Server& server, User& user, Channel& channel);
+bool applyModes(Vec& vec, Server& server, User& user, Channel& channel, Command& cmd);
 
 
 void Command::executeMode(Command& cmd, Server& server, User& user)
@@ -79,7 +81,7 @@ void Command::executeMode(Command& cmd, Server& server, User& user)
 	if (!server.channelExists(cmd.getArg(1)))
 		user.enqueueResponse(errNosuchchannel(server, user, cmd, cmd.getArg(1)));
 	else if (cmd._argCount == 2)
-		sendTwoReplies(server, user, cmd , *channel, " :Available channel modes: itkol");
+		sendTwoReplies(server, user, cmd , *channel);
 	else
 	{
 		if (!channel->isUserOperator(user.getFd()))
@@ -88,13 +90,19 @@ void Command::executeMode(Command& cmd, Server& server, User& user)
 			return ;
 		}
 		Vec vec = lexArgs(cmd);
-		if (!parseArgs(vec, cmd) || !applyModes(vec, server, user, *channel))
+		if (!parseArgs(vec, cmd) || !applyModes(vec, server, user, *channel, cmd))
 		{
-			sendTwoReplies(server, user, cmd , *channel, " :Available channel modes: itkol");
+			if (!unkMode.empty())
+			{
+				std::cout << RED << unkMode << END << std::endl;
+				user.enqueueResponse(errUnknownmode(server, user, cmd, unkMode));
+			}
+			else
+				sendTwoReplies(server, user, cmd , *channel);
 			return ;
 		}
 		std::string extra = modesChangedReply(vec, channel->getPass());
-		sendTwoReplies(server, user, cmd, *channel, extra);
+		user.enqueueResponse(":" + user.getNickname() + " MODE " + channel->getName() + " " + extra);
 	}
   return ;
 }
@@ -126,7 +134,8 @@ bool onlyNumbers(const std::string& str)
 
 std::string modesChangedReply(Vec& vec, const std::string& key)
 {
-	std::string str = " :Channel changed modes: ";
+	(void)key;
+	std::string str = "";
 	char c = vec.m[0][0];
 	str += std::string(1, c);
 	for (size_t i = 0; i < vec.m.size(); i++)
@@ -141,8 +150,8 @@ std::string modesChangedReply(Vec& vec, const std::string& key)
 	}
 	for (size_t i = 0; i < vec.p.size(); i++)
 	{
-		if (vec.p[i] != key)
-			str += " " + vec.p[i];
+		//if (vec.p[i] != key)
+		str += " " + vec.p[i];
 	}
 	return str;
 }
@@ -174,7 +183,7 @@ Vec lexArgs(Command& cmd)
 		else if (!arg.empty())
 			vec.p.push_back(arg);
 	}
-	std::cout << PURPLE << "vec.m: "; //borrar debug
+/* 	std::cout << PURPLE << "vec.m: "; //borrar debug
 	for (size_t i = 0; i < vec.m.size(); i++)
 	{
 		std::cout << vec.m[i] << " ";
@@ -184,7 +193,7 @@ Vec lexArgs(Command& cmd)
 	{
 		std::cout << vec.p[i] << " ";
 	}
-	std::cout << END << std::endl;
+	std::cout << END << std::endl; */
 	return vec;
 }
 
@@ -201,7 +210,10 @@ bool parseArgs(Vec& vec, Command& cmd)
 		if (isSign(mstr[0]) && isSign(mstr[1]))
 			return false;
 		if (!isValidMode(mstr[1]))
+		{
+			unkMode = mstr[1];
 			return false;
+		}
 		if (isModeWithParam(mstr))
 			c++;
 	}
@@ -221,7 +233,7 @@ bool parseArgs(Vec& vec, Command& cmd)
 	return true;
 }
 
-bool applyModes(Vec& vec, Server& server, User& user, Channel& channel)
+bool applyModes(Vec& vec, Server& server, User& user, Channel& channel, Command& cmd)
 {
 	size_t j = 0;
 	for (size_t i = 0; i < vec.m.size(); i++)
@@ -253,18 +265,20 @@ bool applyModes(Vec& vec, Server& server, User& user, Channel& channel)
 		}
 		else if (mode == "+o" && j < vec.p.size() && !vec.p[j].empty())
 		{
-			std::cout << YELLOW << "MODE +o" << END << std::endl; //borrar debug
 			if (user.getNickname() == vec.p[j])
 				return false;
 			else if (server.isNickInServer(vec.p[j]) && channel.isUserInChannel(server.getUserByNick(vec.p[j])->getFd()))
 			{
 				User* targetUser = server.getUserByNick(vec.p[j]);
-				std::cout << YELLOW << "targetUser: " << targetUser->getNickname() << END << std::endl; //borrar debug
+				std::cout << YELLOW << "targetUser: " << targetUser->getNickname() << END << std::endl;
 				channel.addOperatorToChannel(targetUser->getFd());
 				j++;
 			}
 			else
+			{
+				user.enqueueResponse(errNosuchnick(server, user, cmd, vec.p[j]));
 				return false;
+			}
 		}
 		else if (mode == "-o" && j < vec.p.size() && !vec.p[j].empty())
 		{
@@ -284,23 +298,23 @@ bool applyModes(Vec& vec, Server& server, User& user, Channel& channel)
 			if (!onlyNumbers(vec.p[j]))
 				return false;
 			int aux = std::atoi(vec.p[j].c_str());
-			if (aux < 0 && aux > MAX_CLIENTS)
+			if (aux < 0 && aux > MAXCLI)
 				return false;
 			channel.setMaxClient(aux);
 			j++;
 		}
 		else if (mode == "-l")
-			channel.setMaxClient(MAX_CLIENTS);
+			channel.setMaxClient(MAXCLI);
 	}
 	return true;
 }
 
-void sendTwoReplies(Server& server, User& user, Command& cmd, Channel& channel, const std::string& extra)
+void sendTwoReplies(Server& server, User& user, Command& cmd, Channel& channel)
 {
-	user.enqueueResponse(rplChannelmodeis(server, user, cmd, channel, extra));
+	user.enqueueResponse(rplChannelmodeis(server, user, cmd, channel));
 	user.enqueueResponse(rplCreationtime(server, user, cmd, channel));
 	std::vector<Channel*> aux;
   aux.push_back(&channel);
-	cmd.sendMessageToChannels(user, aux, rplChannelmodeis(server, user, cmd, channel, extra));
+	cmd.sendMessageToChannels(user, aux, rplChannelmodeis(server, user, cmd, channel));
 	cmd.sendMessageToChannels(user, aux, rplCreationtime(server, user, cmd, channel));
 }

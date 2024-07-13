@@ -1,6 +1,7 @@
 #include "../inc/Channel.hpp"
 #include "../inc/Server.hpp"
 #include "../inc/Command.hpp"
+#include "../inc/Response.hpp"
 
 //Channel::Channel() : _clientCount(0), _name("") {}
 
@@ -162,7 +163,6 @@ bool Channel::isUserAnOperators(int fd)
 
 void Channel::addOperatorToChannel(int fd)
 {
-    std::cout << RED << "en addOeerator: " << fd << END << std::endl; //borrar debug
    this->_operators.insert(fd);
 }
 
@@ -183,4 +183,23 @@ std::string Channel::showUsers()
 
     }
     return rpl;
+}
+
+//itkol
+std::string Channel::getChannelModes()
+{
+    std::string str = "";
+    if (this->_private)
+        str += "i";
+    if (this->_topicPrivate)
+        str += "t";
+    if (!this->_pass.empty())
+        str += "k";
+    if (this->_maxClients != MAXCLI)
+        str += "l";
+    if (!this->_pass.empty())
+        str += " " + this->_pass;
+    if (this->_maxClients != MAXCLI)
+        str += " " + to_string(this->_maxClients, 0);
+    return str;
 }

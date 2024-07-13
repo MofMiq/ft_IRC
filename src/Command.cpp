@@ -23,12 +23,12 @@ Command::Command(const std::string &msg)
 		this->_args.push_back(token);
 	this->_argCount = this->_args.size();
 	
-  std::cout << BLUE << "Command constructor: argCount: " << this->_argCount << " _args: "; //para probar
+/*   std::cout << BLUE << "Command constructor: argCount: " << this->_argCount << " _args: "; //para probar
 	for (int i = 0; i < this->_argCount; i++)
 	{
 			std::cout << "arg[" << i << "]: " << this->_args[i] << ' ';
 	}
-	std::cout << END << '\n'; // borrar
+	std::cout << END << '\n'; // borrar */
 }
 
 Command::~Command()
