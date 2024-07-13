@@ -194,7 +194,7 @@ std::string rplInviting(Server& server, User& user, const std::string& targetNic
 }
 std::string rplNamreply(Server& server, User& user, Command& cmd, Channel& channel)
 {
-    return (createReply(server, RPL_NAMREPLY) + cmd.getArg(0) + " " + user.getNickname() + " = " + channel.getName() + " :" + channel.showUsers());
+    return (createReply(server, RPL_NAMREPLY) + cmd.getArg(0) + " " + user.getNickname() + " " + channel.getName() + " :" + channel.showUsers());
 }
 std::string rplEndofnames(Server& server, User& user, Command& cmd, const std::string& channelName)
 {

@@ -174,6 +174,17 @@ Vec lexArgs(Command& cmd)
 		else if (!arg.empty())
 			vec.p.push_back(arg);
 	}
+	std::cout << PURPLE << "vec.m: "; //borrar debug
+	for (size_t i = 0; i < vec.m.size(); i++)
+	{
+		std::cout << vec.m[i] << " ";
+	}
+	std::cout << std::endl << RED << "vec.p: ";
+	for (size_t i = 0; i < vec.p.size(); i++)
+	{
+		std::cout << vec.p[i] << " ";
+	}
+	std::cout << END << std::endl;
 	return vec;
 }
 
@@ -242,7 +253,7 @@ bool applyModes(Vec& vec, Server& server, User& user, Channel& channel)
 		}
 		else if (mode == "+o" && j < vec.p.size() && !vec.p[j].empty())
 		{
-			std::cout << YELLOW << "MODE +o" << END << std::endl;
+			std::cout << YELLOW << "MODE +o" << END << std::endl; //borrar debug
 			if (user.getNickname() == vec.p[j])
 				return false;
 			else if (server.isNickInServer(vec.p[j]) && channel.isUserInChannel(server.getUserByNick(vec.p[j])->getFd()))

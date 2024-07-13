@@ -83,10 +83,12 @@ void Command::executeTopic(Command &cmd, Server &server, User &user)
         else
         {
             tmp->setTopic(cmd.getArgsAsString(2).erase(0, 1));
+            actionMessage = " :Topic has been changed successfully to ";
         }
         enqueueSomeMsgs(server, user, *tmp);
         sendMessageToChannels(user, aux, rplTopic(server, user, tmp->getName(), tmp->getTopic()));
         sendMessageToChannels(user, aux, rplTopicwhotime(server, user, tmp->getName(), user.getNickname(), tmp->getTopicTimestamp()));
+        //std::cout << user.getNickname() << actionMessage << tmp->getTopic() << std::endl;
     }
     else
         user.enqueueResponse(errNeedmoreparams(server, user, cmd, 2));

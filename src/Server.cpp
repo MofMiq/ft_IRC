@@ -300,7 +300,7 @@ void    Server::handle_client_message(int client_socket)
     }
     if (done == false && message.find("CAP") == std::string::npos)
         processClientBuffer(client_socket, message);
-    printUSBF(this->_usersServerByFd);
+    //printUSBF(this->_usersServerByFd); //borrar debug
 }
 
 void    Server::printUSBF(std::map < int, User* >& map)
@@ -308,7 +308,7 @@ void    Server::printUSBF(std::map < int, User* >& map)
     std::cout << "IMPRIMIENDO CONTENIDO DE USERS_BY_FD" << std::endl;
     for (std::map < int, User* >::iterator it = map.begin(); it != map.end(); it++)
     {
-        std::cout << "[" << it->first << "] -> " << it->second << std::endl;
+        std::cout << "[" << it->first << "] -> " << it->second << " nick: " << it->second->getNickname() << std::endl;
     }
 }
 
