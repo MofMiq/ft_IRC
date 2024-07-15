@@ -311,8 +311,26 @@ void    Server::printUSBF(std::map < int, User* >& map)
         std::cout << "[" << it->first << "] -> " << it->second << " nick: " << it->second->getNickname() << std::endl;
     }
 }
+//
+//void Server::remove_client(int client_socket) 
+//{
+//    for (std::vector<struct pollfd>::iterator it = pollfds.begin(); it != pollfds.end(); ++it) {
+//        if (it->fd == client_socket) {
+//            pollfds.erase(it);
+//            break;
+//        }
+//    }
+//
+//    if (_usersServerByFd.find(client_socket) != _usersServerByFd.end())
+//    {
+//        delete _usersServerByFd[client_socket];
+//        _usersServerByFd.erase(client_socket);
+//    }
+//    clients.erase(client_socket);
+//
+//}
 
-void Server::remove_client(int client_socket) 
+void Server::remove_client(int client_socket)
 {
     for (std::vector<struct pollfd>::iterator it = pollfds.begin(); it != pollfds.end(); ++it) {
         if (it->fd == client_socket) {
@@ -321,22 +339,24 @@ void Server::remove_client(int client_socket)
         }
     }
 
-    // std::cout << "ESTADO DE LOS MAPAS ANTES DE ELIMINAR ELEMENTOS" << std::endl;
-    // printUSBF(_usersServerByFd);
-
-    // std::cout << "client_socket = " << client_socket << std::endl;
-    // std::cout << "clients[client_socket] = " << clients[client_socket] << std::endl;
-
+    // Si el usuario está en el mapa de usuarios por FD
     if (_usersServerByFd.find(client_socket) != _usersServerByFd.end())
     {
-        delete _usersServerByFd[client_socket];
+        User* user = _usersServerByFd[client_socket];
+        // Eliminar al usuario de todos los canales
+        for (std::map<std::string, Channel>::iterator it = _channelsServer.begin(); it != _channelsServer.end(); ++it) {
+            Channel& channel = it->second;
+            channel.removeUser(user->getFd());
+        }
+        // Eliminar el objeto User
+        delete user;
+        // Eliminar la referencia del mapa de usuarios
         _usersServerByFd.erase(client_socket);
     }
     clients.erase(client_socket);
-
-    // std::cout << "ESTADO DE LOS MAPAS DESPUES DE ELIMINAR ELEMENTOS" << std::endl;
-    // printUSBF(_usersServerByFd);
 }
+
+
 
 
 bool Server::channelExists(const std::string& channelName) 
@@ -378,7 +398,7 @@ bool Server::isUserInChannelServer(User& user, const std::string& channelName)
     return _channelsServer[channelName].isUserInChannel(user.getFd());
 }
 
-void Server::ShowChannelsAndUsers() const 
+void Server::ShowChannelsAndUsers() const
 {
     std::cout << "List of channels and users:" << std::endl;
     for (std::map<std::string, Channel>::const_iterator it = _channelsServer.begin(); it != _channelsServer.end(); ++it)
@@ -390,13 +410,24 @@ void Server::ShowChannelsAndUsers() const
         for (std::vector<User*>::const_iterator userIt = users.begin(); userIt != users.end(); ++userIt)
         {
             User* user = *userIt;
-            std::cout << " - User: " << user->getNickname() << " (FD: " << user->getFd() << ")"; 
-            if(channel.isUserOperator(user->getFd()))
-                std::cout <<" IS OPERATOR";
-            std::cout << std::endl;
+            // Verificar si el puntero es válido antes de usarlo
+            if (user != NULL)
+            {
+                std::cout << " - User: " << user->getNickname() << " (FD: " << user->getFd() << ")";
+                if (channel.isUserOperator(user->getFd()))
+                    std::cout << " IS OPERATOR";
+                std::cout << std::endl;
+            }
+            else
+            {
+                std::cout << " - User: Invalid user pointer" << std::endl;
+            }
         }
     }
 }
+
+
+
 
 // Asigna el rol de operador a un usuario en un canal
 void Server::setOperator(const User& user, const std::string& channelName) 

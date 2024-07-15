@@ -27,11 +27,6 @@ void Command::executeKick(Command& cmd, Server& server, User& user) {
         user.enqueueResponse(errNeedmoreparams(server, user, cmd, 7));
         return;
     }
-    std::cout << "arg count: " <<cmd._argCount << std::endl;
-    std::cout << "arg count: " << cmd.getArg(0) << std::endl;
-    std::cout << "arg count: " << cmd.getArg(1) << std::endl;
-    std::cout << "arg count: " << cmd.getArg(2) << std::endl;
-    std::cout << "arg count: " << cmd.getArg(3) << std::endl;
     // Obtener el nombre del canal y los usuarios objetivo
     std::string channelName = cmd.getArg(1);
     std::string usersStr = cmd.getArg(2);
