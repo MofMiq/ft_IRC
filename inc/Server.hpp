@@ -48,7 +48,6 @@ public:
     std::string extractPassword(std::string strRaw);
     void        handle_client_message(int client_socket);
     void        remove_client(int client_socket);
-
     bool        channelExists(const std::string& channelName);
     void        addUserToChannel(User& user, const std::string& channelName);
     void        createChannel(const std::string& channelName, const std::string& key, const std::string& timestamp);
@@ -59,14 +58,9 @@ public:
     bool        checkChannelKey(const std::string& channelName, const std::string& key);
     std::string&    getPass();
     std::string     extractInfo(std::string& strRaw, const std::string& cmd);
-    
     void processClientBuffer(int clientSocket, std::string messageFragment);
-
     User*       getUserByNick(const std::string& nick);   // Metodo para obtener un usuario por su nickname
-
-    //Commands functions
     bool        isNickInServer(const std::string& nick);
-    void        updateUsersServerByNick(int fd, const std::string& newNick);
     std::vector<Channel*> getAllChannelsUserIn(int fd);
 
     //FUNCIONES PARA DEPURACION

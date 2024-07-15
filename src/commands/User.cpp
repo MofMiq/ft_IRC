@@ -47,11 +47,5 @@ void Command::executeUser(Command& cmd, Server& server, User& user)
     user.setCommandUSER(true);
 
     if (user.getAuthenticated() && user.getCommandNICK() && user.getCommandUSER() && !user.getConfigOK())
-        user.setConfigOK(true);    
-
-    server.sendMessageClient(user.getFd(), ":MyServer 001 " + user.getNickname() + " :Welcome to the IRC Network, :" + user.getNickname() + "!" + user.getRealname() + "@" + user.getServername());
-    server.sendMessageClient(user.getFd(), ":MyServer 002 " + user.getNickname() + " :Your host is MyServer, running version 1.0");
-    server.sendMessageClient(user.getFd(), ":MyServer 003 " + user.getNickname() + " :This server was created at some date");
-    server.sendMessageClient(user.getFd(), ":MyServer 004 " + user.getNickname() + " " + server.getServerName() + " v1.0 Available user modes: , Available channel modes: itkol");
-    //std::cout << GREEN << "✅ Client: " << user.getNickname() << " successfully registered" << END << std::endl;
+        user.setConfigOK(true);
 }

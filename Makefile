@@ -1,6 +1,6 @@
 NAME	= ircserv
 CC		= c++
-CFLAGS	= -Wall -Werror -Wextra -std=c++98 
+CFLAGS	= -Wall -Werror -Wextra -std=c++98 -g
 RM		= rm -rf
 
 GREEN	= \033[;32m
