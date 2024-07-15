@@ -42,7 +42,6 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
     if (cmd._argCount < 2)
     {
         user.enqueueResponse(errNeedmoreparams(server, user, cmd, 8));
-        //server.sendMessageClient(user.getFd(), user.dequeueResponse());
         return;
     }
 
@@ -62,7 +61,6 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
         // Validar el nombre del canal
         if (!isValidChannelName(channelName)) {
             user.enqueueResponse(errBadChannelMask(server, user, cmd, channelName));
-            //server.sendMessageClient(user.getFd(), user.dequeueResponse());
             continue;
         }
 
@@ -82,13 +80,11 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
             if (!server.checkChannelKey(channelName, key))
             {
                 user.enqueueResponse(errBadChannelKey(server, user, cmd, channelName));
-                //server.sendMessageClient(user.getFd(), user.dequeueResponse());
                 continue;
             }
             // Verifica si el canal esta lleno
             if (channel->isFull()) {
                 user.enqueueResponse(errChannelIsFull(server, user, cmd, channelName));
-                //server.sendMessageClient(user.getFd(), user.dequeueResponse());
                 continue;
             }
             // Verifica si el usuario ya esta en el canal

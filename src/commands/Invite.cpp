@@ -70,7 +70,7 @@ void Command::executeInvite(Command& cmd, Server& server, User& user) {
 
     // Envia el mensaje de invitaci�n al usuario objetivo
   //  std::string inviteMessage = ":" + server.getServerName() + " " + cmd.getArg(0) + " " + user.getNickname() + " INVITE " + targetNickname + " :" + channelName;
-    std::string inviteMessage = ":" + user.getNickname() + " INVITE " + targetUser->getNickname() + " " + channelName + ":Invite to " + channelName;
+    std::string inviteMessage = ":" + user.getNickname() + " INVITE " + targetUser->getNickname() + " " + channelName + " to " + channelName;
   // server.sendMessageClient(targetUser->getFd(), inviteMessage);
     targetUser->enqueueResponse(inviteMessage);
 
