@@ -291,13 +291,14 @@ void    Server::handle_client_message(int client_socket)
     {
         std::cerr << "ERROR EN USER" << std::endl;
     }
-    if (this->_usersServerByFd[client_socket]->getConfigOK())
+    if (this->_usersServerByFd[client_socket]->getConfigOK() && !this->_usersServerByFd[client_socket]->getFlag())
     {
         User& tmp = *this->_usersServerByFd[client_socket];
         this->sendMessageClient(client_socket, ":MyServer 001 " + tmp.getNickname() + " :MyServer 001 " + tmp.getNickname() + " :Welcome to the IRC Network, :" + tmp.getNickname() + "!" + tmp.getRealname() + "@" + tmp.getServername());
         this->sendMessageClient(client_socket, ":MyServer 002 " + tmp.getNickname() + " :Your host is MyServer, running version 1.0");
         this->sendMessageClient(client_socket, ":MyServer 003 " + tmp.getNickname() + " :This server was created at some date");
         this->sendMessageClient(client_socket, ":MyServer 004 " + tmp.getNickname() + " " + this->getServerName() + " v1.0 Available user modes: , Available channel modes: itkol");
+        this->_usersServerByFd[client_socket]->setFlag(true);
     }
     if (done == false && message.find("CAP") == std::string::npos)
         processClientBuffer(client_socket, message);

@@ -2,38 +2,15 @@
 #include <stdexcept>
 #include <iostream>
 
-User::User() :
-_authenticated(false), 
-_commandUSER(false), 
-_commandNICK(false),
-_configOK(false), //: _standBy(false)
-_registered(false)
-{
-}
-
 User::User(int fd) : 
 _fd(fd),
 _authenticated(false), 
 _commandUSER(false), 
 _commandNICK(false),
-_configOK(false), //, _standBy(false)
-_registered(false)
-{
-}
-
-User::User(int fd, std::string userName, std::string hostName, std::string serverName, std::string realName) : 
-_fd(fd), 
-_authenticated(false), 
-_commandUSER(false), 
-_commandNICK(false),
 _configOK(false),
 _registered(false),
-_userName(userName), 
-_hostName(hostName), 
-_serverName(serverName), 
-_realName(realName) //, _standBy(false)
+_flag(false)
 {
-
 }
 
 User::~User()
@@ -84,20 +61,6 @@ void User::setHostname(const std::string& hostname)
 int User::getFd() const
 {
     return this->_fd;
-}
-
-// bool User::getStandBy()
-// {
-//     return this->_standBy;
-// }
-// void User::setStandBy(bool cond)
-// {
-//     this->_standBy = cond;
-// }
-
-void User::setPass(int pass)
-{
-    this->_pass = pass;
 }
 
 bool User::checkResponsesQueue()
@@ -214,6 +177,16 @@ bool User::getRegistered() const
 void User::setRegistered(bool value)
 {
     this->_registered = value;
+}
+
+bool User::getFlag() const
+{
+    return (this->_flag);
+}
+
+void User::setFlag(bool value)
+{
+    this->_flag = value;
 }
 
 bool User::getCapLS() const

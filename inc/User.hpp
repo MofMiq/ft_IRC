@@ -16,6 +16,7 @@ private:
     bool        _configOK;
     bool        _registered;
     bool        _capLS;
+    bool        _flag;
     std::string _userName;
     std::string _nickName;
     std::string _oldNick;
@@ -23,16 +24,10 @@ private:
     std::string _serverName;
     std::string _realName;
     std::queue<std::string> _responses;
-    std::vector<std::string> _invitedChannels; //Canales a los que el usuario ha sido invitado
-    int         _pass;
-
-    bool _standBy;
+    std::vector<std::string> _invitedChannels;
 
 public:
-    User();
     User(int fd);
-    User(int fd, std::string userName, std::string hostName, std::string serverName, std::string realName);
-
     ~User();
 
     // Getters y setters
@@ -53,6 +48,9 @@ public:
 
     bool getRegistered() const;
     void setRegistered(bool value);
+
+    bool getFlag() const;
+    void setFlag(bool value);
 
     std::string getUsername() const;
     void setUsername(const std::string& username); //Pa el comando USER
