@@ -123,5 +123,4 @@ void Command::executeJoin(Command& cmd, Server& server, User& user) {
             user.enqueueResponse(rplEndofnames(server, user, cmd, c->getName()));
         }
     }
-    server.ShowChannelsAndUsers(); //borrar debug
 }

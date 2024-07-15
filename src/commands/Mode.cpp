@@ -59,6 +59,7 @@ typedef struct Vec
 } vec;
 
 static std::string unkMode = "";
+static bool badParam = false;
 
 void sendTwoReplies(Server& server, User& user, Command& cmd, Channel& channel);
 bool isSign(char c);
@@ -93,16 +94,19 @@ void Command::executeMode(Command& cmd, Server& server, User& user)
 		if (!parseArgs(vec, cmd) || !applyModes(vec, server, user, *channel, cmd))
 		{
 			if (!unkMode.empty())
-			{
-				std::cout << RED << unkMode << END << std::endl;
 				user.enqueueResponse(errUnknownmode(server, user, cmd, unkMode));
-			}
+			else if (badParam)			
+				user.enqueueResponse(errNeedmoreparams(server, user, cmd, 0));
 			else
 				sendTwoReplies(server, user, cmd , *channel);
 			return ;
 		}
 		std::string extra = modesChangedReply(vec, channel->getPass());
 		user.enqueueResponse(":" + user.getNickname() + " MODE " + channel->getName() + " " + extra);
+		std::vector<Channel*> aux;
+		aux.push_back(channel);
+		cmd.sendMessageToChannels(user, aux, ":" + user.getNickname() + " MODE " + channel->getName() + " " + extra);
+
 	}
   return ;
 }
@@ -218,7 +222,10 @@ bool parseArgs(Vec& vec, Command& cmd)
 			c++;
 	}
 	if (c != vec.p.size())
+	{
+		badParam = true;
 		return false;
+	}
 	for (size_t i = 0; i < vec.p.size(); i++)
 	{
 		std::string& pstr = vec.p[i];
@@ -270,7 +277,6 @@ bool applyModes(Vec& vec, Server& server, User& user, Channel& channel, Command&
 			else if (server.isNickInServer(vec.p[j]) && channel.isUserInChannel(server.getUserByNick(vec.p[j])->getFd()))
 			{
 				User* targetUser = server.getUserByNick(vec.p[j]);
-				std::cout << YELLOW << "targetUser: " << targetUser->getNickname() << END << std::endl;
 				channel.addOperatorToChannel(targetUser->getFd());
 				j++;
 			}
@@ -313,8 +319,4 @@ void sendTwoReplies(Server& server, User& user, Command& cmd, Channel& channel)
 {
 	user.enqueueResponse(rplChannelmodeis(server, user, cmd, channel));
 	user.enqueueResponse(rplCreationtime(server, user, cmd, channel));
-	std::vector<Channel*> aux;
-  aux.push_back(&channel);
-	cmd.sendMessageToChannels(user, aux, rplChannelmodeis(server, user, cmd, channel));
-	cmd.sendMessageToChannels(user, aux, rplCreationtime(server, user, cmd, channel));
 }

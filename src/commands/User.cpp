@@ -42,7 +42,6 @@ void Command::executeUser(Command& cmd, Server& server, User& user)
     user.setHostname(hostname);
     user.setServername(servername);
     user.setRealname(realname);
-    //server.addUserToNickMap(user.getNickname(), user.getFd());
 
     //Para el control de haber realizado el comando USER
     user.setCommandUSER(true);
@@ -54,4 +53,5 @@ void Command::executeUser(Command& cmd, Server& server, User& user)
     server.sendMessageClient(user.getFd(), ":MyServer 002 " + user.getNickname() + " :Your host is MyServer, running version 1.0");
     server.sendMessageClient(user.getFd(), ":MyServer 003 " + user.getNickname() + " :This server was created at some date");
     server.sendMessageClient(user.getFd(), ":MyServer 004 " + user.getNickname() + " " + server.getServerName() + " v1.0 Available user modes: , Available channel modes: itkol");
+    //std::cout << GREEN << "✅ Client: " << user.getNickname() << " successfully registered" << END << std::endl;
 }
