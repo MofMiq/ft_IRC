@@ -201,9 +201,6 @@ void    Server::handle_client_message(int client_socket)
     buffer[bytes_read] = '\0';
     std::string message(buffer);
 
-
-    std::cout << "Client: " << this->_usersServerByFd[client_socket]->getNickname() << " " << message << std::endl;
-
     if (message.find("CAP LS") != std::string::npos)
         _usersServerByFd[client_socket]->setCapLS(true);
 
@@ -229,7 +226,6 @@ void    Server::handle_client_message(int client_socket)
             {
                 if (userPass == this->password)
                 {
-                    std::cout << "CONTRASEÑA OK" << std::endl; //debug borrar
                     this->_usersServerByFd[client_socket]->setAuthenticated(true);
                 }
                 else
@@ -271,9 +267,7 @@ void    Server::handle_client_message(int client_socket)
             nickName = extractInfo(message, "NICK");
             if (nickName != "")
             {
-                std::cout << "NICKNAME EXTRAIDO = " << nickName << std::endl; //debug borrar
                 processClientBuffer(client_socket, nickName);
-
             }
         }
     }
@@ -289,7 +283,6 @@ void    Server::handle_client_message(int client_socket)
             std::string userCmd = extractInfo(message, "USER");
             if (userCmd != "")
             {
-                std::cout << "USERNAME EXTRAIDO = " << userCmd << std::endl; //debug borrar
                 processClientBuffer(client_socket, userCmd);
             }
         }
@@ -300,7 +293,6 @@ void    Server::handle_client_message(int client_socket)
     }
     if (done == false && message.find("CAP") == std::string::npos)
         processClientBuffer(client_socket, message);
-    //printUSBF(this->_usersServerByFd); //borrar debug
 }
 
 void    Server::printUSBF(std::map < int, User* >& map)
@@ -426,9 +418,6 @@ void Server::ShowChannelsAndUsers() const
     }
 }
 
-
-
-
 // Asigna el rol de operador a un usuario en un canal
 void Server::setOperator(const User& user, const std::string& channelName) 
 {
@@ -453,10 +442,6 @@ bool Server::isNickInServer(const std::string& nick)
 {
     if (nick == "bot") //borrar debug? esto es para que no cuente a bot en caso de que alguien quiera mandarle un mensaje
         return true;
-/*     std::map<std::string, int>::const_iterator it = this->_usersServerByNick.find(nick); //borrar
-    if (it != this->_usersServerByNick.end())
-        return true;
-    return false; */
     for (std::map<int, User* >::iterator it = this->_usersServerByFd.begin(); it != this->_usersServerByFd.end(); ++it)
     {
         if (it->second->getNickname() == nick)
@@ -468,17 +453,6 @@ bool Server::isNickInServer(const std::string& nick)
 //Cambiado pq da segfault si no existia el user, hay q recorrer antes y ver si existe
 User* Server::getUserByNick(const std::string& nick)
 {
-/*     std::map<std::string, int>::iterator it = _usersServerByNick.find(nick);
-    if (it == _usersServerByNick.end()) {
-        return NULL;  // Nick no encontrado
-    }
-    int fd = it->second;
-    std::map<int, User*>::iterator userIt = _usersServerByFd.find(fd);
-    if (userIt == _usersServerByFd.end()) {
-        return NULL;  // FD no encontrado
-    }
-    return userIt->second; */
-
     for (std::map<int, User* >::iterator it = this->_usersServerByFd.begin(); it != this->_usersServerByFd.end(); ++it)
     {
         if (it->second->getNickname() == nick)
@@ -533,18 +507,19 @@ void        Server::cleanAll()
     std::cout << "* ALL CLEAN *" << std::endl;
 }
 
-void Server::processClientBuffer(int client_socket, std::string message_fragment)
+void Server::processClientBuffer(int clientSocket, std::string messageFragment)
 {
-    this->_clientBuffers[client_socket] += message_fragment;
+    this->_clientBuffers[clientSocket] += messageFragment;
 
     size_t pos;
-    while ((pos = this->_clientBuffers[client_socket].find('\n')) != std::string::npos)
+    while ((pos = this->_clientBuffers[clientSocket].find('\n')) != std::string::npos)
     {
-        std::string command = this->_clientBuffers[client_socket].substr(0, pos);
+        std::string command = this->_clientBuffers[clientSocket].substr(0, pos);
         Command cmd(command);
-        User* user = this->_usersServerByFd[client_socket];
+        User* user = this->_usersServerByFd[clientSocket];
+        std::cout << "Client: " << this->_usersServerByFd[clientSocket]->getNickname() << " " << this->_clientBuffers[clientSocket];
         cmd.parseCommand(cmd.getArg(0), this, *user);
-        this->_clientBuffers[client_socket].erase(0, pos + 1);
+        this->_clientBuffers[clientSocket].erase(0, pos + 1);
     }
 }
 

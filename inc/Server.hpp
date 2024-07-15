@@ -60,7 +60,7 @@ public:
     std::string&    getPass();
     std::string     extractInfo(std::string& strRaw, const std::string& cmd);
     
-    void processClientBuffer(int client_socket, std::string message_fragment);
+    void processClientBuffer(int clientSocket, std::string messageFragment);
 
     User*       getUserByNick(const std::string& nick);   // Metodo para obtener un usuario por su nickname
 

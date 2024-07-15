@@ -47,6 +47,7 @@ void Command::executeNick(Command &cmd, Server &server, User &user)
     if (cmd._argCount < 2)
     {
         user.enqueueResponse(errNonicknamegiven(server, user, cmd));
+        //std::cout << RED << "❌ Client: " << user.getNickname() << " couldn't change their nick" << END << std::endl;
     }
     else if (!validNickname(cmd, cmd.getArg(1)) || cmd.getArg(1).length() >= MAX_LENGHT || cmd.getArg(1) == "bot")
     {
@@ -74,6 +75,7 @@ void Command::executeNick(Command &cmd, Server &server, User &user)
             std::string rpl = ":" + user.getOldNick() + " NICK " + user.getNickname();
             user.enqueueResponse(rpl);
             sendMessageToChannels(user, server.getAllChannelsUserIn(user.getFd()), rpl);
+            //std::cout << GREEN << "✅ Client: " << user.getNickname() << " successfully their nick" << END << " ❌ " << std::endl;
         }
     }
     return ;
