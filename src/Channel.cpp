@@ -179,7 +179,7 @@ std::string Channel::showUsers()
         if (this->_operators.find(it->second->getFd()) != this->_operators.end())
             rpl += "@" + it->second->getNickname() + " ";
         else
-            rpl += "+" + it->second->getNickname() + " ";
+            rpl += it->second->getNickname() + " ";
 
     }
     return rpl;
