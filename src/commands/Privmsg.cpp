@@ -77,10 +77,7 @@ void Command::executePrivmsg(Command& cmd, Server& server, User& user)
       std::vector<Channel*> aux;
       aux.push_back(server.getChannel(cmd.getArg(1)));
       std::string reply;
-      if (user.getCapLS())
-        reply = ":" + user.getNickname() + " " + cmd.getArg(0) + " " + cmd.getArg(1) + " " + cmd.getArgsAsString(2);
-      else
-        reply = ":" + user.getNickname() + " " + cmd.getArg(0) + " " + cmd.getArg(1) + " :" + cmd.getArgsAsString(2);
+      reply = ":" + user.getNickname() + " " + cmd.getArg(0) + " " + cmd.getArg(1) + " " + cmd.getArgsAsString(2);
       sendMessageToChannels(user, aux, reply);
     }
   }
